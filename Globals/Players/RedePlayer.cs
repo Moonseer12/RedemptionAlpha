@@ -185,7 +185,8 @@ namespace Redemption.Globals.Players
             if (SubworldSystem.Current != null)
                 return;
 
-            if (RedeGen.GoldenGatewayVector.X == -1 || RedeGen.BastionVector.X == -1)
+            bool bastionWarning = !ModLoader.TryGetMod("InfernumMode", out Mod _) && !ModLoader.TryGetMod("Spooky", out Mod _) && !ModLoader.TryGetMod("Synergia", out Mod _);
+            if (RedeGen.GoldenGatewayVector.X == -1 || (RedeGen.BastionVector.X == -1 && bastionWarning))
                 Main.NewText(Language.GetTextValue("Mods.Redemption.StatusMessage.Other.Warning1"), Colors.RarityRed);
             if (!LabSearch() || !AnglonPortalSearch() || !GathPortalSearch() || !HallOfHeroesSearch() || !ShipSearch())
                 Main.NewText(Language.GetTextValue("Mods.Redemption.StatusMessage.Other.Warning2"), Colors.RarityRed);

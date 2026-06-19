@@ -1671,7 +1671,7 @@ namespace Redemption.WorldGeneration
                     if (GoldenGatewayVector.X == -1 && JoShrinePoint.X == 0)
                         JoShrineGen(ref progress);
                 }));
-                if (!ModLoader.TryGetMod("InfernumMode", out Mod infernum) && !ModLoader.TryGetMod("Spooky", out Mod spooky))
+                if (!ModLoader.TryGetMod("InfernumMode", out Mod infernum) && !ModLoader.TryGetMod("Spooky", out Mod spooky) && !ModLoader.TryGetMod("Synergia", out Mod synergia))
                 {
                     tasks.Add(new PassLegacy("Blazing Bastion", delegate (GenerationProgress progress, GameConfiguration configuration)
                     {
