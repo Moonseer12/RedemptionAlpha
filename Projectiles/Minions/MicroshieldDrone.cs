@@ -21,7 +21,7 @@ namespace Redemption.Projectiles.Minions
 
         public const int RESTORE_TIME = 1800;
 
-        public const int MAX_ENDURANCE = 500;
+        public const int MAX_ENDURANCE = 200;
 
         public Vector2 moveTo;
         public override void SetStaticDefaults()

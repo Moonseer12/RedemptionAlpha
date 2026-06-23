@@ -27,8 +27,6 @@ namespace Redemption.Items.Quest
                 string bonusList = "";
                 for (int i = 0; i < 20; i++)
                 {
-                    if (i == (int)RedeQuest.Bonuses.Clash)
-                        continue;
                     string s = ElementID.BonusNameFromID(i);
                     string bonus;
                     if (!RedeQuest.bonusDiscovered[i])

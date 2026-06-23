@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using ParticleLibrary;
+using ParticleLibrary.Core;
 using Redemption.BaseExtension;
 using Redemption.Buffs.NPCBuffs;
 using Redemption.Globals;
@@ -35,14 +34,14 @@ namespace Redemption.Projectiles.Ranged
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Main.rand.NextBool(2))
-                target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 120);
+                target.AddBuff(BuffType<ElectrifiedDebuff>(), 120);
         }
         public override void AI()
         {
             if (Projectile.localAI[0]++ >= 10f && Projectile.localAI[0] % 10 == 0)
             {
                 Vector2 drawPos = Projectile.Center;
-                RedeParticleManager.CreateLaserParticle(drawPos, Projectile.velocity, 2f, Color.LightCyan);
+                RedeParticleManager.CreateLaserParticle(drawPos, Projectile.velocity, 3f, Color.LightCyan);
             }
         }
         public override void OnKill(int timeLeft)

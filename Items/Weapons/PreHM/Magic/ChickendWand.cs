@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Globals;
 using Redemption.Projectiles.Magic;
 using Terraria;
@@ -33,7 +32,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.rare = ItemRarityID.Blue;
             Item.UseSound = SoundID.Item20;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<ChickendEgg_Proj>();
+            Item.shoot = ProjectileType<ChickendEgg_Proj>();
             Item.shootSpeed = 16f;
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)

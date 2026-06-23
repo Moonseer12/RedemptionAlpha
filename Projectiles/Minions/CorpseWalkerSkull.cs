@@ -1,8 +1,6 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Buffs.Minions;
 using Redemption.Globals;
-using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -79,7 +77,7 @@ namespace Redemption.Projectiles.Minions
                 }
             }
 
-            OverlapCheck();
+            ProjHelper.OverlapCheck(Projectile);
 
             if (RedeHelper.ClosestNPC(ref target, 700, Projectile.Center, false, owner.MinionAttackTargetNPC))
             {
@@ -106,7 +104,7 @@ namespace Redemption.Projectiles.Minions
                     }
                     Flare = true;
                     FlareTimer = 0;
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), projPos, RedeHelper.PolarVector(10, (target.Center - Projectile.Center).ToRotation() + Main.rand.NextFloat(-0.1f, 0.1f)), ModContent.ProjectileType<CorpseWalkerSkull_Proj>(), Projectile.damage, Projectile.knockBack, Main.myPlayer);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), projPos, RedeHelper.PolarVector(10, (target.Center - Projectile.Center).ToRotation() + Main.rand.NextFloat(-0.1f, 0.1f)), ProjectileType<CorpseWalkerSkull_Proj>(), Projectile.damage, Projectile.knockBack, Main.myPlayer);
                 }
             }
             else
@@ -127,7 +125,7 @@ namespace Redemption.Projectiles.Minions
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glow = ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "_Glow").Value;
+            Texture2D glow = Request<Texture2D>(Texture + "_Glow").Value;
             int height = texture.Height / 5;
             int y = height * Projectile.frame;
             Rectangle rect = new(0, y, texture.Width, height);
@@ -149,9 +147,9 @@ namespace Redemption.Projectiles.Minions
         public override void PostDraw(Color lightColor)
         {
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
-            Texture2D flare = ModContent.Request<Texture2D>("Redemption/Textures/WhiteFlare").Value;
+            Texture2D flare = Request<Texture2D>("Redemption/Textures/WhiteFlare").Value;
             Rectangle rect = new(0, 0, flare.Width, flare.Height);
             Vector2 origin = new(flare.Width / 2, flare.Height / 2);
             Vector2 position = projPos - Main.screenPosition;
@@ -162,55 +160,22 @@ namespace Redemption.Projectiles.Minions
                 Main.EntitySpriteDraw(flare, position, new Rectangle?(rect), colour * 0.4f, Projectile.rotation, origin, 1f, SpriteEffects.None, 0);
             }
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
         }
 
         private bool CheckActive(Player owner)
         {
             if (owner.dead || !owner.active)
             {
-                owner.ClearBuff(ModContent.BuffType<CorpseSkullBuff>());
+                owner.ClearBuff(BuffType<CorpseSkullBuff>());
 
                 return false;
             }
 
-            if (owner.HasBuff(ModContent.BuffType<CorpseSkullBuff>()))
+            if (owner.HasBuff(BuffType<CorpseSkullBuff>()))
                 Projectile.timeLeft = 2;
 
             return true;
-        }
-
-        private void OverlapCheck()
-        {
-            // If your minion is flying, you want to do this independently of any conditions
-            float overlapVelocity = 0.04f;
-
-            // Fix overlap with other minions
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                Projectile other = Main.projectile[i];
-
-                if (i != Projectile.whoAmI && other.active && other.owner == Projectile.owner && Math.Abs(Projectile.position.X - other.position.X) + Math.Abs(Projectile.position.Y - other.position.Y) < Projectile.width)
-                {
-                    if (Projectile.position.X < other.position.X)
-                    {
-                        Projectile.velocity.X -= overlapVelocity;
-                    }
-                    else
-                    {
-                        Projectile.velocity.X += overlapVelocity;
-                    }
-
-                    if (Projectile.position.Y < other.position.Y)
-                    {
-                        Projectile.velocity.Y -= overlapVelocity;
-                    }
-                    else
-                    {
-                        Projectile.velocity.Y += overlapVelocity;
-                    }
-                }
-            }
         }
     }
 }

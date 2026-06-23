@@ -1,6 +1,6 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Base;
+using Redemption.BaseExtension;
 using Redemption.Buffs.Minions;
 using Redemption.Buffs.NPCBuffs;
 using Redemption.Globals;
@@ -8,7 +8,6 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Redemption.BaseExtension;
 
 namespace Redemption.Projectiles.Minions
 {
@@ -75,7 +74,7 @@ namespace Redemption.Projectiles.Minions
                 Projectile.velocity *= 0.1f;
                 Projectile.netUpdate = true;
             }
-            BaseAI.AIMinionSlime(Projectile, ref Projectile.ai, projOwner, false, 40, 1400, 2000, 3, 5, 10, getTarget: (proj, owner) => { return target == projOwner ? null : target; });
+            BaseAI.AIMinionSlime(Projectile, ref Projectile.ai, projOwner, false, 40, 1400, 2000, 3, 8, 10, getTarget: (proj, owner) => { return target == projOwner ? null : target; });
         }
 
         public int maxDistToAttack = 800;
@@ -86,7 +85,7 @@ namespace Redemption.Projectiles.Minions
             Player projOwner = Main.player[Projectile.owner];
             if (RedeHelper.ClosestNPC(ref target2, 800, Projectile.Center, false, projOwner.MinionAttackTargetNPC))
                 target = target2;
-            else 
+            else
                 target = projOwner;
         }
 
@@ -107,12 +106,12 @@ namespace Redemption.Projectiles.Minions
         {
             if (owner.dead || !owner.active)
             {
-                owner.ClearBuff(ModContent.BuffType<MagmaCubeBuff>());
+                owner.ClearBuff(BuffType<MagmaCubeBuff>());
 
                 return false;
             }
 
-            if (owner.HasBuff(ModContent.BuffType<MagmaCubeBuff>()))
+            if (owner.HasBuff(BuffType<MagmaCubeBuff>()))
                 Projectile.timeLeft = 2;
 
             return true;
@@ -121,12 +120,11 @@ namespace Redemption.Projectiles.Minions
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
-
-            if (Main.rand.NextBool(3))
-                target.AddBuff(BuffID.OnFire, 240);
+            target.AddBuff(BuffID.Oiled, 240);
+            target.AddBuff(BuffID.OnFire, 240);
 
             if (player.RedemptionPlayerBuff().dragonLeadBonus)
-                target.AddBuff(ModContent.BuffType<DragonblazeDebuff>(), 300);
+                target.AddBuff(BuffType<DragonblazeDebuff>(), 300);
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {

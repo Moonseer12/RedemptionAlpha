@@ -26,7 +26,7 @@ namespace Redemption.NPCs.Bosses.Obliterator
             Projectile.height = 10;
             Projectile.aiStyle = -1;
             Projectile.friendly = false;
-            Projectile.hostile = true;
+            Projectile.hostile = false;
             Projectile.penetrate = 1;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 300;

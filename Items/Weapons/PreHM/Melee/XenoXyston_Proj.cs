@@ -26,14 +26,14 @@ namespace Redemption.Items.Weapons.PreHM.Melee
         }
 
         private float rotSpeed = 0.05f;
-        private float SwingSpeed;
+        private float speedBonus;
         public override void AI()
         {
             Projectile.soundDelay--;
             if (Projectile.soundDelay <= 0)
             {
                 SoundEngine.PlaySound(SoundID.Item15 with { Pitch = rotSpeed - 0.5f }, Projectile.Center);
-                Projectile.soundDelay = (int)(360 / ((rotSpeed * (SwingSpeed + 1) + 1) * MathHelper.TwoPi));
+                Projectile.soundDelay = (int)(360 / ((rotSpeed * (speedBonus + 1) + 1) * MathHelper.TwoPi));
             }
 
             Player player = Main.player[Projectile.owner];
@@ -42,16 +42,15 @@ namespace Redemption.Items.Weapons.PreHM.Melee
                 if (!player.channel || player.noItems || player.CCed)
                     Projectile.Kill();
             }
-
-            SwingSpeed = SetSwingSpeed(1);
-            rotSpeed *= 1.01f * (1.1f - 0.1f * SwingSpeed);
+            speedBonus = SetSpeedBonus(10, player.HeldItem.useTime);
+            rotSpeed *= (1f + 0.01f * speedBonus);
             rotSpeed = MathHelper.Clamp(rotSpeed, 0.1f, 1.5f);
 
             Lighting.AddLight(Projectile.Center, 1f, 0.6f, 0f);
-            Projectile.Center = player.RotatedRelativePoint(player.MountedCenter, true);
+            Projectile.Center = player.RotatedRelativePoint(player.MountedCenter);
             Projectile.position.X += player.width / 2 * player.direction;
             Projectile.spriteDirection = player.direction;
-            Projectile.rotation += rotSpeed * SwingSpeed * player.direction;
+            Projectile.rotation += rotSpeed * speedBonus * player.direction;
 
             if (Projectile.rotation > MathHelper.TwoPi)
                 Projectile.rotation -= MathHelper.TwoPi;
@@ -62,12 +61,13 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             player.itemTime = 2;
             player.itemAnimation = 2;
             player.itemRotation = Projectile.rotation;
+            player.ChangeDir(Main.MouseWorld.X > Projectile.Center.X ? 1 : -1);
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GreenFairy);
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
-            target.immune[Projectile.owner] = (int)(120 / ((rotSpeed * (SwingSpeed + 1) + 1) * MathHelper.TwoPi));
+            target.immune[Projectile.owner] = (int)(120 / ((rotSpeed * (speedBonus + 1) + 1) * MathHelper.TwoPi));
             Vector2 directionTo = target.DirectionTo(player.Center);
             for (int i = 0; i < 8; i++)
                 Dust.NewDustPerfect(target.Center + directionTo * 8 + new Vector2(0, 35) + player.velocity, DustType<DustSpark2>(), directionTo.RotatedBy(Main.rand.NextFloat(-0.7f, 0.7f) + 3.14f) * Main.rand.NextFloat(4f, 5f) * MathF.Sqrt(rotSpeed), 0, Color.LimeGreen * .8f, 1.6f);

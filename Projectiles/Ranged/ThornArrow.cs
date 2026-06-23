@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Base;
 using Redemption.Globals;
 using Terraria;
@@ -28,14 +27,7 @@ namespace Redemption.Projectiles.Ranged
         {
             Player player = Main.player[Projectile.owner];
             if (Main.myPlayer == player.whoAmI)
-            {
-                int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), new Vector2(Projectile.Center.X, Projectile.Center.Y - 36), Vector2.Zero, ProjectileType<ThornTrapSmall_Proj>(), Projectile.damage / 2, 3, Main.myPlayer, Projectile.ai[0]);
-                if (Projectile.ai[0] == 1)
-                {
-                    Main.projectile[p].DamageType = DamageClass.Melee;
-                    Main.projectile[p].netUpdate = true;
-                }
-            }
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ProjectileType<ThornArrowSeed>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
         }
         public override void AI()
         {
@@ -100,7 +92,14 @@ namespace Redemption.Projectiles.Ranged
         {
             Player player = Main.player[Projectile.owner];
             if (Main.myPlayer == player.whoAmI)
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), new Vector2(Projectile.Center.X, Projectile.Center.Y - 36), Vector2.Zero, ModContent.ProjectileType<ThornTrapSmall_Proj>(), Projectile.damage / 2, 3, Main.myPlayer, Projectile.ai[0]);
+            {
+                int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), new Vector2(Projectile.Center.X, Projectile.Center.Y - 36), Vector2.Zero, ProjectileType<ThornTrapSmall_Proj>(), Projectile.damage / 2, 1, Main.myPlayer, Projectile.ai[0]);
+                if (Projectile.ai[0] == 1)
+                {
+                    Main.projectile[p].DamageType = DamageClass.Melee;
+                    Main.projectile[p].netUpdate = true;
+                }
+            }
 
             return true;
         }

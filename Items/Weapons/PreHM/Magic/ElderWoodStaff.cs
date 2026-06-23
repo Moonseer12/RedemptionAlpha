@@ -2,6 +2,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Redemption.BaseExtension;
 using Redemption.Dusts;
 using Redemption.Globals;
+using Redemption.Globals.Players;
+using Redemption.Items.Materials.PreHM;
 using Redemption.Items.Placeable.Tiles;
 using Redemption.Projectiles.Magic;
 using ReLogic.Content;
@@ -23,7 +25,10 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.staff[Item.type] = true;
             ElementID.ItemNature[Type] = true;
             ElementID.ItemPoison[Type] = true;
+
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
         public override void SetDefaults()
         {
@@ -47,9 +52,6 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.autoReuse = false;
             Item.shoot = ProjectileType<AncientPixie_Proj>();
             Item.shootSpeed = 1f;
-
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
         }
         public override bool AltFunctionUse(Player player) => true;
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)

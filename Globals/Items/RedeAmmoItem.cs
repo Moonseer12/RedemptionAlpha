@@ -51,6 +51,11 @@ namespace Redemption.Globals.Items
                     item.notAmmo = true;
                     item.shoot = ProjectileID.PoisonedKnife;
                     break;
+                case ItemID.BoneDagger:
+                    item.ammo = ItemID.ThrowingKnife;
+                    item.notAmmo = true;
+                    item.shoot = ProjectileID.BoneDagger;
+                    break;
             }
         }
     }

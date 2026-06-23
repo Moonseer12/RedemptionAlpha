@@ -318,7 +318,7 @@ namespace Redemption.NPCs.Friendly
             }
 
             int damageDone = hit.Damage;
-            RedeProjectile.Decapitation(target, ref damageDone, ref hit.Crit);
+            ProjHelper.Decapitation(target, ref damageDone, ref hit.Crit);
         }
 
         Asset<Texture2D> slashTex;

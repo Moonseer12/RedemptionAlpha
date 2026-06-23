@@ -61,15 +61,21 @@ namespace Redemption.Projectiles.Magic
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.t_Slime, Scale: .5f);
             if (Projectile.ai[0] < 3)
             {
-                for (int i = 0; i < 2; i++)
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.Spread(7), ProjectileType<Bacteria_Proj>(), Projectile.damage, 0, Projectile.owner, Main.rand.Next(3, 5));
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    for (int i = 0; i < 2; i++)
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.Spread(7), ProjectileType<Bacteria_Proj>(), Projectile.damage, 0, Projectile.owner, Main.rand.Next(3, 5));
+                }
             }
             else if (Projectile.ai[0] == 3 || Projectile.ai[0] == 4)
             {
-                for (int i = 0; i < 2; i++)
+                if (Projectile.owner == Main.myPlayer)
                 {
-                    int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.Spread(7), ProjectileType<Bacteria_Proj>(), Projectile.damage, 0, Projectile.owner, Main.rand.Next(5, 7));
-                    Main.projectile[p].timeLeft = Main.rand.Next(40, 181);
+                    for (int i = 0; i < 2; i++)
+                    {
+                        int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.Spread(7), ProjectileType<Bacteria_Proj>(), Projectile.damage, 0, Projectile.owner, Main.rand.Next(5, 7));
+                        Main.projectile[p].timeLeft = Main.rand.Next(40, 181);
+                    }
                 }
             }
         }

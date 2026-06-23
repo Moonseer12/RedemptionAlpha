@@ -1,11 +1,8 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ParticleLibrary;
 using ParticleLibrary.Core;
-using Redemption.Base;
-using Redemption.BaseExtension;
 using Redemption.Buffs.Cooldowns;
 using Redemption.Globals;
+using Redemption.Globals.Players;
 using Redemption.NPCs.Bosses.Cleaver;
 using Redemption.Particles;
 using System;
@@ -24,13 +21,9 @@ namespace Redemption.Items.Weapons.HM.Melee
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Cleaver Remote");
-            /* Tooltip.SetDefault("'Size does matter'"
-                + "\nCalls upon the Omega Cleaver to unleash a devastating attack" +
-                "\nRight-Click to switch mode of attack" +
-                "\n15 second cooldown"); */
-            Item.ResearchUnlockCount = 1;
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
         public override void SetDefaults()
         {
@@ -50,9 +43,7 @@ namespace Redemption.Items.Weapons.HM.Melee
             Item.useTurn = true;
             Item.noMelee = true;
             Item.noUseGraphic = false;
-            Item.shoot = ModContent.ProjectileType<RemoteCleaver>();
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
+            Item.shoot = ProjectileType<RemoteCleaver>();
         }
         public override bool AltFunctionUse(Player player) => true;
         public int AttackMode;
@@ -65,7 +56,7 @@ namespace Redemption.Items.Weapons.HM.Melee
             }
             else
                 Item.UseSound = SoundID.Item44;
-            return !player.HasBuff(ModContent.BuffType<SwordRemoteCooldown>());
+            return !player.HasBuff(BuffType<SwordRemoteCooldown>());
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
@@ -97,20 +88,20 @@ namespace Redemption.Items.Weapons.HM.Melee
             }
             else
             {
-                player.AddBuff(ModContent.BuffType<SwordRemoteCooldown>(), 900, true);
+                player.AddBuff(BuffType<SwordRemoteCooldown>(), 900, true);
                 switch (AttackMode)
                 {
                     case 0:
-                        Projectile.NewProjectile(source, new Vector2(player.Center.X + (50 * player.direction), player.Center.Y - 200), Vector2.Zero, ModContent.ProjectileType<RemoteCleaver>(), 3000, 18, Main.myPlayer, 0);
+                        Projectile.NewProjectile(source, new Vector2(player.Center.X + (50 * player.direction), player.Center.Y - 200), Vector2.Zero, ProjectileType<RemoteCleaver>(), 3000, 18, Main.myPlayer, 0);
                         break;
                     case 1:
-                        Projectile.NewProjectile(source, new Vector2(player.Center.X + (50 * player.direction), player.Center.Y - 200), Vector2.Zero, ModContent.ProjectileType<RemoteCleaver>(), 3000, 18, Main.myPlayer, 1);
+                        Projectile.NewProjectile(source, new Vector2(player.Center.X + (50 * player.direction), player.Center.Y - 200), Vector2.Zero, ProjectileType<RemoteCleaver>(), 3000, 18, Main.myPlayer, 1);
                         break;
                     case 2:
-                        Projectile.NewProjectile(source, new Vector2(player.Center.X + (50 * player.direction), player.Center.Y - 200), Vector2.Zero, ModContent.ProjectileType<RemoteCleaver>(), 3000, 18, Main.myPlayer, 2);
+                        Projectile.NewProjectile(source, new Vector2(player.Center.X + (50 * player.direction), player.Center.Y - 200), Vector2.Zero, ProjectileType<RemoteCleaver>(), 3000, 18, Main.myPlayer, 2);
                         break;
                     case 3:
-                        Projectile.NewProjectile(source, new Vector2(player.Center.X + (50 * player.direction), player.Center.Y - 200), Vector2.Zero, ModContent.ProjectileType<RemoteCleaver>(), 3000, 18, Main.myPlayer, 3);
+                        Projectile.NewProjectile(source, new Vector2(player.Center.X + (50 * player.direction), player.Center.Y - 200), Vector2.Zero, ProjectileType<RemoteCleaver>(), 3000, 18, Main.myPlayer, 3);
                         break;
                 }
             }
@@ -272,8 +263,11 @@ namespace Redemption.Items.Weapons.HM.Melee
                             if (Projectile.localAI[1] < 50)
                             {
                                 Projectile.velocity *= .94f;
-                                rot.SlowRotation(Projectile.DirectionTo(Main.MouseWorld).ToRotation() + 1.57f, (float)Math.PI / 30f);
-                                Projectile.rotation = rot;
+                                if (Projectile.owner == Main.myPlayer)
+                                {
+                                    rot.SlowRotation(Projectile.DirectionTo(Main.MouseWorld).ToRotation() + 1.57f, (float)Math.PI / 30f);
+                                    Projectile.rotation = rot;
+                                }
                             }
                             else if (Projectile.localAI[1] <= 70)
                             {
@@ -282,7 +276,8 @@ namespace Redemption.Items.Weapons.HM.Melee
                             if (Projectile.localAI[1] == 50)
                             {
                                 SoundEngine.PlaySound(SoundID.Item74, Projectile.position);
-                                Projectile.velocity = Projectile.DirectionTo(Main.MouseWorld) * 40;
+                                if (Projectile.owner == Main.myPlayer)
+                                    Projectile.velocity = Projectile.DirectionTo(Main.MouseWorld) * 40;
                                 Projectile.friendly = true;
                             }
                             if (Projectile.localAI[1] > 70)
@@ -314,13 +309,16 @@ namespace Redemption.Items.Weapons.HM.Melee
                             break;
                         case 1:
                             Projectile.localAI[1]++;
-                            rot.SlowRotation(Projectile.DirectionTo(Main.MouseWorld).ToRotation() + 1.57f, (float)Math.PI / 30f);
-                            Projectile.rotation = rot;
-                            Projectile.velocity *= .96f;
+                            if (Projectile.owner == Main.myPlayer)
+                            {
+                                rot.SlowRotation(Projectile.DirectionTo(Main.MouseWorld).ToRotation() + 1.57f, (float)Math.PI / 30f);
+                                Projectile.rotation = rot;
+                            }
+                                Projectile.velocity *= .96f;
                             if (Projectile.localAI[1] >= 60 && Projectile.localAI[1] % 5 == 0 && Projectile.localAI[1] < 130)
                             {
                                 if (Main.myPlayer == Projectile.owner)
-                                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, new Vector2(Main.rand.NextFloat(-6, 7), Main.rand.NextFloat(-6, 7)), ModContent.ProjectileType<PhantomCleaver_F>(), 500, Projectile.knockBack, Main.myPlayer);
+                                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, new Vector2(Main.rand.NextFloat(-6, 7), Main.rand.NextFloat(-6, 7)), ProjectileType<PhantomCleaver_F>(), 500, Projectile.knockBack, Main.myPlayer);
                             }
                             if (Projectile.localAI[1] > 140)
                             {
@@ -367,7 +365,7 @@ namespace Redemption.Items.Weapons.HM.Melee
                                         repeat = 1;
                                 }
                                 if (Main.myPlayer == Projectile.owner)
-                                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), new Vector2(Projectile.Center.X, Projectile.Center.Y) + RedeHelper.PolarVector(134, Projectile.rotation + (float)-Math.PI / 2), RedeHelper.PolarVector(9, Projectile.rotation + (float)-Math.PI / 2), ModContent.ProjectileType<RedPrism_F>(), 1400, Projectile.knockBack, Main.myPlayer, Projectile.whoAmI);
+                                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), new Vector2(Projectile.Center.X, Projectile.Center.Y) + RedeHelper.PolarVector(134, Projectile.rotation + (float)-Math.PI / 2), RedeHelper.PolarVector(9, Projectile.rotation + (float)-Math.PI / 2), ProjectileType<RedPrism_F>(), 1400, Projectile.knockBack, Main.myPlayer, Projectile.whoAmI);
                             }
                             if (Projectile.localAI[1] > 40)
                             {
@@ -423,8 +421,8 @@ namespace Redemption.Items.Weapons.HM.Melee
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glowMask = ModContent.Request<Texture2D>("Redemption/NPCs/Bosses/Cleaver/OmegaCleaver_Glow").Value;
-            Texture2D trail = ModContent.Request<Texture2D>("Redemption/NPCs/Bosses/Cleaver/OmegaCleaver_Trail").Value;
+            Texture2D glowMask = Request<Texture2D>("Redemption/NPCs/Bosses/Cleaver/OmegaCleaver_Glow").Value;
+            Texture2D trail = Request<Texture2D>("Redemption/NPCs/Bosses/Cleaver/OmegaCleaver_Trail").Value;
             var effects = Projectile.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Main.spriteBatch.End();
             Main.spriteBatch.BeginAdditive();
@@ -441,7 +439,7 @@ namespace Redemption.Items.Weapons.HM.Melee
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, texture.Size() / 2, Projectile.scale, effects, 0);
             Main.EntitySpriteDraw(glowMask, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(RedeColor.RedPulse), Projectile.rotation, texture.Size() / 2, Projectile.scale, effects, 0);
 
-            Texture2D bigFlareAni = ModContent.Request<Texture2D>("Redemption/Textures/BigFlare").Value;
+            Texture2D bigFlareAni = Request<Texture2D>("Redemption/Textures/BigFlare").Value;
             Vector2 origin2 = new(bigFlareAni.Width / 2f, bigFlareAni.Height / 2f);
             Vector2 flarePos1 = thrustPos1 + RedeHelper.PolarVector(-6, Projectile.rotation - (float)Math.PI / 2);
             Vector2 flarePos2 = thrustPos2 + RedeHelper.PolarVector(-6, Projectile.rotation - (float)Math.PI / 2);

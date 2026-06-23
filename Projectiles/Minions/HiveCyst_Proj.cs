@@ -1,6 +1,4 @@
-using Microsoft.Xna.Framework;
 using Redemption.Globals;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -13,11 +11,10 @@ namespace Redemption.Projectiles.Minions
         public override string Texture => "Redemption/NPCs/Bosses/SeedOfInfection/SeedGrowth";
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Hive Cyst");
             Main.projFrames[Projectile.type] = 4;
-
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
             ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+            ProjectileID.Sets.MinionShot[Projectile.type] = true;
             ElementID.ProjPoison[Type] = true;
         }
 
@@ -36,12 +33,11 @@ namespace Redemption.Projectiles.Minions
             Projectile.minionSlots = 0;
             Projectile.alpha = 255;
             Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 20;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             SoundEngine.PlaySound(SoundID.NPCHit13, Projectile.position);
-            Projectile.localNPCImmunity[target.whoAmI] = 20;
-            target.immune[Projectile.owner] = 0;
         }
         public override bool? CanCutTiles() => false;
         public override bool MinionContactDamage() => true;
@@ -49,7 +45,7 @@ namespace Redemption.Projectiles.Minions
         public override void AI()
         {
             Player owner = Main.player[Projectile.owner];
-            if (owner.ownedProjectileCounts[ModContent.ProjectileType<HiveCyst_Proj>()] >= 3 && Main.rand.NextBool(2))
+            if (owner.ownedProjectileCounts[ProjectileType<HiveCyst_Proj>()] >= 3 && Main.rand.NextBool(2))
                 Projectile.Kill();
             Projectile.rotation = Projectile.velocity.X * 0.05f;
 
@@ -66,7 +62,7 @@ namespace Redemption.Projectiles.Minions
                     Projectile.frame = 0;
             }
 
-            OverlapCheck();
+            ProjHelper.OverlapCheck(Projectile);
 
             if (RedeHelper.ClosestNPC(ref target2, 800, Projectile.Center, false, owner.MinionAttackTargetNPC))
                 Projectile.Move(new Vector2(target2.Center.X, target2.Center.Y), 10, 1);
@@ -81,43 +77,9 @@ namespace Redemption.Projectiles.Minions
             }
 
         }
-
         public override bool? CanHitNPC(NPC target)
         {
             return target == target2 ? null : false;
-        }
-
-        private void OverlapCheck()
-        {
-            // If your minion is flying, you want to do this independently of any conditions
-            float overlapVelocity = 0.04f;
-
-            // Fix overlap with other minions
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                Projectile other = Main.projectile[i];
-
-                if (i != Projectile.whoAmI && other.active && other.owner == Projectile.owner && Math.Abs(Projectile.position.X - other.position.X) + Math.Abs(Projectile.position.Y - other.position.Y) < Projectile.width)
-                {
-                    if (Projectile.position.X < other.position.X)
-                    {
-                        Projectile.velocity.X -= overlapVelocity;
-                    }
-                    else
-                    {
-                        Projectile.velocity.X += overlapVelocity;
-                    }
-
-                    if (Projectile.position.Y < other.position.Y)
-                    {
-                        Projectile.velocity.Y -= overlapVelocity;
-                    }
-                    else
-                    {
-                        Projectile.velocity.Y += overlapVelocity;
-                    }
-                }
-            }
         }
     }
 }

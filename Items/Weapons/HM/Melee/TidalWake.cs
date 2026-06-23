@@ -28,7 +28,7 @@ namespace Redemption.Items.Weapons.HM.Melee
             Item.value = Item.buyPrice(0, 7, 0, 0);
             Item.rare = ItemRarityID.Lime;
             Item.autoReuse = false;
-            Item.shoot = ModContent.ProjectileType<TidalWake_Proj>();
+            Item.shoot = ProjectileType<TidalWake_Proj>();
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.UseSound = SoundID.Item1;

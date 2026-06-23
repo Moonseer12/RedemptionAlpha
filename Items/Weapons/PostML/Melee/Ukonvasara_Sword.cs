@@ -61,6 +61,7 @@ namespace Redemption.Items.Weapons.PostML.Melee
         public Vector2 startVector;
         public Vector2 positionVector;
         public float SwingSpeed;
+        public bool parried;
         public int pauseTimer;
         public float progress;
         public int maxTime;
@@ -79,6 +80,7 @@ namespace Redemption.Items.Weapons.PostML.Melee
             Owner.direction = (int)LockedDir;
             Projectile.spriteDirection = Owner.direction;
 
+            bool parryActive = false;
             if (--pauseTimer <= 0)
             {
                 progress = Timer / (maxTime * 6 * Projectile.MaxUpdates);
@@ -96,6 +98,11 @@ namespace Redemption.Items.Weapons.PostML.Melee
                         SoundEngine.PlaySound(CustomSounds.Swing1 with { Pitch = -.6f }, Owner.position);
                     }
                 }
+                if (progress >= .5f && progress <= .58f)
+                {
+                    parryActive = true;
+                    ProjHelper.SwordClashFriendly(Projectile, Owner, ref parried);
+                }
                 if (progress < 1f)
                 {
                     Rot = MathHelper.ToRadians(60 + 100f * MathF.Atan(6.5f * MathHelper.Pi * (progress - 0.5f))) * Projectile.spriteDirection;
@@ -104,6 +111,7 @@ namespace Redemption.Items.Weapons.PostML.Melee
                 else
                     Projectile.Kill();
             }
+            Owner.Redemption().CreateParryWindow(Projectile.Hitbox, ref parryActive);
 
             Projectile.rotation = positionVector.ToRotation() + MathHelper.PiOver2;
             Projectile.Center = armCenter + positionVector;
@@ -131,11 +139,12 @@ namespace Redemption.Items.Weapons.PostML.Melee
         public bool strike;
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            RedeProjectile.Decapitation(target, ref damageDone, ref hit.Crit);
+            ProjHelper.Decapitation(target, ref damageDone, ref hit.Crit);
             if (!strike)
             {
                 strike = true;
                 SoundEngine.PlaySound(CustomSounds.Slice4 with { Volume = .7f, Pitch = .2f }, Projectile.position);
+                SoundEngine.PlaySound(CustomSounds.SparkSlash, Projectile.position);
                 Owner.RedemptionScreen().ScreenShakeIntensity += 8;
                 pauseTimer = maxTime / 10 * Projectile.MaxUpdates;
             }
@@ -588,7 +597,7 @@ namespace Redemption.Items.Weapons.PostML.Melee
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            RedeProjectile.Decapitation(target, ref damageDone, ref hit.Crit);
+            ProjHelper.Decapitation(target, ref damageDone, ref hit.Crit);
             target.AddBuff(BuffType<ElectrifiedDebuff>(), 180);
         }
         private float drawTimer;

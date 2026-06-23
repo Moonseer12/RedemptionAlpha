@@ -1,7 +1,7 @@
+using Redemption.Items.Materials.HM;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Redemption.Items.Materials.HM;
 
 namespace Redemption.Items.Weapons.HM.Melee
 {
@@ -34,16 +34,16 @@ namespace Redemption.Items.Weapons.HM.Melee
             Item.rare = ItemRarityID.Yellow;
             Item.UseSound = SoundID.Item23;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<OversizedScrewdriver_Proj>();
+            Item.shoot = ProjectileType<OversizedScrewdriver_Proj>();
             Item.shootSpeed = 5f;
         }
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<OmegaPowerCell>())
-                .AddIngredient(ModContent.ItemType<CorruptedXenomite>(), 6)
-                .AddIngredient(ModContent.ItemType<CarbonMyofibre>(), 3)
-                .AddIngredient(ModContent.ItemType<Plating>(), 6)
+                .AddIngredient(ItemType<OmegaPowerCell>())
+                .AddIngredient(ItemType<CorruptedXenomite>(), 6)
+                .AddIngredient(ItemType<CarbonMyofibre>(), 3)
+                .AddIngredient(ItemType<Plating>(), 6)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }

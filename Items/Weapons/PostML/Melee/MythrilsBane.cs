@@ -12,12 +12,9 @@ namespace Redemption.Items.Weapons.PostML.Melee
 {
     public class MythrilsBane : ModItem
     {
+        public bool channeled;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Mythril's Bane");
-            /* Tooltip.SetDefault("Hitting armed enemies with the blade inflicts Disarmed and Broken Armor\n" +
-                "Disarmed heavily decreases contact damage and their weapon damage\n" +
-                "Blocks weak physical projectiles"); */
             ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<DarkSteelBow>();
             ItemID.Sets.SkipsInitialUseSound[Item.type] = true;
             Item.ResearchUnlockCount = 1;
@@ -33,8 +30,8 @@ namespace Redemption.Items.Weapons.PostML.Melee
 
             // Use Properties
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 10;
-            Item.useTime = 10;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = true;
             Item.channel = true;
@@ -45,6 +42,7 @@ namespace Redemption.Items.Weapons.PostML.Melee
             Item.noUseGraphic = true;
             Item.DamageType = DamageClass.Melee;
             Item.noMelee = true;
+            Item.channel = true;
 
             // Projectile Properties
             Item.shootSpeed = 5f;
@@ -53,11 +51,22 @@ namespace Redemption.Items.Weapons.PostML.Melee
             Item.Redemption().TechnicallySlash = true;
             Item.Redemption().CanSwordClash = true;
         }
+        public override bool ReforgePrice(ref int reforgePrice, ref bool canApplyDiscount)
+        {
+            reforgePrice = Item.value / 10;
+            return true;
+        }
         public override bool MeleePrefix() => true;
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             float adjustedItemScale2 = player.GetAdjustedItemScale(Item);
-            Projectile.NewProjectile(source, position, velocity, ProjectileType<MythrilsBane_Proj>(), damage, knockback, player.whoAmI, 0, 0, adjustedItemScale2);
+            if (!channeled)
+                Projectile.NewProjectile(source, position, velocity, ProjectileType<MythrilsBane_Proj>(), damage, knockback, player.whoAmI, 1, 0, adjustedItemScale2);
+            else
+            {
+                Projectile.NewProjectile(source, position, velocity, ProjectileType<MythrilsBane_Proj>(), damage, knockback, player.whoAmI, -1, 0, adjustedItemScale2);
+                channeled = false;
+            }
             return false;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)

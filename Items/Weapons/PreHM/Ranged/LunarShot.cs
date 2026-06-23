@@ -17,10 +17,13 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ElementID.ArcaneS, ElementID.FireS, ElementID.NatureS);
         public override void SetStaticDefaults()
         {
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
+
             ElementID.ItemFire[Type] = true;
             ElementID.ItemNature[Type] = true;
             ElementID.ItemArcane[Type] = true;
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
         public override void SetDefaults()
         {
@@ -40,8 +43,6 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
             Item.shoot = ProjectileID.PurificationPowder;
             Item.shootSpeed = 10f;
             Item.useAmmo = AmmoID.Arrow;
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
 
             Item.Redemption().HideElementTooltip[ElementID.Fire] = true;
             Item.Redemption().HideElementTooltip[ElementID.Nature] = true;

@@ -1,13 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Redemption.Globals;
+using Redemption.NPCs.Lab.MACE;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Redemption.Globals;
-using Redemption.Base;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent;
-using Redemption.NPCs.Lab.MACE;
 
 namespace Redemption.Projectiles.Magic
 {
@@ -59,13 +57,15 @@ namespace Redemption.Projectiles.Magic
         }
         public override void OnKill(int timeLeft)
         {
-            SoundEngine.PlaySound(CustomSounds.MissileExplosion, Projectile.position);
+            if (!Main.dedServ)
+                SoundEngine.PlaySound(CustomSounds.MissileExplosion, Projectile.position);
+
+            SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, Projectile.position);
             if (Projectile.owner == Main.myPlayer)
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, Projectile.position);
-                    int proj = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center.X, Projectile.Center.Y, -8 + Main.rand.Next(0, 17), -3 + Main.rand.Next(-11, 0), ModContent.ProjectileType<MACE_Miniblast>(), Projectile.damage / 5, 3, Main.myPlayer, 1);
+                    int proj = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center.X, Projectile.Center.Y, -8 + Main.rand.Next(0, 17), -3 + Main.rand.Next(-11, 0), ProjectileType<MACE_Miniblast>(), Projectile.damage / 3, 3, Main.myPlayer, 1);
                     Main.projectile[proj].timeLeft = 300;
                     Main.projectile[proj].hostile = false;
                     Main.projectile[proj].friendly = true;
@@ -73,24 +73,12 @@ namespace Redemption.Projectiles.Magic
                 }
             }
             RedeDraw.SpawnExplosion(Projectile.Center, Color.LightCyan, scale: 2);
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                NPC target = Main.npc[i];
-                if (!target.active || target.dontTakeDamage || target.friendly)
-                    continue;
-
-                if (target.immune[Projectile.whoAmI] > 0 || Projectile.DistanceSQ(target.Center) > 140 * 140)
-                    continue;
-
-                target.immune[Projectile.whoAmI] = 20;
-                int hitDirection = target.RightOfDir(Projectile);
-                BaseAI.DamageNPC(target, Projectile.damage, Projectile.knockBack, hitDirection, Projectile, crit: Projectile.HeldItemCrit());
-            }
+            RedeHelper.NPCRadiusDamage(140, Projectile, Projectile.damage, Projectile.knockBack);
         }
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glow = ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "_Glow").Value;
+            Texture2D glow = Request<Texture2D>(Texture + "_Glow").Value;
             Vector2 drawOrigin = new(texture.Width / 2, Projectile.height / 2);
             var effects = Projectile.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
@@ -107,7 +95,7 @@ namespace Redemption.Projectiles.Magic
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.immune[Projectile.whoAmI] = 20;
+            target.immune[Projectile.owner] = 20;
         }
     }
 }

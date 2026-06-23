@@ -20,17 +20,18 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                 "(5[i:" + ModContent.ItemType<EnergyPack>() + "]) Right-click to fire a precision shot that can penetrate surfaces and lingers, but has a 5 second cooldown\n" +
                 "Requires an Energy Pack to be in your inventory"); */
             ItemID.Sets.SkipsInitialUseSound[Item.type] = true;
+            ItemID.Sets.IsRangedSpecialistWeapon[Type] = true;
             Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()
         {
-            Item.damage = 175;
+            Item.damage = 200;
             Item.DamageType = DamageClass.Ranged;
             Item.width = 90;
             Item.height = 34;
-            Item.useTime = 32;
-            Item.useAnimation = 32;
+            Item.useTime = 20;
+            Item.useAnimation = 20;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.noUseGraphic = true;
@@ -43,11 +44,16 @@ namespace Redemption.Items.Weapons.PostML.Ranged
             Item.shoot = ProjectileType<XeniumElectrolaser_Beam>();
             Item.shootSpeed = 3;
         }
+        public override bool ReforgePrice(ref int reforgePrice, ref bool canApplyDiscount)
+        {
+            reforgePrice = Item.value / 2;
+            return true;
+        }
         public override bool AltFunctionUse(Player player) => true;
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
             if (player.altFunctionUse == 2)
-                damage *= 3;
+                damage *= 2;
 
             type = ProjectileType<XeniumElectrolaser_Proj>();
         }

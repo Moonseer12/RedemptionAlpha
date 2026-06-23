@@ -50,7 +50,7 @@ namespace Redemption.Items.Weapons.HM.Magic
             if (!player.channel)
                 Projectile.Kill();
 
-            RedeProjectile.HoldOutProjBasics(Projectile, player, vector);
+            ProjHelper.HoldOutProjBasics(Projectile, player, vector);
             Projectile.position = player.RotatedRelativePoint(player.MountedCenter + RedeHelper.PolarVector(18, Projectile.velocity.ToRotation()), true) - Projectile.Size / 2f;
             Projectile.rotation = Projectile.velocity.ToRotation() + num;
             Projectile.spriteDirection = Projectile.direction;

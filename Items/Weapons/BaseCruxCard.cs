@@ -6,6 +6,7 @@ using Redemption.Dusts;
 using Redemption.Globals;
 using Redemption.Items.Materials.PreHM;
 using Redemption.Prefixes;
+using Redemption.Projectiles.Misc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +53,7 @@ namespace Redemption.Items.Weapons.PreHM.Summon
         {
             if (player.HasBuff<CruxCardCooldown>())
                 return false;
-            int soul = player.FindItem(ItemType<LostSoul>());
+            int soul = player.FindItemInInventoryOrOpenVoidBag(ItemType<LostSoul>(), out bool inVoidBag);
             if (player.altFunctionUse == 2)
             {
                 bool active2 = false;
@@ -70,11 +71,20 @@ namespace Redemption.Items.Weapons.PreHM.Summon
 
                 return false;
             }
-            if (!player.HasBuff<CruxCardBuff>() && soul >= 0 && player.inventory[soul].stack >= SoulCost)
+            if (!player.HasBuff<CruxCardBuff>() && soul >= 0 && (player.inventory[soul].stack >= SoulCost || player.bank4.item[soul].stack >= SoulCost))
             {
-                player.inventory[soul].stack -= SoulCost;
-                if (player.inventory[soul].stack <= 0)
-                    player.inventory[soul] = new Item();
+                if (!inVoidBag)
+                {
+                    player.inventory[soul].stack -= SoulCost;
+                    if (player.inventory[soul].stack <= 0)
+                        player.inventory[soul] = new Item();
+                }
+                else
+                {
+                    player.bank4.item[soul].stack -= SoulCost;
+                    if (player.bank4.item[soul].stack <= 0)
+                        player.bank4.item[soul] = new Item();
+                }
             }
             else
                 return false;
@@ -92,54 +102,60 @@ namespace Redemption.Items.Weapons.PreHM.Summon
         }
         public override bool? UseItem(Player player)
         {
-            if (player.whoAmI == Main.myPlayer)
-            {
-                if (player.altFunctionUse == 2)
-                {
-                    for (int n = 0; n < Main.maxNPCs; n++)
-                    {
-                        NPC npc = Main.npc[n];
-                        if (!npc.active || !SpiritTypes.Contains(npc.type) || npc.ai[3] != player.whoAmI)
-                            continue;
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return true;
 
-                        for (int i = 0; i < (BossCard ? 20 : 10); i++)
-                        {
-                            int dust = Dust.NewDust(npc.position + npc.velocity, npc.width, npc.height, Infernal ? DustID.InfernoFork : DustID.DungeonSpirit, 0, 0, Scale: SpawnDustSize);
-                            Main.dust[dust].velocity *= 2f;
-                            Main.dust[dust].noGravity = true;
-                        }
-                        npc.ai[0] = 10;
-                        npc.netUpdate = true;
-                    }
-                }
-                else
+            if (player.altFunctionUse == 2)
+            {
+                for (int n = 0; n < Main.maxNPCs; n++)
                 {
-                    player.AddBuff(BuffType<CruxCardBuff>(), 2);
-                    for (int i = 0; i < 16; i++)
+                    NPC npc = Main.npc[n];
+                    if (!npc.active || !SpiritTypes.Contains(npc.type) || npc.ai[3] != player.whoAmI)
+                        continue;
+
+                    for (int i = 0; i < (BossCard ? 20 : 10); i++)
                     {
-                        int dust = Dust.NewDust(player.Center - Vector2.One, 1, 1, DustType<GlowDust>(), 0, 0, 0, default, SpawnDustSize);
+                        int dust = Dust.NewDust(npc.position + npc.velocity, npc.width, npc.height, Infernal ? DustID.InfernoFork : DustID.DungeonSpirit, 0, 0, Scale: SpawnDustSize);
+                        Main.dust[dust].velocity *= 2f;
                         Main.dust[dust].noGravity = true;
-                        Color dustColor = Infernal ? new(255, 162, 17, 0) : new(188, 244, 227, 0);
-                        Main.dust[dust].color = dustColor;
                     }
-                    SpawnSpirits(player);
+                    npc.ai[0] = 10;
+                    npc.netUpdate = true;
                 }
+            }
+            else
+            {
+                player.AddBuff(BuffType<CruxCardBuff>(), 2);
+                for (int i = 0; i < 16; i++)
+                {
+                    int dust = Dust.NewDust(player.Center - Vector2.One, 1, 1, DustType<GlowDust>(), 0, 0, 0, default, SpawnDustSize);
+                    Main.dust[dust].noGravity = true;
+                    Color dustColor = Infernal ? new(255, 162, 17, 0) : new(188, 244, 227, 0);
+                    Main.dust[dust].color = dustColor;
+                }
+                SpawnSpirits(player);
             }
             return true;
         }
         public void NewSpirit(Player player, int x, int y, int typeID = 0)
         {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
             // BEGGING for this method to be public
             MethodInfo method = typeof(Item).GetMethod("TryGetPrefixStatMultipliersForItem", BindingFlags.NonPublic | BindingFlags.Instance);
             object[] args = new object[] { Item.prefix, 1f, 1f, 1f, 1f, 1f, 1f, 0 };
             method.Invoke(Item, args);
             float prefixDmg = (float)args[1];
 
-            int n = NPC.NewNPC(new EntitySource_BossSpawn(player), x, y, SpiritTypes[typeID], ai3: player.whoAmI);
+            int n = NPC.NewNPC(player.GetSource_ItemUse(Item), x, y, SpiritTypes[typeID], ai3: player.whoAmI);
             Main.npc[n].lifeMax = (int)(SpiritHealth[typeID] * Item.Redemption().CruxHealthPrefix);
             Main.npc[n].life = (int)(SpiritHealth[typeID] * Item.Redemption().CruxHealthPrefix);
             Main.npc[n].defense = (int)(SpiritDefense[typeID] * Item.Redemption().CruxDefensePrefix);
             Main.npc[n].damage = (int)(GetOtherDamage(SpiritDamage[typeID]) * prefixDmg);
+            Main.npc[n].defDamage = Main.npc[n].damage;
+            Main.npc[n].defDefense = Main.npc[n].defense;
+            Main.npc[n].netUpdate = true;
         }
         public virtual void SpawnSpirits(Player player) { }
         public override void ModifyTooltips(List<TooltipLine> tooltips)

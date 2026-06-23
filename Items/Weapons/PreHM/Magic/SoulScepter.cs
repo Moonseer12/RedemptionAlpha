@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Base;
 using Redemption.Items.Weapons.PreHM.Melee;
@@ -16,9 +15,8 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             /* Tooltip.SetDefault("Casts controllable soul-charges that orbit the cursor" +
                 "\nMore soul-charges are cast the longer you hold" +
                 "\n'Her soul was not my target...'"); */
-            ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<KeepersClaw>();
             Item.staff[Item.type] = true;
-
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<KeepersClaw>();
             Item.ResearchUnlockCount = 1;
         }
 
@@ -40,7 +38,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.rare = ItemRarityID.Green;
             Item.UseSound = SoundID.Item9 with { Volume = 0 };
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<SoulScepterChargeS>();
+            Item.shoot = ProjectileType<SoulScepterChargeS>();
             Item.shootSpeed = 10f;
         }
         public override bool CanShoot(Player player)
@@ -50,18 +48,18 @@ namespace Redemption.Items.Weapons.PreHM.Magic
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
-            Texture2D glow = ModContent.Request<Texture2D>("Redemption/Textures/WhiteGlow").Value;
+            Texture2D glow = Request<Texture2D>("Redemption/Textures/WhiteGlow").Value;
             BaseUtility.MultiLerp(Main.LocalPlayer.miscCounter % 100 / 100f, scale, scale * 0.8f, scale);
             Color color = BaseUtility.MultiLerpColor(Main.LocalPlayer.miscCounter % 100 / 100f, new Color(46, 32, 54), new Color(111, 83, 188), new Color(46, 32, 54));
             Vector2 origin = new(glow.Width / 2, glow.Height / 2);
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.BeginAdditive();
 
             spriteBatch.Draw(glow, Item.Center - Main.screenPosition, new Rectangle(-32, 34, glow.Width, glow.Height), color * 0.4f, rotation, origin, scale * 0.3f, SpriteEffects.None, 0f);
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.BeginDefault();
             return true;
 
         }

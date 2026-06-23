@@ -1,18 +1,17 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Redemption.BaseExtension;
+using Redemption.Globals;
+using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System;
-using Terraria.Audio;
-using Redemption.BaseExtension;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent;
-using Redemption.Globals;
 
 namespace Redemption.Projectiles.Minions
 {
     public class AndroidMinion_Fist : ModProjectile
-	{
+    {
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Fist Rocket");
@@ -23,7 +22,7 @@ namespace Redemption.Projectiles.Minions
         }
 
         public override void SetDefaults()
-		{
+        {
             Projectile.width = 10;
             Projectile.height = 10;
             Projectile.aiStyle = -1;
@@ -33,7 +32,7 @@ namespace Redemption.Projectiles.Minions
             Projectile.tileCollide = true;
             Projectile.DamageType = DamageClass.Summon;
             Projectile.timeLeft = 60;
-		}
+        }
 
         public override void AI()
         {
@@ -58,7 +57,7 @@ namespace Redemption.Projectiles.Minions
             Vector2 move = Vector2.Zero;
             float distance = 400f;
             bool target = false;
-            for (int k = 0; k < 200; k++)
+            for (int k = 0; k < Main.maxNPCs; k++)
             {
                 NPC npc = Main.npc[k];
                 if (npc.active && npc.CanBeChasedBy() && Collision.CanHit(Projectile.Center, 0, 0, npc.Center, 0, 0) && !npc.Redemption().invisible)
@@ -91,7 +90,7 @@ namespace Redemption.Projectiles.Minions
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glow = ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "_Glow").Value;
+            Texture2D glow = Request<Texture2D>(Texture + "_Glow").Value;
             int height = texture.Height / 3;
             int y = height * Projectile.frame;
             Rectangle rect = new(0, y, texture.Width, height);
@@ -104,6 +103,7 @@ namespace Redemption.Projectiles.Minions
         }
         public override void OnKill(int timeLeft)
         {
+
             SoundEngine.PlaySound(SoundID.Item14, Projectile.position);
             for (int i = 0; i < 10; i++)
             {
@@ -116,5 +116,5 @@ namespace Redemption.Projectiles.Minions
                 Main.dust[dustIndex].velocity *= 1.4f;
             }
         }
-	}
+    }
 }

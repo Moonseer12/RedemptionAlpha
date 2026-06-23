@@ -1,7 +1,6 @@
-using Microsoft.Xna.Framework;
+using Redemption.Buffs.Debuffs;
 using Redemption.Buffs.Minions;
 using Redemption.Globals;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -36,14 +35,13 @@ namespace Redemption.Projectiles.Minions
             Projectile.minionSlots = 1f;
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 20;
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.localNPCImmunity[target.whoAmI] = 20;
-            target.immune[Projectile.owner] = 0;
+            target.AddBuff(BuffType<GreenRashesDebuff>(), 60);
         }
-
         public override bool? CanCutTiles() => false;
         public override bool MinionContactDamage() => true;
 
@@ -68,7 +66,7 @@ namespace Redemption.Projectiles.Minions
                     Projectile.frame = 0;
             }
 
-            OverlapCheck();
+            ProjHelper.OverlapCheck(Projectile);
 
             if (RedeHelper.ClosestNPC(ref target2, 800, Projectile.Center, false, owner.MinionAttackTargetNPC))
                 Projectile.Move(new Vector2(target2.Center.X, target2.position.Y), 10, 1);
@@ -92,48 +90,15 @@ namespace Redemption.Projectiles.Minions
         {
             if (owner.dead || !owner.active)
             {
-                owner.ClearBuff(ModContent.BuffType<CystlingBuff>());
+                owner.ClearBuff(BuffType<CystlingBuff>());
 
                 return false;
             }
 
-            if (owner.HasBuff(ModContent.BuffType<CystlingBuff>()))
+            if (owner.HasBuff(BuffType<CystlingBuff>()))
                 Projectile.timeLeft = 2;
 
             return true;
-        }
-
-        private void OverlapCheck()
-        {
-            // If your minion is flying, you want to do this independently of any conditions
-            float overlapVelocity = 0.04f;
-
-            // Fix overlap with other minions
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                Projectile other = Main.projectile[i];
-
-                if (i != Projectile.whoAmI && other.active && other.owner == Projectile.owner && Math.Abs(Projectile.position.X - other.position.X) + Math.Abs(Projectile.position.Y - other.position.Y) < Projectile.width)
-                {
-                    if (Projectile.position.X < other.position.X)
-                    {
-                        Projectile.velocity.X -= overlapVelocity;
-                    }
-                    else
-                    {
-                        Projectile.velocity.X += overlapVelocity;
-                    }
-
-                    if (Projectile.position.Y < other.position.Y)
-                    {
-                        Projectile.velocity.Y -= overlapVelocity;
-                    }
-                    else
-                    {
-                        Projectile.velocity.Y += overlapVelocity;
-                    }
-                }
-            }
         }
     }
 }

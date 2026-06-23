@@ -1,9 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Redemption.Buffs.Minions;
 using Redemption.Dusts;
 using Redemption.Globals;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
@@ -56,7 +54,7 @@ namespace Redemption.Projectiles.Minions
                 if (++Projectile.frame >= 4)
                     Projectile.frame = 0;
             }
-            OverlapCheck();
+            ProjHelper.OverlapCheck(Projectile);
 
             Projectile.rotation = Projectile.velocity.X * 0.05f;
             Lighting.AddLight(Projectile.Center, Projectile.Opacity, .8f * Projectile.Opacity, .6f * Projectile.Opacity);
@@ -97,7 +95,7 @@ namespace Redemption.Projectiles.Minions
                     if (Projectile.localAI[0] >= 120)
                     {
                         SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact, p.position);
-                        DustHelper.DrawCircle(p.Center, ModContent.DustType<MoonflareDust>(), 4, 2, 2, nogravity: true);
+                        DustHelper.DrawCircle(p.Center, DustType<MoonflareDust>(), 4, 2, 2, nogravity: true);
                         p.GetGlobalProjectile<MoonflareMinionBuff>().moonflareBuff = 300;
                         Projectile.localAI[0] = 0;
                         Projectile.localAI[1] = 0;
@@ -117,13 +115,13 @@ namespace Redemption.Projectiles.Minions
                     {
                         SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, Projectile.Center);
                         for (int i = 0; i < 2; i++)
-                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.DirectionTo(target.Center).RotatedByRandom(0.8f) * 4, ModContent.ProjectileType<MoonflareGuardian_Proj>(), Projectile.damage, Projectile.knockBack, owner.whoAmI);
+                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.DirectionTo(target.Center).RotatedByRandom(0.8f) * 4, ProjectileType<MoonflareGuardian_Proj>(), Projectile.damage, Projectile.knockBack, owner.whoAmI);
                     }
                 }
                 else
                 {
-                    if (Projectile.DistanceSQ(owner.Center) >= 200 * 200)
-                        Projectile.Move(owner.Center, Projectile.DistanceSQ(owner.Center) > 700 * 700 ? 18 : 10, 40);
+                    if (Projectile.DistanceSQ(owner.Center - new Vector2(0, 40)) >= 80 * 80)
+                        Projectile.Move(owner.Center - new Vector2(0, 40), Projectile.DistanceSQ(owner.Center) > 700 * 700 ? 18 : 10, 40);
                     else
                         Projectile.velocity *= 0.98f;
                 }
@@ -138,7 +136,7 @@ namespace Redemption.Projectiles.Minions
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glow = ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "_Glow").Value;
+            Texture2D glow = Request<Texture2D>(Texture + "_Glow").Value;
             int height = texture.Height / 4;
             int y = height * Projectile.frame;
             Rectangle rect = new(0, y, texture.Width, height);
@@ -149,41 +147,9 @@ namespace Redemption.Projectiles.Minions
             Main.EntitySpriteDraw(glow, Projectile.Center - Main.screenPosition, new Rectangle?(rect), Color.White * Projectile.Opacity, Projectile.rotation, drawOrigin, Projectile.scale, effects, 0);
             return false;
         }
-        private void OverlapCheck()
-        {
-            // If your minion is flying, you want to do this independently of any conditions
-            float overlapVelocity = 0.04f;
-
-            // Fix overlap with other minions
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                Projectile other = Main.projectile[i];
-
-                if (i != Projectile.whoAmI && other.active && other.owner == Projectile.owner && Math.Abs(Projectile.position.X - other.position.X) + Math.Abs(Projectile.position.Y - other.position.Y) < Projectile.width)
-                {
-                    if (Projectile.position.X < other.position.X)
-                    {
-                        Projectile.velocity.X -= overlapVelocity;
-                    }
-                    else
-                    {
-                        Projectile.velocity.X += overlapVelocity;
-                    }
-
-                    if (Projectile.position.Y < other.position.Y)
-                    {
-                        Projectile.velocity.Y -= overlapVelocity;
-                    }
-                    else
-                    {
-                        Projectile.velocity.Y += overlapVelocity;
-                    }
-                }
-            }
-        }
         private void CheckActive(Player player)
         {
-            if (!player.dead && player.HasBuff(ModContent.BuffType<MoonflareGuardianBuff>()))
+            if (!player.dead && player.HasBuff(BuffType<MoonflareGuardianBuff>()))
                 Projectile.timeLeft = 2;
         }
     }
@@ -200,7 +166,7 @@ namespace Redemption.Projectiles.Minions
             projectile.damage += 3;
             if (Main.rand.NextBool(8))
             {
-                int d = Dust.NewDust(projectile.position + projectile.velocity, projectile.width, projectile.height, ModContent.DustType<MoonflareDust>(), 0, 0);
+                int d = Dust.NewDust(projectile.position + projectile.velocity, projectile.width, projectile.height, DustType<MoonflareDust>(), 0, 0);
                 Main.dust[d].noGravity = true;
                 Main.dust[d].velocity.Y -= 2;
                 Main.dust[d].velocity.X *= 0;

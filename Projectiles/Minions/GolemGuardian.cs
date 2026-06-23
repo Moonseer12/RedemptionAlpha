@@ -1,5 +1,5 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Redemption.BaseExtension;
 using Redemption.Buffs;
 using Redemption.Globals;
 using Terraria;
@@ -33,6 +33,7 @@ namespace Redemption.Projectiles.Minions
             Projectile.ignoreWater = true;
             Projectile.DamageType = DamageClass.Summon;
             Projectile.penetrate = -1;
+            Projectile.Redemption().auraSentry = true;
         }
 
         public override bool? CanDamage() => false;
@@ -57,7 +58,7 @@ namespace Redemption.Projectiles.Minions
                 if (!player.active || player.dead || Projectile.DistanceSQ(player.Center) > 400 * 400)
                     continue;
 
-                player.AddBuff(ModContent.BuffType<SunAuraBuff>(), 4);
+                player.AddBuff(BuffType<SunAuraBuff>(), 4);
             }
             if (Projectile.localAI[0]++ % 40 == 0)
                 RedeDraw.SpawnCirclePulse(Projectile.Center, Color.Goldenrod, 1.1f, Projectile);
@@ -86,23 +87,23 @@ namespace Redemption.Projectiles.Minions
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glow = ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "_Glow").Value;
+            Texture2D glow = Request<Texture2D>(Texture + "_Glow").Value;
             int height = texture.Height / 5;
             int y = height * Projectile.frame;
             Rectangle rect = new(0, y, texture.Width, height);
             Vector2 drawOrigin = new(texture.Width / 2, Projectile.height / 2);
 
-            RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, texture, ref drawTimer, Projectile.Center - Main.screenPosition, new Rectangle?(rect), lightColor * Projectile.Opacity, Projectile.rotation, drawOrigin, Projectile.scale, 0);
+            RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, texture, ref drawTimer, Projectile.Center - Main.screenPosition, new Rectangle?(rect), lightColor * Projectile.Opacity, Projectile.rotation, drawOrigin, Projectile.scale);
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle?(rect), lightColor * Projectile.Opacity, Projectile.rotation, drawOrigin, Projectile.scale, 0, 0);
             int shader = GameShaders.Armor.GetShaderIdFromItemId(ItemID.LivingFlameDye);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-            GameShaders.Armor.ApplySecondary(shader, Main.player[Main.myPlayer], null);
+            Main.spriteBatch.BeginAdditive(true);
+            GameShaders.Armor.ApplySecondary(shader, Main.LocalPlayer, null);
 
             Main.EntitySpriteDraw(glow, Projectile.Center - Main.screenPosition, new Rectangle?(rect), Color.White * Projectile.Opacity, Projectile.rotation, drawOrigin, Projectile.scale, 0, 0);
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
             return false;
         }
     }

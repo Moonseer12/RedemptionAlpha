@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.BaseExtension;
 using Redemption.Buffs.Debuffs;
 using Redemption.Globals;
@@ -22,7 +21,7 @@ namespace Redemption.Items.Weapons.HM.Melee
         {
             Projectile.width = 16;
             Projectile.height = 16;
-            Projectile.aiStyle = 99;
+            Projectile.aiStyle = ProjAIStyleID.Yoyo;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.MeleeNoSpeed;
@@ -61,7 +60,7 @@ namespace Redemption.Items.Weapons.HM.Melee
                 if (Projectile.DistanceSQ(npc.Center) > 70 * 70)
                     continue;
 
-                npc.AddBuff(ModContent.BuffType<BileDebuff>(), 180);
+                npc.AddBuff(BuffType<BileDebuff>(), 180);
             }
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -72,12 +71,12 @@ namespace Redemption.Items.Weapons.HM.Melee
                 RedeHelper.NPCRadiusDamage(boom, Projectile, Projectile.damage, Projectile.knockBack);
 
                 SoundEngine.PlaySound(SoundID.Item14, target.position);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, Projectile.position);
+                if (Projectile.owner == Main.myPlayer)
                 {
                     for (int i = 0; i < Main.rand.Next(3, 6); i++)
                     {
-                        SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, Projectile.position);
-                        int proj = Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center, new Vector2(Main.rand.Next(-2, 3), Main.rand.Next(-9, -5)), ModContent.ProjectileType<MACE_Miniblast>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, 1);
+                        int proj = Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center, new Vector2(Main.rand.Next(-2, 3), Main.rand.Next(-9, -5)), ProjectileType<MACE_Miniblast>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, 1);
                         Main.projectile[proj].timeLeft = 300;
                         Main.projectile[proj].hostile = false;
                         Main.projectile[proj].friendly = true;

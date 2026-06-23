@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.BaseExtension;
 using Redemption.Dusts;
@@ -27,9 +26,9 @@ namespace Redemption.Items.Weapons.HM.Magic
             if (Main.netMode != NetmodeID.Server)
                 EquipLoader.GetEquipSlot(Mod, Name, EquipType.HandsOn);
         }
-        private int cooldown = 0;
         public override void SetStaticDefaults()
         {
+            ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;
             SetupDrawing();
         }
         public override void SetDefaults()
@@ -37,8 +36,8 @@ namespace Redemption.Items.Weapons.HM.Magic
             Item.damage = 42;
             Item.height = 28;
             Item.width = 28;
-            Item.useTime = 45;
-            Item.useAnimation = 45;
+            Item.useTime = 15;
+            Item.useAnimation = 15;
             Item.DamageType = DamageClass.Magic;
             Item.mana = 10;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -51,67 +50,71 @@ namespace Redemption.Items.Weapons.HM.Magic
             Item.channel = true;
             Item.noUseGraphic = true;
             Item.shootSpeed = 10f;
-            Item.shoot = ModContent.ProjectileType<KineticMine>();
+            Item.shoot = ProjectileType<KineticMine>();
         }
         public override void HoldItem(Player player)
         {
             var p = player.GetModPlayer<PulseBladePlayer>();
             p.VanityOn = true;
-            cooldown--;
         }
-
         public override bool AltFunctionUse(Player player) => true;
         public override Vector2? HoldoutOffset()
         {
             return new Vector2(-15, 0);
         }
-
         public override bool CanUseItem(Player player)
         {
             if (player.altFunctionUse == 2)
             {
-                Item.useTime = Item.useAnimation = 15;
                 Item.channel = false;
-                int max = 8;
-                for (int i = 0; i < Main.maxProjectiles; i++)
-                {
-                    Projectile proj = Main.projectile[i];
-                    if (!proj.active || proj.type != Item.shoot || proj.owner != player.whoAmI || proj.localAI[1] is 0)
-                        continue;
-                    max++;
-                }
-                if (player.ownedProjectileCounts[ModContent.ProjectileType<KineticMine>()] < max && cooldown <= 0)
-                {
-                    return true;
-                }
+                return true;
             }
             else
             {
                 Item.channel = true;
-                return player.ownedProjectileCounts[ModContent.ProjectileType<PulseBlade_Proj>()] <= 0;
+                return player.ownedProjectileCounts[ProjectileType<PulseBlade_Proj>()] <= 0;
             }
-            return false;
         }
-
+        public override float UseTimeMultiplier(Player player)
+        {
+            return player.altFunctionUse == 2 ? 1 : 3;
+        }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.altFunctionUse == 2)
             {
-                cooldown = 15;
-                Projectile.NewProjectile(source, position, velocity * 1.2f, ModContent.ProjectileType<KineticMine>(), damage, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position, velocity * 1.2f, ProjectileType<KineticMine>(), damage, knockback, player.whoAmI);
+                if (player.ownedProjectileCounts[type] >= 8)
+                {
+                    int num = 9999999;
+                    int oldestMine = -1;
+                    foreach (Projectile proj in Main.ActiveProjectiles)
+                    {
+                        if (proj.type != type)
+                            continue;
+
+                        if (proj.timeLeft < num)
+                        {
+                            oldestMine = proj.whoAmI;
+                            num = proj.timeLeft;
+                        }
+                    }
+                    if (oldestMine > -1)
+                        Main.projectile[oldestMine].Kill();
+                }
             }
             else
             {
-                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<PulseBlade_Proj>(), damage, knockback, player.whoAmI, 0, 0, player.itemAnimationMax);
+                Projectile.NewProjectile(source, position, velocity, ProjectileType<PulseBlade_Proj>(), damage, knockback, player.whoAmI, 0, 0, player.itemAnimationMax);
             }
             return false;
         }
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<CorruptedXenomite>(), 4)
-                .AddIngredient(ModContent.ItemType<Plating>(), 2)
-                .AddIngredient(ModContent.ItemType<CarbonMyofibre>(), 4)
+                .AddIngredient(ItemType<CorruptedXenomite>(), 4)
+                .AddIngredient(ItemType<Plating>(), 2)
+                .AddIngredient(ItemType<CarbonMyofibre>(), 4)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }
@@ -128,7 +131,7 @@ namespace Redemption.Items.Weapons.HM.Magic
         {
             if (VanityOn)
             {
-                var item = ModContent.GetInstance<PulseBlade>();
+                var item = GetInstance<PulseBlade>();
                 Player.handon = (sbyte)EquipLoader.GetEquipSlot(Mod, item.Name, EquipType.HandsOn);
             }
         }
@@ -163,6 +166,7 @@ namespace Redemption.Items.Weapons.HM.Magic
         public Vector2 strikePos;
         public Vector2 minePos;
         public float newVelocity;
+        public float damageBonus;
         public override void AI()
         {
             Lighting.AddLight(Projectile.Center, 1 * Projectile.Opacity, 0.3f * Projectile.Opacity, 0.3f * Projectile.Opacity);
@@ -193,7 +197,7 @@ namespace Redemption.Items.Weapons.HM.Magic
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
                     Projectile proj = Main.projectile[i];
-                    if (!proj.active || proj.alpha > 200 || !(proj.type == ModContent.ProjectileType<KineticSlash>()))
+                    if (!proj.active || proj.alpha > 200 || !(proj.type == ProjectileType<KineticSlash>()))
                         continue;
 
                     if (Helper.CheckCircularCollision(Projectile.Center, (int)(80 * proj.scale), proj.Hitbox))
@@ -201,52 +205,28 @@ namespace Redemption.Items.Weapons.HM.Magic
                         if (Projectile.localAI[1]++ == 0)
                         {
                             SoundEngine.PlaySound(CustomSounds.BallFire, Projectile.position);
-                            AdjustMagnitude(ref Projectile.velocity);
-                            strikePos = proj.Center;
+                            Vector2 dir1 = proj.Center.DirectionTo(Projectile.Center);
+                            Vector2 dir2 = Vector2.Zero;
+
                             newVelocity = 4 + proj.velocity.Length();
-                            Projectile.velocity = RedeHelper.PolarVector(newVelocity, proj.velocity.ToRotation());
-                            float damage = Projectile.velocity.Length() / 5;
-                            damage = MathHelper.Max(damage, 1);
-                            Projectile.damage *= (int)damage;
-                        }
-                    }
-                }
-                if (Projectile.localAI[1] > 0)
-                {
-                    Projectile.localAI[1]++;
-                    Vector2 move = Vector2.Zero;
-                    float distance = 900f;
-                    bool target = false;
-                    for (int k = 0; k < Main.maxNPCs; k++)
-                    {
-                        NPC npc = Main.npc[k];
-                        if (npc.active && npc.CanBeChasedBy() && Collision.CanHit(Projectile.Center, 0, 0, npc.Center, 0, 0) && !npc.Redemption().invisible)
-                        {
-                            Vector2 newMove = Main.npc[k].Center - Projectile.Center;
-                            float distanceTo = (float)Math.Sqrt(newMove.X * newMove.X + newMove.Y * newMove.Y);
-                            if (distanceTo < distance)
+                            Projectile.velocity = dir1;
+
+                            NPC target = null;
+                            if (RedeHelper.ClosestNPC(ref target, 1000, Projectile.Center))
                             {
-                                move = newMove;
-                                distance = distanceTo;
-                                target = true;
+                                if (dir1.X * Projectile.Center.DirectionTo(target.Center).X > 0)
+                                {
+                                    dir2 = Projectile.Center.DirectionTo(target.Center);
+                                    Projectile.velocity = Vector2.Lerp(dir1, dir2, 0.75f);
+                                }
                             }
+                            Projectile.velocity *= newVelocity;
+                            damageBonus = Projectile.velocity.Length() / 5;
+                            damageBonus = MathHelper.Max(damageBonus, 1);
+                            Projectile.damage = (int)(Projectile.damage * damageBonus);
                         }
                     }
-                    if (target && Projectile.localAI[1] % 4 == 0)
-                    {
-                        AdjustMagnitude(ref move);
-                        Projectile.velocity = (newVelocity * Projectile.velocity + move) / newVelocity;
-                        AdjustMagnitude(ref Projectile.velocity);
-                    }
                 }
-            }
-        }
-        private void AdjustMagnitude(ref Vector2 vector)
-        {
-            float magnitude = (float)Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-            if (magnitude > 2f)
-            {
-                vector *= newVelocity / magnitude;
             }
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
@@ -271,7 +251,7 @@ namespace Redemption.Items.Weapons.HM.Magic
         }
         public override void OnKill(int timeLeft)
         {
-            Dust dust2 = Dust.NewDustPerfect(Projectile.Center + new Vector2(4, 4), ModContent.DustType<GlowDust>(), Vector2.Zero, Scale: 3);
+            Dust dust2 = Dust.NewDustPerfect(Projectile.Center + new Vector2(4, 4), DustType<GlowDust>(), Vector2.Zero, Scale: 3);
             dust2.noGravity = true;
             Color dustColor = new(Color.IndianRed.R, Color.IndianRed.G, Color.IndianRed.B) { A = 0 };
             dust2.color = dustColor;
@@ -285,7 +265,7 @@ namespace Redemption.Items.Weapons.HM.Magic
         private void BlastSpawn(Vector2 vel)
         {
             if (Projectile.owner == Main.myPlayer)
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + vel, Vector2.Zero, ModContent.ProjectileType<KineticMine_Explosion>(), Projectile.damage / 3, Projectile.knockBack, Main.myPlayer);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + vel, Vector2.Zero, ProjectileType<KineticMine_Explosion>(), Projectile.damage / 3, Projectile.knockBack, Main.myPlayer);
 
             DustHelper.DrawCircle(Projectile.Center + vel, DustID.OrangeTorch, 1, 2, 2, nogravity: true);
             if (!Main.dedServ)
@@ -319,7 +299,7 @@ namespace Redemption.Items.Weapons.HM.Magic
                 Main.EntitySpriteDraw(texture, drawPos, new Rectangle?(rect), Projectile.GetAlpha(color) * 0.3f, Projectile.rotation, origin, Projectile.scale, 0, 0);
             }
 
-            RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, texture, ref drawTimer, position, new Rectangle?(rect), RedeColor.RedPulse * 0.3f, Projectile.rotation, origin, Projectile.scale, 0);
+            RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, texture, ref drawTimer, position, new Rectangle?(rect), RedeColor.RedPulse * 0.3f, Projectile.rotation, origin, Projectile.scale);
             Main.EntitySpriteDraw(texture, position, new Rectangle?(rect), Projectile.GetAlpha(Color.White), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
             return false;
         }
@@ -375,7 +355,7 @@ namespace Redemption.Items.Weapons.HM.Magic
                         if (Timer++ == 3)
                         {
                             SoundEngine.PlaySound(SoundID.DD2_EtherianPortalDryadTouch with { Volume = (glow / 2) + .1f, Pitch = .4f }, Projectile.position);
-                            int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.Center, RedeHelper.PolarVector(20 * (glow + .4f), (mouseOrig - armCenter).ToRotation()), ModContent.ProjectileType<KineticSlash>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                            int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.Center, RedeHelper.PolarVector(20 * (glow + .4f), (mouseOrig - armCenter).ToRotation()), ProjectileType<KineticSlash>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
                             Main.projectile[p].scale += glow;
                             Main.projectile[p].netUpdate = true;
                         }

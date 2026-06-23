@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Items.Weapons.PreHM.Magic;
 using Redemption.Projectiles.Magic;
 using System.Collections.Generic;
@@ -36,7 +35,7 @@ namespace Redemption.Items.Weapons.HM.Magic
             Item.value = Item.buyPrice(0, 70, 0, 0);
             Item.rare = ItemRarityID.Lime;
             Item.shootSpeed = 0;
-            Item.shoot = ModContent.ProjectileType<Rockslide_Proj>();
+            Item.shoot = ProjectileType<Rockslide_Proj>();
             Item.UseSound = SoundID.Item69;
         }
         public override bool CanUseItem(Player player)
@@ -65,7 +64,7 @@ namespace Redemption.Items.Weapons.HM.Magic
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<Earthbind>())
+                .AddIngredient(ItemType<Earthbind>())
                 .AddIngredient(ItemID.BeetleHusk, 4)
                 .AddIngredient(ItemID.LunarTabletFragment, 10)
                 .AddIngredient(ItemID.SoulofNight, 15)

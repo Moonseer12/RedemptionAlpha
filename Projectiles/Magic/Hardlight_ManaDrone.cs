@@ -1,11 +1,10 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ModLoader;
-using Terraria.ID;
 using Redemption.Globals;
+using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Magic
 {
@@ -103,7 +102,7 @@ namespace Redemption.Projectiles.Magic
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D meter = ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "_Meter").Value;
+            Texture2D meter = Request<Texture2D>(Texture + "_Meter").Value;
             int height = texture.Height / 4;
             int y = height * Projectile.frame;
             Rectangle rect = new(0, y, texture.Width, height);

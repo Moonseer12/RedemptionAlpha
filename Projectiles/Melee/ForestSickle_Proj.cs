@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Globals;
 using Terraria;
@@ -24,12 +23,13 @@ namespace Redemption.Projectiles.Melee
             Projectile.friendly = true;
             Projectile.hostile = false;
             Projectile.tileCollide = false;
-            Projectile.penetrate = -1;
+            Projectile.penetrate = 4;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.timeLeft = 180;
             Projectile.scale = 1.5f;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.ownerHitCheck = true;
+            Projectile.stopsDealingDamageAfterPenetrateHits = true;
         }
         private float squish;
         public override void AI()
@@ -69,7 +69,7 @@ namespace Redemption.Projectiles.Melee
             Vector2 scale = new(Projectile.scale + squish, Projectile.scale - squish);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
             for (int k = 0; k < Projectile.oldPos.Length; k++)
             {
                 Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + drawOrigin;
@@ -77,7 +77,7 @@ namespace Redemption.Projectiles.Melee
                 Main.EntitySpriteDraw(texture, drawPos, null, Projectile.GetAlpha(color), Projectile.rotation, drawOrigin, scale, effects, 0);
             }
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
             return false;
         }
     }

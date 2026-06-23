@@ -1,5 +1,7 @@
-using Microsoft.Xna.Framework;
+using Microsoft.Build.Construction;
+using Microsoft.Build.Execution;
 using Microsoft.Xna.Framework.Graphics;
+using ParticleLibrary.Core;
 using Redemption.Base;
 using Redemption.BaseExtension;
 using Redemption.Buffs.NPCBuffs;
@@ -7,13 +9,13 @@ using Redemption.Dusts;
 using Redemption.Globals;
 using Redemption.Particles;
 using Redemption.Projectiles.Ranged;
-using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ModLoader;
+using static Terraria.NPC.NPCNameFakeLanguageCategoryPassthrough;
 
 namespace Redemption.Items.Weapons.PostML.Melee
 {
@@ -29,8 +31,8 @@ namespace Redemption.Items.Weapons.PostML.Melee
         public override bool ShouldUpdatePosition() => TeleportTrigger;
         public override void SetSafeDefaults()
         {
-            Projectile.width = 36;
-            Projectile.height = 36;
+            Projectile.width = 90;
+            Projectile.height = 90;
             Projectile.hostile = false;
             Projectile.friendly = false;
             Projectile.ignoreWater = false;
@@ -38,98 +40,98 @@ namespace Redemption.Items.Weapons.PostML.Melee
             Projectile.ownerHitCheck = true;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.penetrate = -1;
-            Projectile.extraUpdates = 100;
             Projectile.alpha = 255;
-            Projectile.scale = 2;
             Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 100;
             Projectile.Redemption().IsHammer = true;
-            Projectile.noEnchantmentVisuals = true;
         }
-        private Vector2 startVector;
-        private Vector2 vector;
+        private Player Owner => Main.player[Projectile.owner];
         public ref float Length => ref Projectile.localAI[0];
         public ref float Rot => ref Projectile.localAI[1];
+        private Vector2 startVector;
+        private Vector2 positionVector;
         public float Timer;
-        private float SwingSpeed;
         public int pauseTimer;
         public float progress;
-        private Player Player => Main.player[Projectile.owner];
-
+        public int maxTime;
         public override void AI()
         {
-            if (Player.noItems || Player.CCed || Player.dead || !Player.active)
+            if (Owner.noItems || Owner.CCed || Owner.dead || !Owner.active)
                 Projectile.Kill();
 
-            Player.heldProj = Projectile.whoAmI;
-            Player.itemTime = 2;
-            Player.itemAnimation = 2;
+            Owner.heldProj = Projectile.whoAmI;
+            Owner.itemTime = 2;
+            Owner.itemAnimation = 2;
             Projectile.timeLeft = 2;
+            maxTime = SetUseTime(Owner.HeldItem.useTime);
 
             if (!TeleportTrigger && !LaunchTrigger)
+            {
                 Swing();
-
+            }
             if (TeleportTrigger && !LaunchTrigger)
+            {
                 Teleport();
-
+            }
             if (TeleportTrigger && LaunchTrigger)
+            {
+                Projectile.extraUpdates = 2;
                 Launch();
-
+            }
             if (Projectile.penetrate == 0)
                 Projectile.Kill();
-
-            Lighting.AddLight(Projectile.Center, Projectile.Opacity * 0.7f, Projectile.Opacity * 1f, Projectile.Opacity * 1f);
         }
 
         public void Swing()
         {
-            Player.heldProj = Projectile.whoAmI;
-            Player.itemTime = 2;
-            Player.itemAnimation = 2;
+            Owner.heldProj = Projectile.whoAmI;
+            Owner.itemTime = 2;
+            Owner.itemAnimation = 2;
 
-            if (Player.noItems || Player.CCed || Player.dead || !Player.active)
+            if (Owner.noItems || Owner.CCed || Owner.dead || !Owner.active)
                 Projectile.Kill();
 
-            SwingSpeed = 1 / Player.GetAttackSpeed(DamageClass.Melee);
-            Vector2 armCenter = Player.RotatedRelativePoint(Player.MountedCenter, true) + new Vector2(-Player.direction * 4, -4);
-            Projectile.Center = armCenter + vector;
-
-            Projectile.spriteDirection = Player.direction;
-            if (Projectile.spriteDirection == 1)
-                Projectile.rotation = (Projectile.Center - armCenter).ToRotation() + MathHelper.PiOver4;
-            else
-                Projectile.rotation = (Projectile.Center - armCenter).ToRotation() + 3 * MathHelper.PiOver4;
-
-            Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, (armCenter - Projectile.Center).ToRotation() + MathHelper.PiOver2);
-            progress = Timer / (60 * 100 * SwingSpeed);
+            Vector2 armCenter = Owner.RotatedRelativePoint(Owner.MountedCenter) + new Vector2(Owner.direction * -4, -4);
+            Projectile.spriteDirection = Owner.direction;
+            progress = Timer / (maxTime * 6 * Projectile.MaxUpdates);
             if (Timer++ == 0)
             {
-                Projectile.scale *= Projectile.ai[2];
-                Length = 55 * Projectile.ai[2];
+                Projectile.scale = 2 * Projectile.ai[2];
+                Length = 24 * Projectile.scale;
                 startVector = RedeHelper.PolarVector(1, Projectile.spriteDirection * MathHelper.PiOver2 + MathHelper.PiOver2) * Length;
             }
-            if (Timer == (int)(30 * 100 * SwingSpeed))
+            if (Timer == (int)(maxTime * 2 * Projectile.MaxUpdates))
             {
                 if (!Main.dedServ)
-                    SoundEngine.PlaySound(CustomSounds.Swoosh1 with { Pitch = -.6f }, Player.position);
+                    SoundEngine.PlaySound(CustomSounds.Swoosh1 with { Pitch = -.6f }, Owner.position);
             }
             if (progress < 0.3f)
             {
                 Rot = -MathHelper.ToRadians(120 + 100f * MathF.Atan(5 * MathHelper.Pi * (progress - 0.5f))) * Projectile.spriteDirection;
-                vector = startVector.RotatedBy(Rot);
+                positionVector = startVector.RotatedBy(Rot);
             }
             else if (progress < 1f)
             {
-                Projectile.friendly = true;
                 Rot = MathHelper.ToRadians(120 + 100f * MathF.Atan(5 * MathHelper.Pi * (progress - 0.5f))) * Projectile.spriteDirection;
-                vector = startVector.RotatedBy(Rot);
+                positionVector = startVector.RotatedBy(Rot);
             }
             else
                 Projectile.Kill();
+
+            Projectile.friendly = progress >= 0.45f;
 
             if (Timer == 2)
             {
                 Projectile.alpha = 0;
             }
+            Projectile.Center = armCenter + positionVector;
+
+            if (Projectile.spriteDirection == 1)
+                Projectile.rotation = positionVector.ToRotation() + MathHelper.PiOver4;
+            else
+                Projectile.rotation = positionVector.ToRotation() + 3 * MathHelper.PiOver4;
+
+            Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, positionVector.ToRotation() - MathHelper.PiOver2);
         }
 
         public bool TeleportTrigger;
@@ -138,38 +140,38 @@ namespace Redemption.Items.Weapons.PostML.Melee
         private List<Vector2> cache;
         NPC initialTarget;
         NPC target;
+        List<int> targetCache = new();
         public void Teleport()
         {
-            TeleportTimer++;
-            if (cache == null)
+            Projectile.velocity *= 0;
+
+            target = initialTarget;
+            if (targetCache == null)
+                targetCache = [target.whoAmI];
+            else
+                targetCache.Add(target.whoAmI);
+            if (RedeHelper.ClosestNPC(ref initialTarget, 500, target.Center, true, -1, (target) => !targetCache.Contains(target.whoAmI)))
             {
-                cache = new List<Vector2>();
-                for (int i = 0; i < 10; i++)
-                {
-                    cache.Add(initialTarget.Center);
-                }
-            }
-            RedeHelper.SpecialCondition a = PossibleTarget;
-            if (RedeHelper.ClosestNPC(ref target, 500, Projectile.Center + new Vector2(250 * Player.direction, 0), true, -1, a))
-            {
-                target = (NPC)RedeHelper.FindClosestNPC(ref target, 500, Projectile.Center + new Vector2(250 * Player.direction, 0), true, -1, a);
-                cache.Add(target.Center);
-                int hitDirection = target.RightOfDir(Projectile);
+                int hitDirection = initialTarget.RightOfDir(Projectile);
                 BaseAI.DamageNPC(target, Projectile.damage, Projectile.knockBack, hitDirection, Projectile, crit: Projectile.HeldItemCrit());
-                //Projectile.Move(target.Center, 15, 0);
+
+                int maxTime = Main.rand.Next(8, 12) * 4;
+                ParticleSystem.NewParticle(target.Center, initialTarget.Center - target.Center, new ElectricParticle(maxTime, 120, 1), Color.LightYellow, 1);
             }
             else
             {
-                Projectile.velocity *= 0;
+                int hitDirection = initialTarget.RightOfDir(Projectile);
+                BaseAI.DamageNPC(target, Projectile.damage, Projectile.knockBack, hitDirection, Projectile, crit: Projectile.HeldItemCrit());
+
                 Projectile.friendly = false;
                 LaunchTrigger = true;
             }
         }
-        public bool PossibleTarget(NPC next)
+        public bool PossibleTarget(NPC nextTarget)
         {
-            if (next.immune[Player.heldProj] > 0)
-                return false;
-            return true;
+            if (Projectile.localNPCImmunity[nextTarget.whoAmI] <= 0)
+                return true;
+            return false;
         }
 
         public float LaunchTimer;
@@ -177,55 +179,55 @@ namespace Redemption.Items.Weapons.PostML.Melee
         NPC target2;
         public void Launch()
         {
-            if (LaunchTimer == 0)
+            if (LaunchTimer++ == 0)
                 Projectile.damage *= 5;
 
-            //float progress = MathHelper.Clamp(LaunchTimer / 3000, 0, 1);
-            //Projectile.Center += new Vector2(0, -0.16f * (1 - progress));
-            LaunchTimer += 1 / MathF.Sqrt(SwingSpeed);
-            Projectile.rotation += LaunchTimer * 0.000002f;
+            Projectile.rotation += LaunchTimer * 0.0015f;
 
-            if (Main.rand.NextBool(500))
+            if (Main.rand.NextBool(5))
             {
                 for (int i = 0; i < 2; i++)
                     DustHelper.DrawParticleElectricity(Projectile.Center - new Vector2(20 * Projectile.direction, 0), Projectile.Center - new Vector2(20 * Projectile.direction, 0) + RedeHelper.PolarVector(Main.rand.Next(70, 121), RedeHelper.RandomRotation()), .8f, 10, 0.2f);
             }
-
-            if (LaunchTimer < 6000)
+            if (LaunchTimer < maxTime * 12 * Projectile.MaxUpdates)
             {
-                Projectile.Move(Player.Center + new Vector2(-Player.direction * 200f, -100), 1f, 1000);
+                Projectile.Move(Owner.Center + new Vector2(-Owner.direction * 200f, -100), 25, 20);
             }
-
-            if (LaunchTimer > 6000)
+            else
             {
                 Projectile.friendly = true;
                 Projectile.penetrate = 1;
                 if (RedeHelper.ClosestNPC(ref target2, 1000, Projectile.Center))
-                    Projectile.Move(target2.Center, 1f, 10);
+                {
+                    Projectile.Move(target2.Center, 25, 10);
+                }
                 else
                 {
-                    Projectile.Move(Player.Center, 0.3f, 10);
-                    if (Vector2.Distance(Projectile.Center, Player.Center) < 20f)
+                    Projectile.Move(Owner.Center, 25, 2);
+                    if (Vector2.Distance(Projectile.Center, Owner.Center) < 20f)
                         Projectile.Kill();
                 }
             }
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 180);
-            TeleportTrigger = true;
-            initialTarget = target;
-            target.immune[Player.heldProj] = 20;
+            SoundEngine.PlaySound(CustomSounds.ChainCurrents, target.position);
+            target.AddBuff(BuffType<ElectrifiedDebuff>(), 180);
+            if (!TeleportTrigger)
+            {
+                TeleportTrigger = true;
+                initialTarget = target;
+            }
             Vector2 directionTo = target.DirectionTo(Projectile.Center);
             float num = LaunchTrigger ? 2f : 1;
             if (LaunchTrigger)
             {
                 for (int i = 0; i < 8; i++)
-                    Dust.NewDustPerfect(target.Center + directionTo * 5 + new Vector2(0, 70), ModContent.DustType<DustSpark2>(), directionTo.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f) + 3.14f) * Main.rand.NextFloat(4f * num, 5f * num), 0, Color.White * .8f, 3f);
+                    Dust.NewDustPerfect(target.Center + directionTo * 5 + new Vector2(0, 70), DustType<DustSpark2>(), directionTo.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f) + 3.14f) * Main.rand.NextFloat(4f * num, 5f * num), 0, Color.White * .8f, 3f);
             }
             if (Main.myPlayer == Projectile.owner)
             {
-                int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center + new Vector2(Main.rand.NextFloat(-2, 2)), Vector2.Zero, ModContent.ProjectileType<UkonArrowStrike>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, 0, 1);
+                int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center + new Vector2(Main.rand.NextFloat(-2, 2)), Vector2.Zero, ProjectileType<UkonArrowStrike>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0, 1);
                 Main.projectile[p].DamageType = DamageClass.Melee;
                 Main.projectile[p].localAI[0] = 35;
                 Main.projectile[p].alpha = 0;
@@ -234,36 +236,19 @@ namespace Redemption.Items.Weapons.PostML.Melee
                 Main.projectile[p].netUpdate = true;
             }
         }
+        private float drawTimer;
         public override bool PreDraw(ref Color lightColor)
         {
             SpriteEffects spriteEffects = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = new(texture.Width / 2f, texture.Height / 2f);
-            Vector2 dirOffeset = vector.SafeNormalize(Vector2.One) * Projectile.scale;
-            Vector2 drawPos = Projectile.Center + dirOffeset * -0 + dirOffeset.RotatedBy(MathHelper.PiOver2 * Player.direction) * 1;
-
+            Vector2 armCenter = Owner.RotatedRelativePoint(Owner.MountedCenter) + new Vector2(Owner.direction * -4, -4);
+            Vector2 drawPos = !LaunchTrigger ?  armCenter + positionVector.SafeNormalize(default) * 24 * Projectile.scale : Projectile.Center;
+            float opacity = EaseFunction.EaseQuadIn.Ease(Utils.GetLerpValue(0, maxTime * 12 * Projectile.MaxUpdates, LaunchTimer, true));
+            Color c = Color.Lerp(Color.Transparent, Color.LightYellow with { A = 0 }, opacity);
+            if(LaunchTrigger)
+                Main.EntitySpriteDraw(texture, drawPos - Main.screenPosition, null, Projectile.GetAlpha(c), Projectile.rotation, origin, Projectile.scale * 1.5f, spriteEffects, 0);
             Main.EntitySpriteDraw(texture, drawPos - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
-
-            //Chain lightning
-
-            Texture2D Dash = ModContent.Request<Texture2D>("Redemption/Textures/Trails/Lightning2", AssetRequestMode.ImmediateLoad).Value;
-            Rectangle Dashrectangle = Dash.Frame();
-            Vector2 Dashorigin = Dashrectangle.Size() / 2f;
-            if (LaunchTrigger)
-            {
-                for (int k = 0; k < cache.Count - 1; k++)
-                {
-                    Vector2 DashCenter = 0.5f * (cache[k] + cache[k + 1]);
-                    float DashRot = (cache[k] - cache[k + 1]).ToRotation();
-                    float DashLength = (cache[k] - cache[k + 1]).Length();
-                    float opacity = 1 - LaunchTimer / 3000;
-                    Vector2 DashScale = new(DashLength * 0.004f, 0.5f);
-                    Main.EntitySpriteDraw(Dash, DashCenter - Main.screenPosition, new Rectangle?(Dashrectangle), Color.LightCyan with { A = 0 } * 0.8f * opacity, DashRot, Dashorigin, DashScale, 0, 0);
-                }
-            }
-
-            float opacity2 = MathHelper.Clamp(LaunchTimer / 3000, 0, 1);
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Color.White with { A = 0 } * 0.6f * opacity2, Projectile.rotation, origin, Projectile.scale * 1.5f, spriteEffects, 0);
             return false;
         }
     }

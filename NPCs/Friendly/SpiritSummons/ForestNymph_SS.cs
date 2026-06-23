@@ -485,7 +485,7 @@ namespace Redemption.NPCs.Friendly.SpiritSummons
         public override void OnHitNPC(NPC target, NPC.HitInfo hit)
         {
             int damageDone = hit.Damage;
-            RedeProjectile.Decapitation(target, ref damageDone, ref hit.Crit);
+            ProjHelper.Decapitation(target, ref damageDone, ref hit.Crit);
 
             if (Main.rand.NextBool(3))
                 target.AddBuff(BuffID.DryadsWardDebuff, 300);

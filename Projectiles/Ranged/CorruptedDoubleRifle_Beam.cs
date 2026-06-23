@@ -1,5 +1,5 @@
-using Microsoft.Xna.Framework;
 using ParticleLibrary.Core;
+using ParticleLibrary.Utilities;
 using Redemption.BaseExtension;
 using Redemption.Globals;
 using Redemption.Particles;
@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Ranged
 {
-    public class CorruptedDoubleRifle_Beam : ModProjectile
+    public class CorruptedDoubleRifle_Beam : ModRedeProjectile
     {
         public override string Texture => Redemption.EMPTY_TEXTURE;
         public override void SetStaticDefaults()
@@ -68,7 +68,7 @@ namespace Redemption.Projectiles.Ranged
             if (!Main.dedServ)
                 SoundEngine.PlaySound(CustomSounds.PlasmaBlast with { Volume = 0.5f }, Projectile.position);
             if (Projectile.owner == Main.myPlayer)
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity / 3, Vector2.Zero, ModContent.ProjectileType<PlasmaRound_Blast>(), Projectile.damage, Projectile.knockBack, Main.myPlayer);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity / 3, Vector2.Zero, ProjectileType<PlasmaRound_Blast>(), Projectile.damage, Projectile.knockBack, Main.myPlayer);
             player.RedemptionScreen().ScreenShakeIntensity += 3;
         }
     }

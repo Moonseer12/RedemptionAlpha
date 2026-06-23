@@ -1,6 +1,5 @@
-using Microsoft.Xna.Framework;
+using Redemption.Items.Accessories.PostML;
 using Redemption.Items.Materials.HM;
-using Redemption.Items.Weapons.PostML.Magic;
 using Redemption.Projectiles.Ranged;
 using System.Collections.Generic;
 using Terraria;
@@ -14,7 +13,13 @@ namespace Redemption.Items.Weapons.PostML.Ranged
     {
         public override void SetStaticDefaults()
         {
-            ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<TeslaCoil>();
+            // DisplayName.SetDefault("Depleted Crossbow");
+            /* Tooltip.SetDefault("Fires depleted uranium rods that explode upon impact\n" +
+                "Consumes uranium as ammo\n" +
+                "No ammo cost if the user has at least 10 uranium"); */
+            ItemID.Sets.IsRangedSpecialistWeapon[Type] = true;
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<Criticade>();
+            Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()
@@ -41,12 +46,12 @@ namespace Redemption.Items.Weapons.PostML.Ranged
 
             // Projectile Properties
             Item.shootSpeed = 10;
-            Item.shoot = ModContent.ProjectileType<Uranium_Proj>();
-            Item.useAmmo = ModContent.ItemType<Uranium>();
+            Item.shoot = ProjectileType<Uranium_Proj>();
+            Item.useAmmo = ItemType<Uranium>();
         }
         public override bool CanConsumeAmmo(Item ammo, Player player)
         {
-            int uranium = player.FindItem(ModContent.ItemType<Uranium>());
+            int uranium = player.FindItem(ItemType<Uranium>());
             if (uranium >= 0 && player.inventory[uranium].stack >= 10)
                 return false;
             return true;

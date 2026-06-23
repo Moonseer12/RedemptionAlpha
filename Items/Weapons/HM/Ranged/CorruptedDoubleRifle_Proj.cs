@@ -32,8 +32,8 @@ namespace Redemption.Items.Weapons.HM.Ranged
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter, true);
-            RedeProjectile.HoldOutProjBasics(Projectile, player, vector);
+            Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter);
+            ProjHelper.HoldOutProjBasics(Projectile, player, playerCenter);
             Projectile.timeLeft = 2;
             player.ChangeDir(Projectile.direction);
             player.heldProj = Projectile.whoAmI;
@@ -41,10 +41,10 @@ namespace Redemption.Items.Weapons.HM.Ranged
             player.itemAnimation = 2;
             player.itemRotation = (float)Math.Atan2(Projectile.velocity.Y * Projectile.direction, Projectile.velocity.X * Projectile.direction);
 
-            Vector2 gunPos = Projectile.Center + RedeHelper.PolarVector(21 * Projectile.spriteDirection, Projectile.rotation) + RedeHelper.PolarVector(-6, Projectile.rotation + MathHelper.PiOver2);
+            Vector2 gunPos1 = playerCenter + Projectile.velocity.SafeNormalize(default).RotatedBy(1.57f) * 8 * Projectile.direction + Projectile.velocity.SafeNormalize(default) * 20;
+            Vector2 gunPos2 = playerCenter + Projectile.velocity.SafeNormalize(default).RotatedBy(1.57f) * -2 * Projectile.direction + Projectile.velocity.SafeNormalize(default) * 20;
 
-            offset -= 5;
-            rotOffset += 0.1f;
+            offset -= 3;
             if (Main.myPlayer == Projectile.owner)
             {
                 if (player.HeldItem.ModItem is CorruptedDoubleRifle rifle)
@@ -54,8 +54,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
                     Projectile.Kill();
                 else
                 {
-                    float shootingSpeed = 1 / player.GetAttackSpeed(DamageClass.Ranged);
-                    if (++Projectile.localAI[1] % (int)(player.inventory[player.selectedItem].useTime * shootingSpeed) == 0)
+                    if (++Projectile.localAI[1] % (int)(player.HeldItem.useTime / player.GetAttackSpeed(DamageClass.Ranged)) == 0)
                     {
                         if (player.PickAmmo(player.HeldItem, out bullet, out float shootSpeed, out int weaponDamage, out float weaponKnockback, out int usedAmmoId, Main.rand.NextBool(3)))
                         {
@@ -64,20 +63,22 @@ namespace Redemption.Items.Weapons.HM.Ranged
                             if (bullet == ProjectileID.Bullet)
                                 bullet = ProjectileID.BulletHighVelocity;
 
-                            offset = 15;
-                            rotOffset = -0.3f;
-                            float increase = 1;
+                            offset = 12;
+                            float bonus = 1;
                             if (player.HeldItem.ModItem is CorruptedDoubleRifle rifle3)
-                                increase = 1 + rifle3.Count * 0.01f;
+                                bonus = 1 + rifle3.Count * 0.01f;
+
                             if (Projectile.ai[0] is 1)
                             {
-                                float Distance = (Main.MouseWorld - gunPos).Length();
+                                float Distance = (Main.MouseWorld - gunPos1).Length();
                                 Distance = MathF.Max(Distance, 16 * 3);
                                 if (!Main.dedServ)
                                     SoundEngine.PlaySound(CustomSounds.PlasmaShot, player.position);
-                                player.GetModPlayer<EnergyPlayer>().statEnergy -= 6;
-                                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center + RedeHelper.PolarVector(8, (player.Center - Main.MouseWorld).ToRotation() + MathHelper.PiOver2), RedeHelper.PolarVector(Distance / 120, (Main.MouseWorld - gunPos).ToRotation()), ProjectileType<CorruptedDoubleRifle_Beam>(), (int)(Projectile.damage * increase * 2), Projectile.knockBack, player.whoAmI, 1, Distance);
-                                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center + RedeHelper.PolarVector(2, (player.Center - Main.MouseWorld).ToRotation() - MathHelper.PiOver2), RedeHelper.PolarVector(Distance / 120, (Main.MouseWorld - gunPos).ToRotation()), ProjectileType<CorruptedDoubleRifle_Beam>(), (int)(Projectile.damage * increase * 2), Projectile.knockBack, player.whoAmI, 1, Distance);
+
+                                EnergyPlayer.ConsumeEnergy(player, 6);
+
+                                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), gunPos1, Projectile.velocity.SafeNormalize(default) * Distance / 120f, ProjectileType<CorruptedDoubleRifle_Beam>(), (int)(Projectile.damage * bonus * 2), Projectile.knockBack, player.whoAmI, 1, Distance);
+                                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), gunPos2, Projectile.velocity.SafeNormalize(default) * Distance / 120f, ProjectileType<CorruptedDoubleRifle_Beam>(), (int)(Projectile.damage * bonus * 2), Projectile.knockBack, player.whoAmI, 1, Distance);
                                 Projectile.ai[0] = 0;
                                 if (player.HeldItem.ModItem is CorruptedDoubleRifle rifle2)
                                 {
@@ -89,8 +90,8 @@ namespace Redemption.Items.Weapons.HM.Ranged
                             else
                             {
                                 SoundEngine.PlaySound(SoundID.Item36, Projectile.position);
-                                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center + RedeHelper.PolarVector(8, (player.Center - Main.MouseWorld).ToRotation() + MathHelper.PiOver2), RedeHelper.PolarVector(shootSpeed, (Main.MouseWorld - gunPos).ToRotation()), bullet, (int)(Projectile.damage * increase), Projectile.knockBack, player.whoAmI).GetGlobalProjectile<CorruptedDoubleRifleGlobal>().ShotFrom = true;
-                                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center + RedeHelper.PolarVector(2, (player.Center - Main.MouseWorld).ToRotation() - MathHelper.PiOver2), RedeHelper.PolarVector(shootSpeed, (Main.MouseWorld - gunPos).ToRotation()), bullet, (int)(Projectile.damage * increase), Projectile.knockBack, player.whoAmI).GetGlobalProjectile<CorruptedDoubleRifleGlobal>().ShotFrom = true;
+                                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), gunPos1, Projectile.velocity.SafeNormalize(default) * shootSpeed, bullet, (int)(Projectile.damage * bonus), Projectile.knockBack, player.whoAmI).GetGlobalProjectile<CorruptedDoubleRifleGlobal>().ShotFrom = true;
+                                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), gunPos2, Projectile.velocity.SafeNormalize(default) * shootSpeed, bullet, (int)(Projectile.damage * bonus), Projectile.knockBack, player.whoAmI).GetGlobalProjectile<CorruptedDoubleRifleGlobal>().ShotFrom = true;
                             }
                         }
                     }
@@ -111,15 +112,16 @@ namespace Redemption.Items.Weapons.HM.Ranged
                 Main.dust[dustIndex].velocity.X = 0f;
                 Main.dust[dustIndex].velocity.Y = -2f;
             }
-            Projectile.Center = vector;
+            Projectile.Center = playerCenter;
             Projectile.spriteDirection = Projectile.direction;
-            float num = 0;
-            if (Projectile.spriteDirection == -1)
-                num = MathHelper.Pi;
+            float num = Projectile.spriteDirection == 1 ? 0 : MathHelper.Pi;
             Projectile.rotation = Projectile.velocity.ToRotation() + num;
 
             offset = MathHelper.Clamp(offset, 0, 20);
-            rotOffset = MathHelper.Clamp(rotOffset, -1, 0);
+        }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            base.ModifyHitNPC(target, ref modifiers);
         }
         public override bool PreDraw(ref Color lightColor)
         {

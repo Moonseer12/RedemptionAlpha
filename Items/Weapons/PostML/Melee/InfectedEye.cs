@@ -36,7 +36,7 @@ namespace Redemption.Items.Weapons.PostML.Melee
             Item.autoReuse = false;
 
             Item.DamageType = DamageClass.Melee;
-            Item.damage = 800;
+            Item.damage = 600;
             Item.knockBack = 8f;
             Item.noMelee = true;
             Item.noUseGraphic = true;
@@ -161,7 +161,7 @@ namespace Redemption.Items.Weapons.PostML.Melee
             release = true;
             SoundEngine.PlaySound(SoundID.NPCDeath1, Projectile.position);
             Vector2 vel = oldVel.SafeNormalize(default) * 16f;
-            Projectile.NewProjectile(null, Projectile.Center, vel, ProjectileType<InfectedEye_Ball2>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, vel, ProjectileType<InfectedEye_Ball2>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner);
 
             SoundEngine.PlaySound(SoundID.NPCDeath1 with { Volume = .2f }, Projectile.position);
             for (int i = 0; i < 10; i++)
@@ -225,7 +225,7 @@ namespace Redemption.Items.Weapons.PostML.Melee
         }
         public override void OnKill(int timeLeft)
         {
-            RedeDraw.SpawnXenoSplat(Projectile.Center, 1, false);
+            RedeDraw.SpawnXenoSplat(Projectile.Center, false);
             SoundEngine.PlaySound(SoundID.NPCDeath1, Projectile.position);
             for (int i = 0; i < 30; i++)
             {

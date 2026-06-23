@@ -31,7 +31,6 @@ namespace Redemption.Projectiles.Misc
             public int Timer;
         }
 
-        private static Dictionary<string, Asset<Texture2D>> _runsAssetsByPath;
         private static Asset<Texture2D> _screamAsset;
         private Gust[] _gustSmall;
         private Gust[] _gustBig;
@@ -42,6 +41,7 @@ namespace Redemption.Projectiles.Misc
 
         public ref float Duration => ref Projectile.ai[0];
         public ref float Radius => ref Projectile.ai[1];
+        public ref float HostIndex => ref Projectile.ai[2];
 
         private bool Initialized
         {
@@ -62,7 +62,6 @@ namespace Redemption.Projectiles.Misc
         public override void Load()
         {
             _screamAsset = Request<Texture2D>("Redemption/Textures/Shockwave2");
-            _runsAssetsByPath = [];
         }
 
         public override void Unload()
@@ -100,6 +99,13 @@ namespace Redemption.Projectiles.Misc
 
             InitializeEffects();
             UpdateEffects();
+
+            if (HostIndex != 0)
+            {
+                Projectile p = Main.projectile[(int)HostIndex];
+                if (p.active)
+                    Projectile.Center = p.Center;
+            }
         }
 
         private void InitializeEffects()

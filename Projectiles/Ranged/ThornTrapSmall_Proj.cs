@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Globals;
 using System.Collections.Generic;
 using Terraria;
@@ -29,6 +28,8 @@ namespace Redemption.Projectiles.Ranged
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 180;
             Projectile.hide = true;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 20;
         }
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {

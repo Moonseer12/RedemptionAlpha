@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Globals;
 using Redemption.Helpers;
+using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -35,8 +36,10 @@ namespace Redemption.Projectiles.Magic
             LaserEndSegmentLength = 14;
             NewCollision = true;
         }
+        public Player Owner => Main.player[Projectile.owner];
         public override void OnSpawn(IEntitySource source)
         {
+            Projectile.timeLeft = (int)(Projectile.ai[0] / Owner.GetAttackSpeed(DamageClass.Magic));
             Vector2 positionInWorld = Main.rand.NextVector2FromRectangle(Projectile.Hitbox);
             ParticleOrchestraSettings particleOrchestraSettings = default;
             particleOrchestraSettings.PositionInWorld = positionInWorld;
@@ -46,11 +49,17 @@ namespace Redemption.Projectiles.Magic
         }
         public override void AI()
         {
-            Player player = Main.player[Projectile.owner];
-            Projectile.rotation = Projectile.velocity.ToRotation();
-            Projectile.velocity = RedeHelper.PolarVector(1, Projectile.rotation);
+            Vector2 playerCenter = Owner.RotatedRelativePoint(Owner.MountedCenter);
+            ProjHelper.HoldOutProj_SlowTurn(Projectile, Owner, playerCenter, 0.02f);
 
-            Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter, true);
+            Projectile.Center = playerCenter;
+            Projectile.spriteDirection = Projectile.direction;
+            Projectile.rotation = Projectile.velocity.ToRotation();
+
+            Owner.ChangeDir(Projectile.direction);
+            Owner.heldProj = Projectile.whoAmI;
+            Owner.itemRotation = (float)Math.Atan2(Projectile.velocity.Y * Projectile.direction, Projectile.velocity.X * Projectile.direction);
+
             #region Beginning And End Effects
             if (AITimer == 0)
                 LaserScale = 0.1f;
@@ -61,7 +70,7 @@ namespace Redemption.Projectiles.Magic
             {
                 LaserScale += 0.09f;
             }
-            else if (!player.channel || Projectile.timeLeft < 10 || !player.active)
+            else if (!Owner.channel || Projectile.timeLeft < 10 || !Owner.active)
             {
                 if (Projectile.timeLeft > 10)
                 {
@@ -86,8 +95,23 @@ namespace Redemption.Projectiles.Magic
             LaserLength = LengthSetting(Projectile, endPoint);
             #endregion
             ++AITimer;
-            if (Main.myPlayer != player.whoAmI)
+            if (Main.myPlayer != Owner.whoAmI)
                 CheckHits();
+        }
+        public override bool PreDraw(ref Color lightColor)
+        {
+            DrawTipFlare();
+            SpriteEffects spriteEffects = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Texture2D texture = Request<Texture2D>("Redemption/Items/Weapons/HM/Magic/SunshardGreatstaff").Value;
+            Rectangle rect = new(0, 0, texture.Width, texture.Height);
+            Vector2 origin = new(texture.Width / 2f, texture.Height / 2f);
+
+            Vector2 playerCenter = Owner.RotatedRelativePoint(Owner.MountedCenter);
+            Vector2 drawPos = playerCenter + Projectile.velocity.SafeNormalize(default) * 49.5f;
+
+            float rotation = Projectile.spriteDirection == -1 ? Projectile.rotation + 3 * MathHelper.PiOver4 : Projectile.rotation + 1 * MathHelper.PiOver4;
+            Main.EntitySpriteDraw(texture, drawPos - Main.screenPosition, rect, Projectile.GetAlpha(lightColor), rotation, origin, Projectile.scale, spriteEffects, 0);
+            return false;
         }
         #region Drawcode
         // The core function of drawing a Laser, you shouldn't need to touch this
@@ -110,7 +134,7 @@ namespace Redemption.Projectiles.Magic
             Main.EntitySpriteDraw(texture, start + maxDist * (1 / scale) * unit - Main.screenPosition,
                 new Rectangle((int)(LaserWidth * Frame), LaserSegmentLength + LaserEndSegmentLength, LaserWidth, LaserEndSegmentLength), color, r, new Vector2(LaserWidth / 2, LaserSegmentLength / 2), scale, 0, 0);
         }
-        public override bool PreDraw(ref Color lightColor)
+        public void DrawTipFlare()
         {
             Main.spriteBatch.End();
             Main.spriteBatch.BeginAdditive();
@@ -127,8 +151,7 @@ namespace Redemption.Projectiles.Magic
             Main.EntitySpriteDraw(flare, position, new Rectangle?(rect), Projectile.GetAlpha(colour), -(AITimer / 10), origin, 1.5f, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.BeginDefault();
-            return false;
+            Main.spriteBatch.BeginDefault(true);
         }
         #endregion
     }

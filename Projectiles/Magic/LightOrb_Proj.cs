@@ -12,12 +12,13 @@ using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Magic
 {
-    public class LightOrb_Proj : ModProjectile
+    public class LightOrb_Proj : ModRedeProjectile
     {
         public override string Texture => "Redemption/Textures/WhiteOrb";
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Light Orb");
+            ProjectileID.Sets.CultistIsResistantTo[Type] = true;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 8;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ElementID.ProjHoly[Type] = true;
@@ -36,7 +37,7 @@ namespace Redemption.Projectiles.Magic
             Projectile.timeLeft = 240;
             Projectile.alpha = 5;
         }
-        private float squish;
+        protected float squish;
         public override void AI()
         {
             Projectile.velocity *= 0.96f;
@@ -88,11 +89,18 @@ namespace Redemption.Projectiles.Magic
                 Main.dust[dust].color = dustColor;
             }
         }
+
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Main.rand.NextBool(3))
                 target.AddBuff(BuffType<HolyFireDebuff>(), 60);
         }
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            if (Main.rand.NextBool(3))
+                target.AddBuff(BuffType<HolyFireDebuff>(), 60);
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
@@ -147,15 +155,12 @@ namespace Redemption.Projectiles.Magic
                 randRot = Main.rand.NextFloat(-.1f, .1f);
                 Projectile.localAI[0] = Main.rand.Next(70, 101);
             }
-            Projectile.Center = proj.Center;
+            if (proj.active && proj.ModProjectile != null && proj.ModProjectile is LightOrb_Proj)
+                Projectile.Center = proj.Center;
+
             Projectile.alpha += 15;
             if (Projectile.alpha >= 255)
                 Projectile.Kill();
-        }
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            if (Main.rand.NextBool(3))
-                target.AddBuff(BuffType<HolyFireDebuff>(), 180);
         }
         public override bool PreDraw(ref Color lightColor)
         {

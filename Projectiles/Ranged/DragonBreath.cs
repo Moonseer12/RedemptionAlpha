@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.BaseExtension;
 using Redemption.Buffs.NPCBuffs;
@@ -30,7 +29,7 @@ namespace Redemption.Projectiles.Ranged
             Projectile.Center = player.Center;
             SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { MaxInstances = 2 }, Projectile.position);
             if (Projectile.timeLeft % 4 == 0)
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.velocity * 0.8f, ModContent.ProjectileType<DragonBreath>(), Projectile.damage, Projectile.knockBack, player.whoAmI);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.velocity * 0.8f, ProjectileType<DragonBreath>(), Projectile.damage, Projectile.knockBack, player.whoAmI);
         }
     }
     public class DragonBreath : ModProjectile
@@ -79,7 +78,6 @@ namespace Redemption.Projectiles.Ranged
             oldrot[0] = Projectile.rotation;
             oldPos[0] = Projectile.Center;
         }
-
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             if (NPCLists.Dragonlike.Contains(target.type))
@@ -88,10 +86,8 @@ namespace Redemption.Projectiles.Ranged
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.OnFire, 120);
-
-            Player player = Main.player[Projectile.owner];
-            if (player.RedemptionPlayerBuff().dragonLeadBonus)
-                target.AddBuff(ModContent.BuffType<DragonblazeDebuff>(), 300);
+            if (Main.player[Projectile.owner].RedemptionPlayerBuff().dragonLeadBonus)
+                target.AddBuff(BuffType<DragonblazeDebuff>(), 300);
         }
         public override void OnHitPlayer(Player target, Player.HurtInfo info) => target.AddBuff(BuffID.OnFire, 120);
         public override bool PreDraw(ref Color lightColor)

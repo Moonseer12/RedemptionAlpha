@@ -32,8 +32,8 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             Item.DamageType = DamageClass.Summon;
             Item.width = 46;
             Item.height = 58;
-            Item.useTime = 18;
-            Item.useAnimation = 18;
+            Item.useTime = 10;
+            Item.useAnimation = 10;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.noMelee = true;
             Item.knockBack = 2;
@@ -44,7 +44,6 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             Item.buffType = BuffType<NaturePixieBuff>();
             Item.shoot = ProjectileType<NaturePixie>();
             Item.shootSpeed = 2;
-            Item.mana = 6;
 
             Item.Redemption().HideElementTooltip[ElementID.Psychic] = true;
         }

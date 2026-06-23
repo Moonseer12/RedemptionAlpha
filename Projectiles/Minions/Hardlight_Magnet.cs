@@ -1,13 +1,12 @@
-using Terraria;
-using System;
-using Terraria.ID;
-using Microsoft.Xna.Framework;
-using Terraria.ModLoader;
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.Globals;
-using Terraria.Audio;
 using Redemption.Base;
+using Redemption.Globals;
+using System;
+using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Minions
 {
@@ -82,14 +81,13 @@ namespace Redemption.Projectiles.Minions
                     dust2.noGravity = true;
                     dust2.velocity *= 0f;
                 }
-                for (int i = 0; i < Main.maxProjectiles; i++)
+                foreach (Projectile target in Main.ActiveProjectiles)
                 {
-                    Projectile target = Main.projectile[i];
-                    if (!target.active || target.width >= 40 || target.height >= 40 || Projectile.DistanceSQ(target.Center) >= 200 * 200 || !target.hostile || target.damage <= 0 || target.ProjBlockBlacklist())
+                    if (target.width >= 40 || target.height >= 40 || Projectile.DistanceSQ(target.Center) >= 200 * 200 || target.damage <= 0 || !ProjReflect.FriendlyReflectCheck(Projectile, target, 5000) || ProjReflect.ProjBlockBlacklist(target))
                         continue;
 
                     if (Projectile.owner == Main.myPlayer)
-                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center, Vector2.Zero, ModContent.ProjectileType<Hardlight_MagnetPulse>(), 0, 0, player.whoAmI, Projectile.whoAmI);
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center, Vector2.Zero, ProjectileType<Hardlight_MagnetPulse>(), 0, 0, player.whoAmI, Projectile.whoAmI);
                     damageStored += target.damage * 2;
                     target.Kill();
                 }
@@ -113,7 +111,7 @@ namespace Redemption.Projectiles.Minions
                 if (!Main.dedServ)
                     SoundEngine.PlaySound(CustomSounds.BallFire, Projectile.position);
 
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.PolarVector(10, (Main.npc[getNPC].Center - Projectile.Center).ToRotation()), ModContent.ProjectileType<Hardlight_MagnetBeam>(), (int)MathHelper.Clamp(damageStored, 10, 800), 4, player.whoAmI, Projectile.whoAmI);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.PolarVector(10, (Main.npc[getNPC].Center - Projectile.Center).ToRotation()), ProjectileType<Hardlight_MagnetBeam>(), (int)MathHelper.Clamp(damageStored, 10, 800), 4, player.whoAmI, Projectile.whoAmI);
             }
             if (Projectile.localAI[0] >= 400)
             {
@@ -130,7 +128,7 @@ namespace Redemption.Projectiles.Minions
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glowMask = ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "_Glow").Value;
+            Texture2D glowMask = Request<Texture2D>(Texture + "_Glow").Value;
             int height = texture.Height / 12;
             int y = height * Projectile.frame;
             Rectangle rect = new(0, y, texture.Width, height);

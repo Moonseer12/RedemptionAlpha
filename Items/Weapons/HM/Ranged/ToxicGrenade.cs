@@ -3,7 +3,6 @@ using Redemption.Items.Materials.PreHM;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static AssGen.Assets;
 
 namespace Redemption.Items.Weapons.HM.Ranged
 {
@@ -33,7 +32,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Item.DamageType = DamageClass.Ranged;
             Item.autoReuse = true;
             Item.consumable = true;
-            Item.shoot = ModContent.ProjectileType<ToxicGrenade_Proj>();
+            Item.shoot = ProjectileType<ToxicGrenade_Proj>();
             Item.shootSpeed = 11f;
             Item.ammo = ItemID.Grenade;
             Item.notAmmo = true;
@@ -47,13 +46,13 @@ namespace Redemption.Items.Weapons.HM.Ranged
         {
             CreateRecipe(10)
                 .AddIngredient(ItemID.Grenade, 10)
-                .AddIngredient(ModContent.ItemType<ToxicBile>())
+                .AddIngredient(ItemType<ToxicBile>())
                 .AddTile(TileID.MythrilAnvil)
                 .AddDecraftCondition(Condition.DownedMechBossAny)
                 .Register();
             CreateRecipe()
                 .AddIngredient(ItemID.Grenade)
-                .AddIngredient(ModContent.ItemType<XenomiteShard>(), 2)
+                .AddIngredient(ItemType<XenomiteShard>(), 2)
                 .AddTile(TileID.Anvils)
                 .Register();
         }

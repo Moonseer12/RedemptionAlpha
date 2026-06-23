@@ -1,10 +1,9 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Base;
+using Redemption.BaseExtension;
 using Redemption.Buffs.Minions;
 using Redemption.Buffs.NPCBuffs;
 using Redemption.Globals;
-using Redemption.Particles;
 using System;
 using System.Linq;
 using Terraria;
@@ -51,7 +50,7 @@ namespace Redemption.Projectiles.Minions
             Player player = Main.player[Projectile.owner];
             if (!CheckActive(player))
                 return;
-            OverlapCheck();
+            ProjHelper.OverlapCheck(Projectile);
 
             glowOpacity -= .05f;
             glowOpacity = MathHelper.Max(glowOpacity, 0);
@@ -61,17 +60,23 @@ namespace Redemption.Projectiles.Minions
                 if (++Projectile.frame >= 16)
                     Projectile.frame = 0;
             }
-            float sin = (float)(Math.Sin(Projectile.ai[0]++ / 20) * 20);
-            Vector2 DefaultPos = new(player.Center.X + sin, player.Center.Y - 40 - (Projectile.minionPos * 30));
+            float sin = (float)(Math.Sin(Projectile.ai[1]++ / 20) * 20);
+            Projectile.AI_GetMyGroupIndexAndFillBlackList(null, out int index, out int _);
+            Vector2 DefaultPos = new(player.Center.X + sin, player.Center.Y - 40 - (index * 30));
             if (RedeHelper.ClosestNPC(ref target, 900, Projectile.Center, true, player.MinionAttackTargetNPC))
             {
-                Vector2 AttackPos = new(target.Center.X + sin, target.position.Y - 60 - (Projectile.minionPos * 30));
+                Vector2 AttackPos = new(target.Center.X + sin, target.position.Y - 60 - (index * 30));
                 Projectile.Move(AttackPos, 30, 2);
-                if (Projectile.ai[0] % 5 == 0)
+                if (Projectile.ai[1] % 20 == 0 && Projectile.owner == Main.myPlayer)
                 {
-                    int p = Projectile.NewProjectile(Projectile.InheritSource(Projectile), RedeHelper.RandAreaInEntity(Projectile), new Vector2(0, 8), ProjectileID.RainFriendly, Projectile.damage, Projectile.knockBack, Projectile.owner);
+                    int p = Projectile.NewProjectile(player.GetSource_FromThis(), RedeHelper.RandAreaInEntity(Projectile), new Vector2(0, 8), ProjectileID.RainFriendly, Projectile.damage, Projectile.knockBack, Projectile.owner);
                     Main.projectile[p].DamageType = DamageClass.Summon;
                     Main.projectile[p].netUpdate = true;
+                    Main.projectile[p].penetrate = 6;
+                    Main.projectile[p].usesIDStaticNPCImmunity = false;
+                    Main.projectile[p].usesLocalNPCImmunity = true;
+                    Main.projectile[p].localNPCHitCooldown = -1;
+                    Main.projectile[p].Redemption().FromMinion = true;
                 }
             }
             else
@@ -83,50 +88,18 @@ namespace Redemption.Projectiles.Minions
                 Projectile.netUpdate = true;
             }
         }
-        private void OverlapCheck()
-        {
-            // If your minion is flying, you want to do this independently of any conditions
-            float overlapVelocity = 0.04f;
-
-            // Fix overlap with other minions
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                Projectile other = Main.projectile[i];
-
-                if (i != Projectile.whoAmI && other.active && other.owner == Projectile.owner && Math.Abs(Projectile.position.X - other.position.X) + Math.Abs(Projectile.position.Y - other.position.Y) < Projectile.width)
-                {
-                    if (Projectile.position.X < other.position.X)
-                    {
-                        Projectile.velocity.X -= overlapVelocity;
-                    }
-                    else
-                    {
-                        Projectile.velocity.X += overlapVelocity;
-                    }
-
-                    if (Projectile.position.Y < other.position.Y)
-                    {
-                        Projectile.velocity.Y -= overlapVelocity;
-                    }
-                    else
-                    {
-                        Projectile.velocity.Y += overlapVelocity;
-                    }
-                }
-            }
-        }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 120);
+            target.AddBuff(BuffType<ElectrifiedDebuff>(), 120);
         }
         private bool CheckActive(Player owner)
         {
             if (owner.dead || !owner.active)
             {
-                owner.ClearBuff(ModContent.BuffType<UkkonenBuff>());
+                owner.ClearBuff(BuffType<UkkonenBuff>());
                 return false;
             }
-            if (owner.HasBuff(ModContent.BuffType<UkkonenBuff>()))
+            if (owner.HasBuff(BuffType<UkkonenBuff>()))
                 Projectile.timeLeft = 2;
             return true;
         }
@@ -147,7 +120,7 @@ namespace Redemption.Projectiles.Minions
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glow = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
+            Texture2D glow = Request<Texture2D>(Texture + "_Glow").Value;
             int height = texture.Height / 16;
             int y = height * Projectile.frame;
             Rectangle rect = new(0, y, texture.Width, height);
@@ -168,22 +141,26 @@ namespace Redemption.Projectiles.Minions
             return false;
         }
     }
-    class UkkonenGlobalNPC : GlobalProjectile
+    public class UkkonenGlobalNPC : GlobalProjectile
     {
         public override bool InstancePerEntity => true;
-        public static int GetUkkonenCount() => Main.projectile.Where(p => p.active && p.type == ModContent.ProjectileType<Ukkonen>()).Count();
-
+        public static int GetUkkonenCount() => Main.projectile.Count(p => p.active && p.type == ProjectileType<Ukkonen>());
+        public int ukkonenNum;
+        public override bool PreAI(Projectile projectile)
+        {
+            ukkonenNum = Main.projectile.Count(p => p.active && p.type == ProjectileType<Ukkonen>());
+            return base.PreAI(projectile);
+        }
         public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (ProjectileID.Sets.IsAWhip[projectile.type] && projectile.CountsAsClass(DamageClass.Summon))
             {
-                int count = GetUkkonenCount();
-                if (count > 0)
+                if (ukkonenNum > 0)
                 {
                     for (int i = 0; i < Main.maxProjectiles; i++)
                     {
                         Projectile proj = Main.projectile[i];
-                        if (proj.active && proj.type == ModContent.ProjectileType<Ukkonen>() && proj.ModProjectile is Ukkonen ukkonen && ukkonen.glowOpacity <= 0)
+                        if (proj.active && proj.owner == projectile.owner && proj.type == ProjectileType<Ukkonen>() && proj.ModProjectile is Ukkonen ukkonen && ukkonen.glowOpacity <= 0)
                         {
                             ukkonen.glowOpacity = 1;
                             if (!Main.dedServ)

@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+using Redemption.BaseExtension;
 using Redemption.Globals;
 using Redemption.NPCs.Bosses.Keeper;
 using Terraria;
@@ -20,9 +20,11 @@ namespace Redemption.Projectiles.Melee
         {
             base.SetDefaults();
             Projectile.friendly = true;
-            Projectile.penetrate = -1;
+            Projectile.penetrate = 6;
             Projectile.hostile = false;
             Projectile.usesLocalNPCImmunity = true;
+            Projectile.stopsDealingDamageAfterPenetrateHits = true;
+            Projectile.Redemption().friendlyHostile = false;
         }
 
         public override void AI()

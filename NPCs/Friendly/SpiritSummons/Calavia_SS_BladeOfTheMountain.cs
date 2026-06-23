@@ -125,7 +125,7 @@ namespace Redemption.NPCs.Friendly.SpiritSummons
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            RedeProjectile.Decapitation(target, ref damageDone, ref hit.Crit);
+            ProjHelper.Decapitation(target, ref damageDone, ref hit.Crit);
 
             NPC npc = Main.npc[(int)Projectile.ai[0]];
             if (target.DistanceSQ(npc.Center) > 100 * 100 && target.knockBackResist > 0 && !target.RedemptionNPCBuff().iceFrozen)

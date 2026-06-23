@@ -33,14 +33,13 @@ namespace Redemption.Items.Weapons.HM.Summon
             Item.useAnimation = 36;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.noMelee = true;
-            Item.knockBack = 0;
+            Item.knockBack = 1;
             Item.value = Item.sellPrice(0, 2, 0, 0);
             Item.rare = ItemRarityID.Pink;
             Item.UseSound = SoundID.DD2_DefenseTowerSpawn;
             Item.autoReuse = false;
             Item.buffType = BuffType<TeslaGeneratorBuff>();
             Item.shoot = ProjectileType<TeslaGenerator_Proj>();
-            Item.mana = 10;
         }
         public override bool CanUseItem(Player player)
         {

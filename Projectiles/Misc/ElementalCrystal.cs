@@ -1,16 +1,15 @@
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ModLoader;
-using Terraria.ID;
-using Redemption.Globals;
-using Terraria.Audio;
-using Redemption.BaseExtension;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria.DataStructures;
-using Redemption.Dusts;
-using Terraria.GameContent;
-using System;
+using Redemption.BaseExtension;
 using Redemption.Buffs;
+using Redemption.Dusts;
+using Redemption.Globals;
+using System;
+using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Misc
 {
@@ -30,17 +29,13 @@ namespace Redemption.Projectiles.Misc
             Projectile.friendly = true;
             Projectile.hostile = false;
             Projectile.penetrate = -1;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 10;
             Projectile.DamageType = DamageClass.Generic;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 1200;
             Projectile.alpha = 255;
-            Projectile.usesLocalNPCImmunity = true;
-        }
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            Projectile.localNPCImmunity[target.whoAmI] = 15;
-            target.immune[Projectile.owner] = 0;
         }
         public override bool? CanCutTiles() => false;
         public ref float Element => ref Projectile.ai[1];
@@ -73,9 +68,12 @@ namespace Redemption.Projectiles.Misc
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
+            Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter);
             if (!onSpawn)
             {
                 bool noIntersect = false;
+                Projectile.localAI[0] = RedeHelper.RandomRotation();
+                Projectile.localAI[1] = Main.rand.Next(50, 100);
                 while (!noIntersect)
                 {
                     noIntersect = true;
@@ -97,7 +95,7 @@ namespace Redemption.Projectiles.Misc
                         noIntersect = false;
                         Projectile.localAI[0] = RedeHelper.RandomRotation();
                         Projectile.localAI[1] = Main.rand.Next(50, 100);
-                        Projectile.Center = player.Center + Vector2.One.RotatedBy(MathHelper.ToRadians(Projectile.localAI[0])) * Projectile.localAI[1];
+                        Projectile.Center = playerCenter + Vector2.One.RotatedBy(MathHelper.ToRadians(Projectile.localAI[0])) * Projectile.localAI[1];
                     }
                 }
                 onSpawn = true;
@@ -109,32 +107,38 @@ namespace Redemption.Projectiles.Misc
             if (!CheckActive(player))
                 return;
 
-            Projectile.rotation = (player.Center - Projectile.Center).ToRotation();
+            Projectile.rotation = (playerCenter - Projectile.Center).ToRotation();
 
             Projectile.alpha -= 4;
             if (Main.myPlayer == Projectile.owner)
             {
                 if (Projectile.localAI[0] is -1)
                 {
+                    Projectile.tileCollide = true;
                     Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+                    NPC target = null;
+                    if (RedeHelper.ClosestNPC(ref target, 1000, Projectile.Center))
+                        Projectile.Move(target.Center, 40, 20);
+                    else
+                        Projectile.velocity *= 0.91f;
+
                     if (Projectile.alpha > 0)
                         Projectile.Kill();
-                    Projectile.tileCollide = true;
-                    Projectile.velocity.Y += .05f;
                     return;
                 }
-                if (player.Redemption().onHit)
+                if (player.Redemption().onHit || !player.RedemptionPlayerBuff().crystalKnowledge)
                 {
-                    player.ClearBuff(ModContent.BuffType<CrystalKnowledgeBuff>());
+                    player.ClearBuff(BuffType<CrystalKnowledgeBuff>());
                     Projectile.timeLeft = 300;
                     Projectile.penetrate = 1;
+                    Projectile.velocity = RedeHelper.PolarVector(speed * 8f, Projectile.DirectionTo(playerCenter).ToRotation() - MathHelper.PiOver2);
+                    Projectile.netUpdate = true;
                     Projectile.localAI[0] = -1;
                     Projectile.localAI[1] = 0;
-                    Projectile.velocity = RedeHelper.PolarVector(10, Projectile.DirectionTo(player.Center).ToRotation() - MathHelper.PiOver2);
                     return;
                 }
                 Projectile.localAI[0] += speed;
-                Projectile.Center = player.Center + Vector2.One.RotatedBy(MathHelper.ToRadians(Projectile.localAI[0])) * Projectile.localAI[1];
+                Projectile.Center = playerCenter + Vector2.One.RotatedBy(MathHelper.ToRadians(Projectile.localAI[0])) * Projectile.localAI[1];
             }
             Projectile.alpha = (int)MathHelper.Max(Projectile.alpha, 0);
         }
@@ -142,10 +146,10 @@ namespace Redemption.Projectiles.Misc
         {
             if (owner.dead || !owner.active)
             {
-                owner.ClearBuff(ModContent.BuffType<CrystalKnowledgeBuff>());
+                owner.ClearBuff(BuffType<CrystalKnowledgeBuff>());
                 return false;
             }
-            if (owner.HasBuff(ModContent.BuffType<CrystalKnowledgeBuff>()))
+            if (owner.HasBuff(BuffType<CrystalKnowledgeBuff>()))
                 Projectile.timeLeft = 2;
             return true;
         }
@@ -153,17 +157,17 @@ namespace Redemption.Projectiles.Misc
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glow = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
+            Texture2D glow = Request<Texture2D>(Texture + "_Glow").Value;
             Rectangle rect = new(0, 0, texture.Width, texture.Height);
             Vector2 origin = new(texture.Width / 2f, texture.Height / 2f);
             float pulse = (float)Math.Abs(Math.Sin(drawTimer++ / 20));
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
             for (int k = 0; k < Projectile.oldPos.Length; k++)
             {
-                Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + origin - new Vector2(13, 26) + new Vector2(0f, Projectile.gfxOffY);
+                Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + origin - new Vector2(13, 26);
                 Color color = Projectile.GetAlpha(elemColor) * ((Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
                 Main.EntitySpriteDraw(texture, drawPos, new Rectangle?(rect), color, oldrot[k], origin, Projectile.scale, SpriteEffects.None, 0);
             }
@@ -172,7 +176,7 @@ namespace Redemption.Projectiles.Misc
             Main.EntitySpriteDraw(glow, Projectile.Center - Main.screenPosition, new Rectangle?(rect), Projectile.GetAlpha(elemColor) * pulse * 10, Projectile.rotation, origin, Projectile.scale * pulse, 0, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
             return false;
         }
         public override void OnKill(int timeLeft)
@@ -180,7 +184,7 @@ namespace Redemption.Projectiles.Misc
             SoundEngine.PlaySound(SoundID.Item27, Projectile.position);
             for (int i = 0; i < 25; i++)
             {
-                int dust = Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), Alpha: Projectile.alpha, Scale: .5f);
+                int dust = Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, DustType<GlowDust>(), Alpha: Projectile.alpha, Scale: .5f);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity *= 2f;
                 Color dustColor = new(elemColor.R, elemColor.G, elemColor.B) { A = 0 };

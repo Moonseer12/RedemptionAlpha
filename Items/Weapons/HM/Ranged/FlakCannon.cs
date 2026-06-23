@@ -40,6 +40,11 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Item.shootSpeed = 10;
             Item.useAmmo = ItemID.Grenade;
         }
+        public override bool ReforgePrice(ref int reforgePrice, ref bool canApplyDiscount)
+        {
+            reforgePrice = Item.value / 2;
+            return true;
+        }
         public override bool CanConsumeAmmo(Item ammo, Player player) => player.ItemUsesThisAnimation != 0;
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {

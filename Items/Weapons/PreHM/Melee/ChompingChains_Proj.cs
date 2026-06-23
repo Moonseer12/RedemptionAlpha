@@ -1,13 +1,12 @@
-﻿using System;
-using Terraria;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Terraria.ID;
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.Globals;
-using Terraria.Audio;
-using ReLogic.Content;
 using Redemption.BaseExtension;
+using Redemption.Globals;
+using ReLogic.Content;
+using System;
+using Terraria;
+using Terraria.Audio;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.PreHM.Melee
 {
@@ -31,40 +30,20 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             Projectile.ignoreWater = true;
             Projectile.Redemption().TechnicallyMelee = true;
         }
+        public float SetSwingSpeed(float speed)
+        {
+            Player player = Main.player[Projectile.owner];
+            return speed / player.GetAttackSpeed(DamageClass.Melee);
+        }
+        private float SwingSpeed;
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
             float num = MathHelper.ToRadians(0f);
-            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter, true);
             if (Projectile.spriteDirection == -1)
                 num = MathHelper.ToRadians(180f);
 
-            if (Main.myPlayer == Projectile.owner)
-            {
-                float scaleFactor6 = 1f;
-                if (player.inventory[player.selectedItem].shoot == Projectile.type)
-                {
-                    scaleFactor6 = player.inventory[player.selectedItem].shootSpeed * Projectile.scale;
-                }
-                Vector2 vector13 = Main.MouseWorld - vector;
-                vector13.Normalize();
-                if (vector13.HasNaNs())
-                {
-                    vector13 = Vector2.UnitX * player.direction;
-                }
-                vector13 *= scaleFactor6;
-                if (vector13.X != Projectile.velocity.X || vector13.Y != Projectile.velocity.Y)
-                    Projectile.netUpdate = true;
-
-                Projectile.velocity = vector13;
-                if (player.noItems || player.CCed || player.dead || !player.active)
-                {
-                    Projectile.Kill();
-                }
-                Projectile.netUpdate = true;
-            }
-
-            Projectile.position = player.RotatedRelativePoint(player.MountedCenter + RedeHelper.PolarVector(4, Projectile.velocity.ToRotation()), true) - Projectile.Size / 2f;
+            Projectile.position = player.RotatedRelativePoint(player.MountedCenter, true) - Projectile.Size / 2f;
             Projectile.rotation = Projectile.velocity.ToRotation() + num;
             Projectile.spriteDirection = Projectile.direction;
             Projectile.timeLeft = 2;
@@ -74,18 +53,24 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             player.itemAnimation = 2;
             player.itemRotation = (float)Math.Atan2(Projectile.velocity.Y * Projectile.direction, Projectile.velocity.X * Projectile.direction);
 
-            if (Projectile.localAI[0]++ == 0 && Projectile.owner == Main.myPlayer)
+            SwingSpeed = SetSwingSpeed(1);
+
+            if (Projectile.localAI[0]++ == 0)
             {
                 Projectile.alpha = 0;
-                float numberProjectiles = 3;
-                float rotation = MathHelper.ToRadians(25);
-                for (int i = 0; i < numberProjectiles; i++)
+
+                if (Projectile.owner == Main.myPlayer)
                 {
-                    Vector2 perturbedSpeed = Projectile.velocity.RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (numberProjectiles - 1)));
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, perturbedSpeed * 1.2f, ModContent.ProjectileType<ChompingChains_Proj_Skull>(), Projectile.damage, Projectile.knockBack, player.whoAmI, Projectile.whoAmI, i);
+                    float numberProjectiles = 3;
+                    float rotation = MathHelper.ToRadians(25);
+                    for (int i = 0; i < numberProjectiles; i++)
+                    {
+                        Vector2 perturbedSpeed = Projectile.velocity.RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (numberProjectiles - 1)));
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, perturbedSpeed * 1.2f / SwingSpeed, ProjectileType<ChompingChains_Proj_Skull>(), Projectile.damage, Projectile.knockBack, player.whoAmI, Projectile.whoAmI, i);
+                    }
                 }
             }
-            else if (Projectile.localAI[0] >= 10 && player.ownedProjectileCounts[ModContent.ProjectileType<ChompingChains_Proj_Skull>()] <= 0)
+            else if (Projectile.localAI[0] >= 10 && player.ownedProjectileCounts[ProjectileType<ChompingChains_Proj_Skull>()] <= 0)
                 Projectile.Kill();
         }
     }
@@ -94,12 +79,15 @@ namespace Redemption.Items.Weapons.PreHM.Melee
         private static Asset<Texture2D> chainTexture;
         public override void Load()
         {
-            chainTexture = ModContent.Request<Texture2D>("Redemption/Items/Weapons/PreHM/Melee/ChompingChains_Proj_Chain");
+            if (Main.dedServ)
+                return;
+            chainTexture = Request<Texture2D>("Redemption/Items/Weapons/PreHM/Melee/ChompingChains_Proj_Chain");
         }
         public override void Unload()
         {
             chainTexture = null;
         }
+
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Chomping Chains");
@@ -131,30 +119,27 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             float num = MathHelper.ToRadians(0f);
             if (Projectile.spriteDirection == -1)
                 num = MathHelper.ToRadians(180f);
-            if (Projectile.owner == Main.myPlayer)
+            switch (Projectile.localAI[0])
             {
-                switch (Projectile.localAI[0])
-                {
-                    case 0:
-                        Projectile.rotation = Projectile.velocity.ToRotation() + num;
-                        Projectile.spriteDirection = Projectile.direction;
-                        if (Projectile.DistanceSQ(handle.Center) >= 240 * 240 || !player.channel)
-                            Projectile.localAI[0] = 2;
-                        break;
-                    case 1:
-                        Projectile.tileCollide = false;
-                        Projectile.localAI[1]++;
-                        Projectile.Center = nommed.Center + locked;
-                        if (Projectile.localAI[1] >= 300 || !nommed.active || Projectile.DistanceSQ(handle.Center) >= 600 * 600 || !player.channel)
-                            Projectile.localAI[0] = 2;
-                        break;
-                    case 2:
-                        Projectile.tileCollide = false;
-                        Projectile.Move(handle.Center, 15, 1);
-                        if (Projectile.DistanceSQ(handle.Center) < 20 * 20)
-                            Projectile.Kill();
-                        break;
-                }
+                case 0:
+                    Projectile.rotation = Projectile.velocity.ToRotation() + num;
+                    Projectile.spriteDirection = Projectile.direction;
+                    if (Projectile.DistanceSQ(handle.Center) >= 240 * 240 || !player.channel)
+                        Projectile.localAI[0] = 2;
+                    break;
+                case 1:
+                    Projectile.tileCollide = false;
+                    Projectile.localAI[1]++;
+                    Projectile.Center = nommed.Center + locked;
+                    if (Projectile.localAI[1] >= 300 || !nommed.active || Projectile.DistanceSQ(handle.Center) >= 600 * 600 || !player.channel)
+                        Projectile.localAI[0] = 2;
+                    break;
+                case 2:
+                    Projectile.tileCollide = false;
+                    Projectile.Move(handle.Center, 15, 1);
+                    if (Projectile.DistanceSQ(handle.Center) < 20 * 20)
+                        Projectile.Kill();
+                    break;
             }
         }
         public override bool? CanHitNPC(NPC target)
@@ -174,8 +159,9 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             target.immune[Projectile.owner] = 0;
             if (Projectile.localAI[0] == 0)
             {
+                SoundEngine.PlaySound(SoundID.Item2, target.position);
                 nommed = target;
-                locked = Projectile.Center - target.Center;
+                locked = Projectile.Center - target.Center - Projectile.velocity;
                 Projectile.localAI[0] = 1;
             }
         }

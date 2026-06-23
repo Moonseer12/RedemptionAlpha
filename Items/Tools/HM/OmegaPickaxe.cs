@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.BaseExtension;
 using Redemption.Globals.Players;
 using Redemption.Items.Materials.HM;
 using Terraria;
@@ -10,13 +9,19 @@ namespace Redemption.Items.Tools.HM
 {
     public class OmegaPickaxe : ModItem
     {
+        public override void SetStaticDefaults()
+        {
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
+        }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
+
         public override void SetDefaults()
         {
             Item.attackSpeedOnlyAffectsWeaponAnimation = true;
             Item.damage = 46;
             Item.DamageType = DamageClass.Melee;
-            Item.width = 52;
-            Item.height = 56;
+            Item.width = 56;
+            Item.height = 50;
             Item.useTime = 5;
             Item.useAnimation = 16;
             Item.pick = 210;
@@ -28,14 +33,12 @@ namespace Redemption.Items.Tools.HM
             Item.autoReuse = true;
             Item.useTurn = true;
             Item.tileBoost += 1;
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
         }
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<OmegaPowerCell>())
-                .AddIngredient(ModContent.ItemType<CorruptedXenomite>(), 6)
+                .AddIngredient(ItemType<OmegaPowerCell>())
+                .AddIngredient(ItemType<CorruptedXenomite>(), 6)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }

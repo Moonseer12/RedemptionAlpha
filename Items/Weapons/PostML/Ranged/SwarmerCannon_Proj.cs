@@ -48,7 +48,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
             }
             Player player = Main.player[Projectile.owner];
             Vector2 vector = player.RotatedRelativePoint(player.MountedCenter, true);
-            RedeProjectile.HoldOutProjBasics(Projectile, player, vector);
+            ProjHelper.HoldOutProjBasics(Projectile, player, vector);
             Projectile.Center = vector;
             Projectile.spriteDirection = Projectile.direction;
             Projectile.timeLeft = 2;

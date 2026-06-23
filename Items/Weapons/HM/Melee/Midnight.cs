@@ -1,11 +1,10 @@
-using Terraria.ModLoader;
-using Terraria.ID;
-using Terraria;
-using Terraria.Localization;
-using Microsoft.Xna.Framework;
 using Redemption.BaseExtension;
 using Redemption.Items.Weapons.PreHM.Melee;
 using System.Collections.Generic;
+using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.HM.Melee
 {
@@ -32,13 +31,14 @@ namespace Redemption.Items.Weapons.HM.Melee
 
             // Use Properties
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 40;
-            Item.useTime = 40;
+            Item.useAnimation = 25;
+            Item.useTime = 25;
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = true;
 
             // Weapon Properties
             Item.damage = 105;
+            Item.crit = 20;
             Item.knockBack = 10.5f;
             Item.noUseGraphic = true;
             Item.DamageType = DamageClass.Melee;
@@ -47,13 +47,14 @@ namespace Redemption.Items.Weapons.HM.Melee
 
             // Projectile Properties
             Item.shootSpeed = 3.7f;
-            Item.shoot = ModContent.ProjectileType<Midnight_SlashProj>();
+            Item.shoot = ProjectileType<Midnight_SlashProj>();
             Item.Redemption().TechnicallyAxe = true;
         }
+        public override bool MeleePrefix() => true;
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<NoblesHalberd>())
+                .AddIngredient(ItemType<NoblesHalberd>())
                 .AddIngredient(ItemID.SoulofNight, 10)
                 .AddIngredient(ItemID.Ectoplasm, 10)
                 .AddTile(TileID.MythrilAnvil)

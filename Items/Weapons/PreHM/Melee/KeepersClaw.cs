@@ -1,10 +1,8 @@
 using Redemption.BaseExtension;
 using Redemption.Items.Materials.PreHM;
 using Redemption.Items.Weapons.PreHM.Ranged;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.PreHM.Melee
@@ -33,8 +31,8 @@ namespace Redemption.Items.Weapons.PreHM.Melee
 
             // Use Properties
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 30;
-            Item.useTime = 30;
+            Item.useAnimation = 24;
+            Item.useTime = 24;
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = true;
 

@@ -2,7 +2,6 @@ using Redemption.BaseExtension;
 using Redemption.Globals;
 using Redemption.Items.Materials.HM;
 using Redemption.Items.Weapons.PreHM.Melee;
-using Redemption.Projectiles.Melee;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -31,15 +30,15 @@ namespace Redemption.Items.Weapons.HM.Melee
 
             // Use Properties
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 28;
-            Item.useTime = 28;
+            Item.useAnimation = 30;
+            Item.useTime = 30;
             Item.UseSound = SoundID.DD2_BetsyWindAttack;
             Item.autoReuse = true;
             Item.channel = true;
 
             // Weapon Properties
             Item.damage = 70;
-            Item.knockBack = 5;
+            Item.knockBack = 4;
             Item.noUseGraphic = true;
             Item.DamageType = DamageClass.Melee;
             Item.noMelee = true;

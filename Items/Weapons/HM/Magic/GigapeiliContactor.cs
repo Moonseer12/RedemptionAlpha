@@ -1,6 +1,4 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.BaseExtension;
 using Redemption.Globals.Players;
 using Redemption.Items.Materials.HM;
 using Redemption.Projectiles.Magic;
@@ -21,7 +19,9 @@ namespace Redemption.Items.Weapons.HM.Magic
                 "Bolts hitting the drone will reflect them with a longer range and tighter spread at the nearest enemy"); */
             Item.staff[Item.type] = true;
             Item.ResearchUnlockCount = 1;
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
         public override void SetDefaults()
         {
@@ -40,9 +40,7 @@ namespace Redemption.Items.Weapons.HM.Magic
             Item.value = Item.sellPrice(0, 8, 0, 0);
             Item.UseSound = CustomSounds.Laser1 with { Pitch = .3f };
             Item.shootSpeed = 10f;
-            Item.shoot = ModContent.ProjectileType<GigapeiliBolt>();
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
+            Item.shoot = ProjectileType<GigapeiliBolt>();
         }
         public override bool AltFunctionUse(Player player) => true;
         public override bool CanUseItem(Player player)
@@ -59,14 +57,14 @@ namespace Redemption.Items.Weapons.HM.Magic
         {
             Vector2 Offset = Vector2.Normalize(velocity) * 45f;
 
-            if (Collision.CanHit(position, 0, 0, position + Offset, 0, 0))
+            if (Collision.CanHit(position, 16, 16, position + Offset, 16, 16))
                 position += Offset;
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.altFunctionUse == 2)
             {
-                type = ModContent.ProjectileType<GigapeiliDrone>();
+                type = ProjectileType<GigapeiliDrone>();
                 if (player.ownedProjectileCounts[type] == 0)
                     Projectile.NewProjectile(source, position, velocity, type, 0, 0, player.whoAmI);
                 else
@@ -96,10 +94,10 @@ namespace Redemption.Items.Weapons.HM.Magic
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<OmegaPowerCell>())
-                .AddIngredient(ModContent.ItemType<CorruptedXenomite>(), 6)
-                .AddIngredient(ModContent.ItemType<Plating>(), 4)
-                .AddIngredient(ModContent.ItemType<AIChip>())
+                .AddIngredient(ItemType<OmegaPowerCell>())
+                .AddIngredient(ItemType<CorruptedXenomite>(), 6)
+                .AddIngredient(ItemType<Plating>(), 4)
+                .AddIngredient(ItemType<AIChip>())
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }

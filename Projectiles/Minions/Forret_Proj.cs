@@ -1,13 +1,13 @@
-using Microsoft.Xna.Framework;
 using Redemption.Base;
+using Redemption.BaseExtension;
+using Redemption.Buffs.Debuffs;
 using Redemption.Buffs.Minions;
 using Redemption.Globals;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Redemption.BaseExtension;
-using Redemption.Buffs.Debuffs;
 
 namespace Redemption.Projectiles.Minions
 {
@@ -21,6 +21,8 @@ namespace Redemption.Projectiles.Minions
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
             ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+
+            ElementID.ProjNature[Type] = true;
         }
 
         public override void SetDefaults()
@@ -39,7 +41,6 @@ namespace Redemption.Projectiles.Minions
 
         public override bool? CanCutTiles() => false;
         public override bool MinionContactDamage() => Projectile.velocity.Length() > 4;
-
         public override void AI()
         {
             Target();
@@ -84,18 +85,26 @@ namespace Redemption.Projectiles.Minions
             Projectile.localAI[0] = MathHelper.Clamp(Projectile.localAI[0], 0, 80);
             if (Projectile.localAI[0] <= 0 && BaseAI.HitTileOnSide(Projectile, 3) && RedeHelper.ClosestNPC(ref target2, 100, Projectile.Center, false, projOwner.MinionAttackTargetNPC))
             {
-                Projectile.velocity.X += target.Center.X < Projectile.Center.X ? -8 : 8;
+                Projectile.velocity.X += target.Center.X < Projectile.Center.X ? -6 : 6;
                 Projectile.velocity.Y = Main.rand.NextFloat(-3f, -5f);
                 Projectile.localAI[0] = 80;
             }
-
+            if (Projectile.extraUpdates > 0)
+            {
+                if (Projectile.localAI[1] > 240 * Projectile.MaxUpdates)
+                {
+                    Projectile.extraUpdates = 0;
+                    Projectile.localAI[1] = 0;
+                }
+                Projectile.localAI[1]++;
+            }
             if (Main.myPlayer == projOwner.whoAmI && Projectile.DistanceSQ(projOwner.Center) > 2000 * 2000)
             {
                 Projectile.position = projOwner.Center;
                 Projectile.velocity *= 0.1f;
                 Projectile.netUpdate = true;
             }
-            BaseAI.AIMinionFighter(Projectile, ref Projectile.ai, projOwner, false, 9, 6, 40, 1400, 2000, 0.1f, 6, 10, (proj, owner) => { return target == projOwner ? null : target; });
+            BaseAI.AIMinionFighter(Projectile, ref Projectile.ai, projOwner, false, 9, 6, 40, 1200, 2000, 0.1f, 6, 10, (proj, owner) => { return target == projOwner ? null : target; });
         }
 
         private Entity target;
@@ -108,17 +117,16 @@ namespace Redemption.Projectiles.Minions
             else
                 target = projOwner;
         }
-
         private bool CheckActive(Player owner)
         {
             if (owner.dead || !owner.active)
             {
-                owner.ClearBuff(ModContent.BuffType<ForretBuff>());
+                owner.ClearBuff(BuffType<ForretBuff>());
 
                 return false;
             }
 
-            if (owner.HasBuff(ModContent.BuffType<ForretBuff>()))
+            if (owner.HasBuff(BuffType<ForretBuff>()))
                 Projectile.timeLeft = 2;
 
             return true;
@@ -130,15 +138,38 @@ namespace Redemption.Projectiles.Minions
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Player player = Main.player[Projectile.owner];
-            if (player.RedemptionPlayerBuff().pureIronBonus)
-                target.AddBuff(ModContent.BuffType<PureChillDebuff>(), 300);
+            Player projOwner = Main.player[Projectile.owner];
+            if (projOwner.RedemptionPlayerBuff().pureIronBonus)
+                target.AddBuff(BuffType<PureChillDebuff>(), 300);
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             if (Projectile.penetrate == 0)
                 Projectile.Kill();
             return false;
+        }
+    }
+    public class Forret_GlobalProj : GlobalProjectile
+    {
+        public override bool InstancePerEntity => true;
+        public static int GetMinionCount() => Main.projectile.Count(p => p.active && p.type == ProjectileType<Forret_Proj>());
+        public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (ProjectileID.Sets.IsAWhip[projectile.type] && projectile.CountsAsClass(DamageClass.Summon))
+            {
+                int count = GetMinionCount();
+                if (count > 0)
+                {
+                    for (int i = 0; i < Main.maxProjectiles; i++)
+                    {
+                        Projectile proj = Main.projectile[i];
+                        if (proj.active && proj.extraUpdates == 0 && proj.type == ProjectileType<Forret_Proj>())
+                        {
+                            proj.extraUpdates = 1;
+                        }
+                    }
+                }
+            }
         }
     }
 }

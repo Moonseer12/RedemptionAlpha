@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Globals;
 using Terraria;
@@ -32,7 +31,7 @@ namespace Redemption.Projectiles.Melee
         {
             Player player = Main.player[Projectile.owner];
             Projectile.rotation += 0.05f * player.direction;
-            Projectile.Center = player.Center;
+            Projectile.Center = player.MountedCenter;
 
             for (int i = 0; i < 30; i++)
             {
@@ -52,7 +51,7 @@ namespace Redemption.Projectiles.Melee
             }
             if (Projectile.timeLeft % 3 == 0 && Projectile.owner == Main.myPlayer)
             {
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.Center, RedeHelper.PolarVector(10, Projectile.rotation * 8), ModContent.ProjectileType<Lightmass>(), Projectile.damage / 5, 0, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.Center, RedeHelper.PolarVector(10, Projectile.rotation * 8), ProjectileType<Lightmass>(), Projectile.damage / 5, 0, Projectile.owner);
             }
 
             if (Projectile.timeLeft >= 40)
@@ -69,13 +68,13 @@ namespace Redemption.Projectiles.Melee
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D flare = ModContent.Request<Texture2D>("Redemption/Textures/WhiteFlare").Value;
+            Texture2D flare = Request<Texture2D>("Redemption/Textures/WhiteFlare").Value;
             Vector2 drawOrigin = new(texture.Width / 2, texture.Height / 2);
             Vector2 flareOrigin = new(flare.Width / 2, flare.Height / 2);
             SpriteEffects effects = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, drawOrigin, Projectile.scale * 1.6f, effects, 0);
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(Color.White), -Projectile.rotation, drawOrigin, Projectile.scale * 1.6f, effects, 0);
@@ -83,7 +82,7 @@ namespace Redemption.Projectiles.Melee
             Main.EntitySpriteDraw(flare, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(Color.LightYellow) * 2f, -Projectile.rotation, flareOrigin, Projectile.scale * 1.6f, effects, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
             return false;
         }
     }

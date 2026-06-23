@@ -27,7 +27,9 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             Item.ResearchUnlockCount = 1;
             ElementID.ItemHoly[Type] = true;
             ElementID.ItemArcane[Type] = true;
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
         public override void SetDefaults()
         {
@@ -46,8 +48,6 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             Item.useTurn = false;
             Item.shoot = ProjectileType<Bindeklinge_Slash>();
             Item.rare = ItemRarityID.Blue;
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)

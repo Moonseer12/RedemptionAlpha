@@ -1,6 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Redemption.Globals;
+using Redemption.Items.Accessories.PostML;
+using Redemption.NPCs.Bosses.Obliterator;
+using System;
+using System.Windows.Markup;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -76,14 +79,14 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                             if (!Main.dedServ)
                                 SoundEngine.PlaySound(CustomSounds.MissileFire1, player.position);
 
-                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), new Vector2(player.Center.X + ((12 + side) * player.direction), player.Center.Y - 10), new Vector2(10 * player.direction, -5), ModContent.ProjectileType<BlastBattery_Missile>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.whoAmI, 1);
-                            
+                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), new Vector2(player.Center.X + ((12 + side) * player.direction), player.Center.Y - 10), new Vector2(10 * player.direction, -5), ProjectileType<BlastBattery_Missile>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.whoAmI, 1);
+
                             if (side == 0)
                                 side = -30;
                             else
                                 side = 0;
                         }
-                        if (Projectile.localAI[1] >= 60 && !RedeHelper.AnyProjectiles(ModContent.ProjectileType<BlastBattery_Missile>()))
+                        if (Projectile.localAI[1] >= 60 && !RedeHelper.AnyProjectiles(ProjectileType<BlastBattery_Missile>()))
                             Projectile.Kill();
                         break;
                 }
@@ -100,7 +103,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                     if (!Main.dedServ)
                         SoundEngine.PlaySound(CustomSounds.MissileFire1, player.position);
 
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), new Vector2(player.Center.X + ((12 + side) * player.direction), player.Center.Y - 10), new Vector2(10 * player.direction, -5), ModContent.ProjectileType<BlastBattery_Missile>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), new Vector2(player.Center.X + ((12 + side) * player.direction), player.Center.Y - 10), new Vector2(10 * player.direction, -5), ProjectileType<BlastBattery_Missile>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
                 }
             }
         }

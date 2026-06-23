@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Items.Materials.PreHM;
 using Redemption.Projectiles.Magic;
 using System.Collections.Generic;
@@ -29,9 +28,9 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.mana = 15;
             Item.width = 38;
             Item.height = 44;
+            Item.crit = 16;
             Item.useTime = 26;
             Item.useAnimation = 26;
-            Item.reuseDelay = 26;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.noUseGraphic = true;
@@ -42,18 +41,18 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.rare = ItemRarityID.Orange;
             Item.UseSound = SoundID.Item43;
             Item.shootSpeed = 8;
-            Item.shoot = ModContent.ProjectileType<IceBolt>();
+            Item.shoot = ProjectileType<IceBolt>();
         }
 
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            type = ModContent.ProjectileType<PureIronStaff_Proj>();
+            type = ProjectileType<PureIronStaff_Proj>();
         }
 
         public override void AddRecipes()
         {
             CreateRecipe()
-            .AddIngredient(ModContent.ItemType<PureIronAlloy>(), 10)
+            .AddIngredient(ItemType<PureIronAlloy>(), 10)
             .AddIngredient(ItemID.Diamond, 3)
             .AddTile(TileID.Anvils)
             .Register();

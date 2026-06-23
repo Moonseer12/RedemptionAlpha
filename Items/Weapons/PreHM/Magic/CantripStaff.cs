@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Projectiles.Magic;
 using System.Collections.Generic;
 using Terraria;
@@ -37,7 +36,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.rare = ItemRarityID.White;
             Item.UseSound = SoundID.Item20;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<CantripEmber>();
+            Item.shoot = ProjectileType<CantripEmber>();
             Item.shootSpeed = 16f;
         }
         private int CastCount;
@@ -50,7 +49,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
         {
             Vector2 Offset = Vector2.Normalize(velocity) * 25f;
 
-            if (Collision.CanHit(position, 0, 0, position + Offset, 0, 0))
+            if (Collision.CanHit(position, 16, 16, position + Offset, 16, 16))
             {
                 position += Offset;
             }
@@ -58,7 +57,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             CastCount++;
             if (CastCount >= 4)
             {
-                type = ModContent.ProjectileType<CantripEmberS>();
+                type = ProjectileType<CantripEmberS>();
                 damage *= 2;
                 knockback += 5;
                 CastCount = 0;

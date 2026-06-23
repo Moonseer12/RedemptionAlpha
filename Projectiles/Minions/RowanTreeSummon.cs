@@ -1,7 +1,9 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Redemption.Base;
+using Redemption.BaseExtension;
 using Redemption.Buffs;
 using Redemption.Globals;
+using Redemption.Textures;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -31,6 +33,7 @@ namespace Redemption.Projectiles.Minions
             Projectile.ignoreWater = true;
             Projectile.DamageType = DamageClass.Summon;
             Projectile.penetrate = -1;
+            Projectile.Redemption().auraSentry = true;
         }
 
         public override bool? CanDamage() => false;
@@ -49,10 +52,10 @@ namespace Redemption.Projectiles.Minions
                 if (!player.active || player.dead || Projectile.DistanceSQ(player.Center) > 460 * 460)
                     continue;
 
-                player.AddBuff(ModContent.BuffType<RowanAuraBuff>(), 4);
+                player.AddBuff(BuffType<RowanAuraBuff>(), 4);
             }
-            if (Projectile.localAI[0]++ % 40 == 0)
-                RedeDraw.SpawnCirclePulse(Projectile.Center, Color.Lime, 1.4f, Projectile);
+            if (Projectile.localAI[0]++ >= 40)
+                Projectile.localAI[0] = 0;
         }
         public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
         {
@@ -73,10 +76,23 @@ namespace Redemption.Projectiles.Minions
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawOrigin = new(texture.Width / 2, Projectile.height / 2);
-
-            RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, texture, ref drawTimer, Projectile.Center - Main.screenPosition, null, Color.Lime * Projectile.Opacity, Projectile.rotation, drawOrigin, Projectile.scale, 0);
+            DrawPulse();
+            RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, texture, ref drawTimer, Projectile.Center - Main.screenPosition, null, Color.Lime * Projectile.Opacity, Projectile.rotation, drawOrigin, Projectile.scale);
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, lightColor * Projectile.Opacity, Projectile.rotation, drawOrigin, Projectile.scale, 0, 0);
             return false;
+        }
+        public void DrawPulse()
+        {
+            Texture2D texture = Request<Texture2D>("Redemption/Textures/DreamsongLight_Visual").Value;
+            Vector2 drawOrigin = new(texture.Width / 2, texture.Height / 2);
+            Color c = Color.Lime * BaseUtility.MultiLerp(Projectile.localAI[0] / 40f, 0, 1, 0);
+            float scale = Projectile.scale * BaseUtility.MultiLerp(Projectile.localAI[0] / 40f, 1, 1.25f);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.BeginAdditive();
+            Main.EntitySpriteDraw(texture, Projectile.Center - Vector2.UnitY * 0 - Main.screenPosition, null, c, Projectile.rotation, drawOrigin, scale, 0, 0);
+            Main.spriteBatch.End();
+            Main.spriteBatch.BeginDefault();
         }
     }
 }

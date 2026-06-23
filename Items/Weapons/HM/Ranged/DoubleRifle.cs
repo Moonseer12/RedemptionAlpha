@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Globals;
 using Terraria;
 using Terraria.DataStructures;
@@ -13,7 +12,8 @@ namespace Redemption.Items.Weapons.HM.Ranged
         {
             // DisplayName.SetDefault("Double Rifle");
             /* Tooltip.SetDefault("Converts normal bullets into high velocity bullets\n" +
-                "33% chance not to consume ammo"); */
+                "33% chance not to consume ammo");
+            "\n'From Intrusion, with love'" */
             Item.ResearchUnlockCount = 1;
         }
 
@@ -22,7 +22,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Item.damage = 32;
             Item.DamageType = DamageClass.Ranged;
             Item.width = 56;
-            Item.height = 28;
+            Item.height = 26;
             Item.useTime = 19;
             Item.useAnimation = 19;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -33,8 +33,13 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Item.UseSound = SoundID.Item36;
             Item.autoReuse = true;
             Item.shoot = ProjectileID.PurificationPowder;
-            Item.shootSpeed = 90;
+            Item.shootSpeed = 10;
             Item.useAmmo = AmmoID.Bullet;
+        }
+        public override bool ReforgePrice(ref int reforgePrice, ref bool canApplyDiscount)
+        {
+            reforgePrice = Item.value / 2;
+            return true;
         }
         public override bool CanConsumeAmmo(Item ammo, Player player)
         {

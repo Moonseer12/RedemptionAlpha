@@ -1,7 +1,7 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Base;
 using Redemption.BaseExtension;
+using Redemption.Globals.Players;
 using Redemption.Projectiles.Minions;
 using Terraria;
 using Terraria.DataStructures;
@@ -22,7 +22,9 @@ namespace Redemption.Items.Weapons.HM.Summon
 
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true;
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
         public override void SetDefaults()
         {
@@ -38,10 +40,7 @@ namespace Redemption.Items.Weapons.HM.Summon
             Item.rare = ItemRarityID.Lime;
             Item.UseSound = SoundID.DD2_DefenseTowerSpawn;
             Item.autoReuse = false;
-            Item.shoot = ModContent.ProjectileType<GolemGuardian>();
-            Item.mana = 28;
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
+            Item.shoot = ProjectileType<GolemGuardian>();
         }
         public override bool AltFunctionUse(Player player) => true;
         public override bool CanUseItem(Player player)
@@ -59,17 +58,16 @@ namespace Redemption.Items.Weapons.HM.Summon
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if (player.altFunctionUse == 2)
+            foreach (Projectile proj in Main.ActiveProjectiles)
             {
-                for (int i = 0; i < Main.maxProjectiles; i++)
-                {
-                    Projectile proj = Main.projectile[i];
-                    if (!proj.active || proj.type != type || proj.owner != player.whoAmI)
-                        continue;
-                    proj.timeLeft = 2;
-                }
-                return false;
+                if (!proj.Redemption().auraSentry || proj.owner != player.whoAmI)
+                    continue;
+                proj.timeLeft = 2;
             }
+
+            if (player.altFunctionUse == 2)
+                return false;
+
             var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer, player.direction);
             projectile.originalDamage = Item.damage;
             player.UpdateMaxTurrets();

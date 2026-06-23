@@ -165,7 +165,7 @@ namespace Redemption.Projectiles.Magic
                 Projectile.localAI[0]++;
                 bool hitEffect = Projectile.localAI[0] % 30f == 0f;
                 int projTargetIndex = (int)TargetWhoAmI;
-                if (projTargetIndex < 0 || projTargetIndex >= 200 || Projectile.localAI[1] is 1)
+                if (projTargetIndex < 0 || projTargetIndex >= 200 || Projectile.ai[2] is 1)
                     killProj = true;
                 else if (Main.npc[projTargetIndex].active && !Main.npc[projTargetIndex].dontTakeDamage)
                 {
@@ -179,7 +179,7 @@ namespace Redemption.Projectiles.Magic
 
                 if (killProj)
                 {
-                    if (Main.myPlayer == Projectile.owner && Projectile.localAI[1] is 1)
+                    if (Main.myPlayer == Projectile.owner && Projectile.ai[2] is 1)
                     {
                         BaseAI.DamageNPC(Main.npc[projTargetIndex], Projectile.damage, Projectile.knockBack, Projectile, crit: RedeHelper.HeldItemCrit(Projectile));
                         int spread = 8;

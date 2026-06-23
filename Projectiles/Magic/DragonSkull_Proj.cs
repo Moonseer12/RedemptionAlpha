@@ -5,6 +5,7 @@ using Redemption.Globals;
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -30,6 +31,14 @@ namespace Redemption.Projectiles.Magic
             Projectile.tileCollide = false;
         }
 
+        private int maxTime;
+        private float speedBonus;
+        public override void OnSpawn(IEntitySource source)
+        {
+            Player player = Main.player[Projectile.owner];
+            maxTime = (int)(player.HeldItem.useTime / player.GetAttackSpeed(DamageClass.Magic));
+            speedBonus = 30f / maxTime;
+        }
         private bool faceLeft;
         private float jawRot;
         public override void AI()
@@ -42,25 +51,28 @@ namespace Redemption.Projectiles.Magic
             player.itemTime = 2;
             player.itemAnimation = 2;
 
-            if (player.channel && Projectile.ai[1] == 0 && Main.myPlayer == Projectile.owner)
+            if (player.channel && Projectile.ai[1] == 0)
             {
-                if (Main.MouseWorld.X > Projectile.Center.X)
+                if (Main.myPlayer == Projectile.owner)
                 {
-                    if (faceLeft)
+                    if (Main.MouseWorld.X > Projectile.Center.X)
                     {
-                        Projectile.rotation -= MathHelper.Pi;
-                        faceLeft = false;
+                        if (faceLeft)
+                        {
+                            Projectile.rotation -= MathHelper.Pi;
+                            faceLeft = false;
+                        }
+                        Projectile.spriteDirection = 1;
                     }
-                    Projectile.spriteDirection = 1;
-                }
-                else
-                {
-                    if (!faceLeft)
+                    else
                     {
-                        Projectile.rotation += MathHelper.Pi;
-                        faceLeft = true;
+                        if (!faceLeft)
+                        {
+                            Projectile.rotation += MathHelper.Pi;
+                            faceLeft = true;
+                        }
+                        Projectile.spriteDirection = -1;
                     }
-                    Projectile.spriteDirection = -1;
                 }
                 int mana = player.inventory[player.selectedItem].mana;
                 if (Main.myPlayer == Projectile.owner)
@@ -79,26 +91,27 @@ namespace Redemption.Projectiles.Magic
                 {
                     jawRot += 0.03f;
                 }
-                if (Projectile.ai[0] == 40)
+                if (Projectile.ai[0] == maxTime)
                 {
                     SoundEngine.PlaySound(CustomSounds.FlameRise2, Projectile.position);
                     SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, Projectile.position);
                 }
-                if (Projectile.ai[0] >= 40 && Projectile.ai[0] % 3 == 0 && Projectile.ai[0] <= 180)
-                {
+                if (Projectile.ai[0] >= maxTime && Projectile.ai[0] % 3 == 0 && Projectile.ai[0] <= 180 && Main.myPlayer == Projectile.owner)
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + RedeHelper.PolarVector(6, Projectile.rotation + MathHelper.PiOver2), RedeHelper.PolarVector(5, Projectile.rotation + (Projectile.spriteDirection == -1 ? (float)Math.PI : 0)), ProjectileType<DragonSkullFlames_Proj>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-                }
 
-                if (Projectile.ai[0] == 180)
+                if (Projectile.ai[0] == maxTime * 6)
                 {
+                    jawRot += 0.15f;
                     if (BasePlayer.ReduceMana(player, mana * 2))
                     {
                         player.RedemptionScreen().ScreenShakeIntensity += 6;
-                        DustHelper.DrawCircle(Projectile.Center, DustID.Torch, 2, 4, 4, 1, 2, nogravity: true);
                         SoundEngine.PlaySound(SoundID.Item122, Projectile.position);
-                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + RedeHelper.PolarVector(6, Projectile.rotation + MathHelper.PiOver2),
-                            RedeHelper.PolarVector(0, Projectile.rotation + (Projectile.spriteDirection == -1 ? (float)Math.PI : 0)), ProjectileType<HeatRay>(),
-                            Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
+                        DustHelper.DrawCircle(Projectile.Center, DustID.Torch, 2, 4, 4, 1, 2, nogravity: true);
+                        if (Main.myPlayer == Projectile.owner)
+                        {
+                            Vector2 pos = Projectile.Center + RedeHelper.PolarVector(6, Projectile.rotation + MathHelper.PiOver2);
+                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), pos, Vector2.Zero, ProjectileType<HeatRay>(),Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
+                        }
                     }
                     else
                         Projectile.ai[1] = 1;

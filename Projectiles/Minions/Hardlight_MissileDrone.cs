@@ -1,13 +1,12 @@
-using Terraria;
-using System;
-using Terraria.ID;
-using Microsoft.Xna.Framework;
-using Terraria.ModLoader;
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.Globals;
-using Terraria.Audio;
 using Redemption.Base;
+using Redemption.Globals;
+using System;
+using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Minions
 {
@@ -76,7 +75,7 @@ namespace Redemption.Projectiles.Minions
                 if (getNPC != -1 && Projectile.localAI[0] % 30 == 0 && Projectile.owner == Main.myPlayer)
                 {
                     SoundEngine.PlaySound(SoundID.Item74, Projectile.position);
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.PolarVector(10, (Main.npc[getNPC].Center - Projectile.Center).ToRotation() + Main.rand.NextFloat(0.2f, 0.2f)), ModContent.ProjectileType<Hardlight_SlayerMissile>(), 242, 4, player.whoAmI, Projectile.whoAmI);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.PolarVector(10, (Main.npc[getNPC].Center - Projectile.Center).ToRotation() + Main.rand.NextFloat(0.2f, 0.2f)), ProjectileType<Hardlight_SlayerMissile>(), 242, 4, player.whoAmI, Projectile.whoAmI);
                     shotCount++;
                 }
             }
@@ -95,7 +94,7 @@ namespace Redemption.Projectiles.Minions
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glowMask = ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "_Glow").Value;
+            Texture2D glowMask = Request<Texture2D>(Texture + "_Glow").Value;
             int height = texture.Height / 4;
             int y = height * Projectile.frame;
             Rectangle rect = new(0, y, texture.Width, height);
@@ -184,7 +183,7 @@ namespace Redemption.Projectiles.Minions
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glow = ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "_Glow").Value;
+            Texture2D glow = Request<Texture2D>(Texture + "_Glow").Value;
             var effects = Projectile.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             int height = texture.Height / 2;
             int y = height * Projectile.frame;

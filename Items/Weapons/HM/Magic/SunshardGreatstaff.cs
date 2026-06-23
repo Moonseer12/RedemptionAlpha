@@ -1,15 +1,14 @@
-using Terraria;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Terraria.ID;
-using Terraria.Localization;
-using Terraria.DataStructures;
-using System.Collections.Generic;
-using Redemption.Projectiles.Magic;
-using Redemption.Globals;
-using Terraria.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Base;
+using Redemption.Globals;
+using Redemption.Projectiles.Magic;
+using System.Collections.Generic;
+using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.HM.Magic
 {
@@ -43,7 +42,7 @@ namespace Redemption.Items.Weapons.HM.Magic
             Item.value = Item.sellPrice(0, 7, 50, 0);
             Item.UseSound = SoundID.Item125;
             Item.shootSpeed = 16f;
-            Item.shoot = ModContent.ProjectileType<Sunshard>();
+            Item.shoot = ProjectileType<Sunshard>();
 
         }
         private int CastCount;
@@ -54,6 +53,7 @@ namespace Redemption.Items.Weapons.HM.Magic
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
+            Item.noUseGraphic = false;
             float numberProjectiles = 5;
             float rotation = MathHelper.ToRadians(20);
             for (int i = 0; i < numberProjectiles; i++)
@@ -65,11 +65,12 @@ namespace Redemption.Items.Weapons.HM.Magic
             CastCount++;
             if (CastCount >= 3)
             {
+                Item.noUseGraphic = true;
                 SoundEngine.PlaySound(SoundID.Item122, player.position);
                 RedeDraw.SpawnRing(position, new Color(255, 255, 120), 0.12f, 0.86f, 4);
                 RedeDraw.SpawnRing(position, new Color(255, 255, 120), 0.14f, 0.83f, 3);
                 RedeDraw.SpawnRing(position, new Color(255, 255, 120), 0.16f);
-                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<SunshardRay>(), damage, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position, velocity, ProjectileType<SunshardRay>(), damage, knockback, player.whoAmI, Item.useTime);
                 CastCount = 0;
             }
             return false;
@@ -120,18 +121,18 @@ namespace Redemption.Items.Weapons.HM.Magic
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
-            Texture2D glow = ModContent.Request<Texture2D>("Redemption/Textures/WhiteFlare").Value;
+            Texture2D glow = Request<Texture2D>("Redemption/Textures/WhiteFlare").Value;
             Color color = BaseUtility.MultiLerpColor(Main.LocalPlayer.miscCounter % 100 / 100f, new Color(211, 232, 169), new Color(247, 247, 169), new Color(211, 232, 169));
             Vector2 origin = new(glow.Width / 2, glow.Height / 2);
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.BeginAdditive();
 
             spriteBatch.Draw(glow, Item.Center - Main.screenPosition - new Vector2(-14f, 16f), new Rectangle(0, 0, glow.Width, glow.Height), color, glowRot, origin, scale, SpriteEffects.None, 0f);
             spriteBatch.Draw(glow, Item.Center - Main.screenPosition - new Vector2(-14f, 16f), new Rectangle(0, 0, glow.Width, glow.Height), color, -glowRot, origin, scale, SpriteEffects.None, 0f);
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.BeginDefault();
             return true;
         }
     }

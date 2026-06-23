@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Projectiles.Magic;
 using System.Collections.Generic;
 using Terraria;
@@ -13,11 +12,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Bronze Wand");
-            /* Tooltip.SetDefault("Casts two unstable zig-zagging water orbs" +
-                "\nWater orbs home in on enemies after 6 consecutive shots"); */
             Item.staff[Item.type] = true;
-
             Item.ResearchUnlockCount = 1;
         }
 
@@ -38,7 +33,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.rare = ItemRarityID.Green;
             Item.UseSound = SoundID.Item21;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<WaterOrb>();
+            Item.shoot = ProjectileType<WaterOrb>();
             Item.shootSpeed = 8f;
         }
 
@@ -58,14 +53,12 @@ namespace Redemption.Items.Weapons.PreHM.Magic
         {
             Vector2 Offset = Vector2.Normalize(velocity) * 35f;
 
-            if (Collision.CanHit(position, 0, 0, position + Offset, 0, 0))
-            {
+            if (Collision.CanHit(position, 16, 16, position + Offset, 16, 16))
                 position += Offset;
-            }
 
             CastCount++;
             if (CastCount >= 6)
-                type = ModContent.ProjectileType<WaterOrbS>();
+                type = ProjectileType<WaterOrbS>();
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)

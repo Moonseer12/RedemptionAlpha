@@ -1,6 +1,5 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.BaseExtension;
+using Redemption.Globals.Players;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,17 +7,19 @@ using Terraria.ModLoader;
 namespace Redemption.Items.Weapons.HM.Ranged
 {
     public class DAN : ModItem
-	{
-		public override void SetStaticDefaults()
-		{
+    {
+        public override void SetStaticDefaults()
+        {
             // DisplayName.SetDefault("D.A.N");
             /* Tooltip.SetDefault("Fires two blasts of bullets per use\n" +
                 "Continuing to hold left-click will spin the weapon while firing, creating a spiral of bullets\n" +
                 "\n(15[i:" + ModContent.ItemType<EnergyPack>() + "]) Continuing to hold left-click while aiming downwards will charge a purple beam that'll cause eruptions on impact\n" +
-                "66% chance to not consume ammo, 90% chance during the bullet spiral"); */
+                "66% chance to not consume ammo, 90% chance during the bullet spiral");
+                "'From Intrusion, with love'"); */
             ItemID.Sets.SkipsInitialUseSound[Item.type] = true;
-            Item.ResearchUnlockCount = 1;
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
         public override void SetDefaults()
         {
@@ -26,8 +27,8 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Item.DamageType = DamageClass.Ranged;
             Item.width = 110;
             Item.height = 44;
-            Item.useTime = 50;
-            Item.useAnimation = 50;
+            Item.useTime = 20;
+            Item.useAnimation = 20;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.noUseGraphic = true;
@@ -40,13 +41,16 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Item.shoot = ProjectileID.PurificationPowder;
             Item.shootSpeed = 10;
             Item.useAmmo = AmmoID.Bullet;
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
+        }
+        public override bool ReforgePrice(ref int reforgePrice, ref bool canApplyDiscount)
+        {
+            reforgePrice = Item.value / 2;
+            return true;
         }
         public override bool CanConsumeAmmo(Item ammo, Player player) => player.ItemUsesThisAnimation != 0;
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            type = ModContent.ProjectileType<DAN_Proj>();
+            type = ProjectileType<DAN_Proj>();
         }
     }
 }

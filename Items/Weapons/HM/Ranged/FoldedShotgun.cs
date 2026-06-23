@@ -69,8 +69,8 @@ namespace Redemption.Items.Weapons.HM.Ranged
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter, true);
-            RedeProjectile.HoldOutProjBasics(Projectile, player, vector);
+            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter);
+            ProjHelper.HoldOutProjBasics(Projectile, player, vector);
             Projectile.timeLeft = 2;
             player.ChangeDir(Projectile.direction);
             player.heldProj = Projectile.whoAmI;
@@ -84,15 +84,13 @@ namespace Redemption.Items.Weapons.HM.Ranged
             offset -= 5;
             rotOffset += 0.04f;
 
-            float shootingSpeed = 1 / player.GetAttackSpeed(DamageClass.Ranged);
-
             if (Projectile.localAI[0]++ > 0 && Main.myPlayer == Projectile.owner)
             {
-                if (!player.channel && Projectile.localAI[1] >= (int)(player.inventory[player.selectedItem].useTime * shootingSpeed))
+                if (!player.channel && Projectile.localAI[1] >= (int)(player.HeldItem.useTime / player.GetAttackSpeed(DamageClass.Ranged)))
                     Projectile.Kill();
                 else
                 {
-                    if (Projectile.localAI[1]++ % (int)(player.inventory[player.selectedItem].useTime * shootingSpeed) == 0)
+                    if (Projectile.localAI[1]++ % (int)(player.HeldItem.useTime / player.GetAttackSpeed(DamageClass.Ranged)) == 0)
                     {
                         if (player.PickAmmo(player.HeldItem, out bullet, out float shootSpeed, out int weaponDamage, out float weaponKnockback, out int usedAmmoId))
                         {

@@ -1,10 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Redemption.Base;
 using Redemption.BaseExtension;
 using Redemption.Buffs.NPCBuffs;
 using Redemption.Globals;
-using Redemption.Particles;
 using ReLogic.Utilities;
 using System.Collections.Generic;
 using Terraria;
@@ -49,97 +47,94 @@ namespace Redemption.Items.Weapons.PostML.Magic
             Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter, true);
             Vector2 coilPos = Projectile.Center + new Vector2(3 * Projectile.spriteDirection, -36);
 
-            if (Projectile.owner == Main.myPlayer)
+            switch (Projectile.ai[0])
             {
-                switch (Projectile.ai[0])
-                {
-                    case 0:
-                        if (Projectile.localAI[0]++ % 3 == 0)
+                case 0:
+                    if (Projectile.localAI[0]++ % 3 == 0)
+                    {
+                        if (BasePlayer.ReduceMana(player, 3))
                         {
-                            if (BasePlayer.ReduceMana(player, 3))
+                            if (sound == null && !Main.dedServ)
+                                loop = SoundEngine.PlaySound(CustomSounds.ElectricLoop, Projectile.position);
+                            for (int k = 0; k < Main.rand.Next(2, 4); k++)
                             {
-                                if (sound == null && !Main.dedServ)
-                                    loop = SoundEngine.PlaySound(CustomSounds.ElectricLoop, Projectile.position);
-                                for (int k = 0; k < Main.rand.Next(2, 4); k++)
+                                Vector2 lightningArc = coilPos + RedeHelper.PolarVector(Main.rand.Next(40, 71), -MathHelper.Pi + Main.rand.NextFloat(0, MathHelper.Pi));
+                                DustHelper.DrawParticleElectricity(lightningArc, coilPos, 1f, 20, 0.05f);
+                                int side = -1;
+                                if (lightningArc.X > coilPos.X)
+                                    side = 1;
+                                Vector2 lightningArc2 = Projectile.Center + new Vector2(Main.rand.Next(0, 261) * side, Main.rand.Next(24, 45));
+                                if (Projectile.ai[1] == 0)
                                 {
-                                    Vector2 lightningArc = coilPos + RedeHelper.PolarVector(Main.rand.Next(40, 71), -MathHelper.Pi + Main.rand.NextFloat(0, MathHelper.Pi));
-                                    DustHelper.DrawParticleElectricity(lightningArc, coilPos, 1f, 20, 0.05f);
-                                    int side = -1;
-                                    if (lightningArc.X > coilPos.X)
-                                        side = 1;
-                                    Vector2 lightningArc2 = Projectile.Center + new Vector2(Main.rand.Next(0, 261) * side, Main.rand.Next(24, 45));
-                                    if (Projectile.ai[1] == 0)
-                                    {
-                                        targets.Clear();
-                                        int target = -1;
-                                        for (int i = 0; i < Main.maxNPCs; i++)
-                                        {
-                                            NPC npc = Main.npc[i];
-                                            if (!npc.active || npc.friendly || npc.dontTakeDamage)
-                                                continue;
-
-                                            if (npc.DistanceSQ(player.Center) > 400 * 400)
-                                                continue;
-
-                                            targets.Add(npc.whoAmI);
-                                            int[] targetsArr = targets.ToArray();
-                                            target = Utils.Next(Main.rand, targetsArr);
-                                        }
-                                        if (target != -1 && Main.rand.NextBool(3))
-                                            lightningArc2 = Main.npc[target].Center;
-                                    }
-                                    else
-                                    {
-                                        if (RedeHelper.ClosestNPC(ref target2, 80, Main.MouseWorld, true))
-                                            lightningArc2 = target2.Center;
-                                        else
-                                            lightningArc2 = Main.MouseWorld;
-                                    }
-                                    float lagReduce = 0.05f;
-                                    if (lightningArc.DistanceSQ(lightningArc2) > 400 * 400)
-                                        lagReduce = 0.2f;
-                                    DustHelper.DrawParticleElectricity(lightningArc, lightningArc2, 1f, 20, 0.05f);
+                                    targets.Clear();
+                                    int target = -1;
                                     for (int i = 0; i < Main.maxNPCs; i++)
                                     {
                                         NPC npc = Main.npc[i];
                                         if (!npc.active || npc.friendly || npc.dontTakeDamage)
                                             continue;
 
-                                        if (target2 != null)
-                                        {
-                                            int whoAmI = target2.whoAmI;
-                                            if (whoAmI != -1)
-                                            {
-                                                if (Projectile.ai[1] == 1)
-                                                {
-                                                    if (npc.whoAmI != whoAmI || !Main.rand.NextBool(2))
-                                                        continue;
-                                                }
-                                            }
-                                        }
-
-                                        if (npc.DistanceSQ(lightningArc2) > 60 * 60)
+                                        if (npc.DistanceSQ(player.Center) > 400 * 400)
                                             continue;
 
-                                        int hitDirection = npc.RightOfDir(Projectile);
-                                        BaseAI.DamageNPC(npc, Projectile.damage, Projectile.knockBack, hitDirection, Projectile, crit: Projectile.HeldItemCrit());
+                                        targets.Add(npc.whoAmI);
+                                        int[] targetsArr = targets.ToArray();
+                                        target = Utils.Next(Main.rand, targetsArr);
+                                    }
+                                    if (target != -1 && Main.rand.NextBool(3))
+                                        lightningArc2 = Main.npc[target].Center;
+                                }
+                                else
+                                {
+                                    if (Projectile.owner == Main.myPlayer)
+                                    {
+                                        if (RedeHelper.ClosestNPC(ref target2, 80, Main.MouseWorld, true))
+                                            lightningArc2 = target2.Center;
+                                        else
+                                            lightningArc2 = Main.MouseWorld;
                                     }
                                 }
-                                glow += Main.rand.Next(-5, 6);
-                                glow = (int)MathHelper.Clamp(glow, 0, 20);
-                            }
-                            else
-                            {
-                                if (sound != null)
+                                DustHelper.DrawParticleElectricity(lightningArc, lightningArc2, 1f, 20, 0.05f);
+                                for (int i = 0; i < Main.maxNPCs; i++)
                                 {
-                                    sound.Stop();
-                                    loop = SlotId.Invalid;
+                                    NPC npc = Main.npc[i];
+                                    if (!npc.active || npc.friendly || npc.dontTakeDamage)
+                                        continue;
+
+                                    if (target2 != null)
+                                    {
+                                        int whoAmI = target2.whoAmI;
+                                        if (whoAmI != -1)
+                                        {
+                                            if (Projectile.ai[1] == 1)
+                                            {
+                                                if (npc.whoAmI != whoAmI || !Main.rand.NextBool(2))
+                                                    continue;
+                                            }
+                                        }
+                                    }
+
+                                    if (npc.DistanceSQ(lightningArc2) > 60 * 60)
+                                        continue;
+
+                                    int hitDirection = npc.RightOfDir(Projectile);
+                                    BaseAI.DamageNPC(npc, Projectile.damage, Projectile.knockBack, hitDirection, Projectile, crit: Projectile.HeldItemCrit());
                                 }
-                                glow = 0;
                             }
+                            glow += Main.rand.Next(-5, 6);
+                            glow = (int)MathHelper.Clamp(glow, 0, 20);
                         }
-                        break;
-                }
+                        else
+                        {
+                            if (sound != null)
+                            {
+                                sound.Stop();
+                                loop = SlotId.Invalid;
+                            }
+                            glow = 0;
+                        }
+                    }
+                    break;
             }
             SoundEngine.TryGetActiveSound(loop, out sound);
             if (sound != null)
@@ -162,7 +157,7 @@ namespace Redemption.Items.Weapons.PostML.Magic
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 180);
+            target.AddBuff(BuffType<ElectrifiedDebuff>(), 180);
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
@@ -183,7 +178,7 @@ namespace Redemption.Items.Weapons.PostML.Magic
             Main.spriteBatch.End();
             Main.spriteBatch.BeginAdditive();
 
-            Texture2D flare = ModContent.Request<Texture2D>("Redemption/Textures/Star").Value;
+            Texture2D flare = Request<Texture2D>("Redemption/Textures/Star").Value;
             Rectangle rect = new(0, 0, flare.Width, flare.Height);
             Vector2 origin = new(flare.Width / 2, flare.Height / 2);
             Vector2 position = Projectile.Center + new Vector2(3 * Projectile.spriteDirection, -36) - Main.screenPosition;

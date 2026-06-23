@@ -176,7 +176,7 @@ namespace Redemption.Items.Weapons.HM.Melee
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            RedeProjectile.Decapitation(target, ref damageDone, ref hit.Crit);
+            ProjHelper.Decapitation(target, ref damageDone, ref hit.Crit);
         }
         private float drawTimer;
         public override bool PreDraw(ref Color lightColor)

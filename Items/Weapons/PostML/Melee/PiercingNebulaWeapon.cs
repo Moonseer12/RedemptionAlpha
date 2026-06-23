@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.BaseExtension;
 using Redemption.Globals.Players;
 using Redemption.Items.Materials.PostML;
 using Redemption.Rarities;
@@ -18,11 +17,13 @@ namespace Redemption.Items.Weapons.PostML.Melee
             /* Tooltip.SetDefault("Deals more damage the closer you are to the target\n" +
                 "'Penetrates through even the fabric of space'"); */
             ItemID.Sets.SkipsInitialUseSound[Item.type] = true;
+            RedeGlowmask.AddGlowMask(Type, Texture);
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, TextureAssets.Item[Type].Value, rotation, scale);
 
         public override void SetDefaults()
         {
-            Item.damage = 444;
+            Item.damage = 333;
             Item.DamageType = DamageClass.Melee;
             Item.width = 82;
             Item.height = 82;
@@ -38,8 +39,6 @@ namespace Redemption.Items.Weapons.PostML.Melee
             Item.shoot = ProjectileType<PNebula1_Friendly>();
             Item.shootSpeed = 9f;
             Item.rare = RarityType<CosmicRarity>();
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture).Value;
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {

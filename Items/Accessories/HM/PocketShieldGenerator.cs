@@ -1,10 +1,9 @@
-﻿using Terraria.Audio;
+﻿using Redemption.Globals.Players;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Redemption.Globals.Players;
-using Microsoft.Xna.Framework;
 
 namespace Redemption.Items.Accessories.HM
 {
@@ -47,13 +46,13 @@ namespace Redemption.Items.Accessories.HM
             EnergyPlayer eP = player.GetModPlayer<EnergyPlayer>();
             if (bP.shieldGeneratorCD <= 0)
             {
-                if (bP.shieldGeneratorAlpha <= 0)
+                if (bP.shieldGeneratorAlpha <= 0 && !Main.dedServ)
                     SoundEngine.PlaySound(CustomSounds.ShieldActivate, player.position);
                 if (bP.shieldGeneratorAlpha < 0.6f)
                     bP.shieldGeneratorAlpha += 0.04f;
                 bP.shieldGenerator = true;
 
-                if (eP.energyMax > 0 && eP.statEnergy >= (int)(eP.energyMax * 0.01f) && bP.shieldGeneratorLife < 200)
+                if (eP.energyMax > 0 && eP.statEnergy >= (int)(eP.energyMax * 0.01f) && bP.shieldGeneratorLife < 250)
                 {
                     eP.stopEnergyRegen = true;
                     if (timer % 60 == 0)
@@ -67,6 +66,15 @@ namespace Redemption.Items.Accessories.HM
             {
                 bP.shieldGeneratorAlpha = 0;
                 bP.shieldGeneratorCD--;
+                if (eP.energyMax > 0 && eP.statEnergy >= (int)(eP.energyMax * 0.01f))
+                {
+                    eP.stopEnergyRegen = true;
+                    if (timer % 60 == 0)
+                    {
+                        eP.statEnergy -= (int)(eP.energyMax * 0.01f);
+                        bP.shieldGeneratorCD += -60;
+                    }
+                }
             }
         }
     }

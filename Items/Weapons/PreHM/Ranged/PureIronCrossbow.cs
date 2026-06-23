@@ -1,5 +1,5 @@
-using Microsoft.Xna.Framework;
 using Redemption.Globals;
+using Redemption.Items.Weapons.PreHM.Melee;
 using Redemption.Projectiles.Ranged;
 using Terraria;
 using Terraria.ID;
@@ -40,8 +40,8 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
             Item.noMelee = true;
 
             // Projectile Properties
-            Item.shootSpeed = 14f;
-            Item.shoot = ModContent.ProjectileType<FrigidBolt>();
+            Item.shootSpeed = 7;
+            Item.shoot = ProjectileType<FrigidBolt>();
             Item.useAmmo = AmmoID.Arrow;
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)

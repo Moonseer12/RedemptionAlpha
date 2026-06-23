@@ -1,13 +1,11 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.IO;
-using Terraria;
-using Terraria.ModLoader;
-using Terraria.GameContent;
 using Redemption.Base;
-using Terraria.Audio;
-using Terraria.ID;
 using Redemption.BaseExtension;
+using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Minions
 {
@@ -74,7 +72,7 @@ namespace Redemption.Projectiles.Minions
             }
 
             Projectile proj = Main.projectile[(int)Projectile.ai[0]];
-            if (!proj.active || proj.type != ModContent.ProjectileType<Hardlight_Magnet>())
+            if (!proj.active || proj.type != ProjectileType<Hardlight_Magnet>())
                 Projectile.Kill();
 
             Projectile.Center = proj.Center;
@@ -158,12 +156,12 @@ namespace Redemption.Projectiles.Minions
         public override bool PreDraw(ref Color lightColor)
         {
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
             DrawLaser(TextureAssets.Projectile[Projectile.type].Value, Projectile.Center + (new Vector2(Projectile.width, 0).RotatedBy(Projectile.rotation) * LaserScale), new Vector2(1f, 0).RotatedBy(Projectile.rotation) * LaserScale, -1.57f, LaserScale, LaserLength, Projectile.GetAlpha(Color.White), (int)FirstSegmentDrawDist);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
             return false;
         }
         #endregion
@@ -183,29 +181,6 @@ namespace Redemption.Projectiles.Minions
             {
                 return false;
             }
-        }
-        #endregion
-
-        #region MP Sync
-        public override void SendExtraAI(BinaryWriter writer)
-        {
-            writer.Write(LaserLength);
-            writer.Write(LaserScale);
-            writer.Write(LaserSegmentLength);
-            writer.Write(LaserEndSegmentLength);
-            writer.Write(LaserWidth);
-            writer.Write(MaxLaserLength);
-            writer.Write(StopsOnTiles);
-        }
-        public override void ReceiveExtraAI(BinaryReader reader)
-        {
-            LaserLength = reader.ReadSingle();
-            LaserScale = reader.ReadSingle();
-            LaserSegmentLength = reader.ReadInt32();
-            LaserEndSegmentLength = reader.ReadInt32();
-            LaserWidth = reader.ReadInt32();
-            MaxLaserLength = reader.ReadInt32();
-            StopsOnTiles = reader.ReadBoolean();
         }
         #endregion
     }

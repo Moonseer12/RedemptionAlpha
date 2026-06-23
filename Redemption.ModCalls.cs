@@ -349,7 +349,7 @@ namespace Redemption
                                 throw new Exception($"Expected an argument of type int when setting chance, but got type {args[4].GetType().Name} instead.");
                         }
 
-                        return RedeProjectile.Decapitation(target, ref damageDone, ref crit, c);
+                        return ProjHelper.Decapitation(target, ref damageDone, ref crit, c);
                     case "setSlashBonus":
                         if (args[1] is not Item slashItem)
                             throw new Exception($"Expected an argument of type Item when setting item to get the bonus, but got type {args[1].GetType().Name} instead.");

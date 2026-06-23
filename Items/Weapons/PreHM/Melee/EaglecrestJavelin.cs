@@ -18,7 +18,6 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             ElementID.ItemEarth[Type] = true;
             ElementID.ItemThunder[Type] = true;
         }
-
         public override void SetDefaults()
         {
             // Common Properties
@@ -35,7 +34,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             Item.autoReuse = true;
 
             // Weapon Properties
-            Item.damage = 24;
+            Item.damage = 26;
             Item.knockBack = 6;
             Item.noUseGraphic = true;
             Item.DamageType = DamageClass.Melee;
@@ -44,11 +43,12 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             Item.channel = true;
 
             // Projectile Properties
-            Item.shootSpeed = 0f;
+            Item.shootSpeed = 1f;
             Item.shoot = ProjectileType<EaglecrestJavelin_Proj>();
 
             Item.Redemption().HideElementTooltip[ElementID.Thunder] = true;
         }
+        public override bool MeleePrefix() => true;
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             if (Main.keyState.PressingShift())

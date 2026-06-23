@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Projectiles.Ranged;
 using Terraria;
 using Terraria.ID;
@@ -24,19 +23,15 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
             Item.autoReuse = true;
 
             // Weapon Properties
-            Item.damage = 12;
+            Item.damage = 20;
             Item.knockBack = 2;
             Item.DamageType = DamageClass.Ranged;
             Item.noMelee = true;
 
             // Projectile Properties
             Item.shootSpeed = 14f;
-            Item.shoot = ModContent.ProjectileType<ElderWoodBolt>();
+            Item.shoot = ProjectileType<ElderWoodBolt>();
             Item.useAmmo = AmmoID.Arrow;
-        }
-        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
-        {
-            type = Item.shoot;
         }
         public override Vector2? HoldoutOffset()
         {

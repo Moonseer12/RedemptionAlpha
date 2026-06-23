@@ -1,9 +1,10 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Dusts;
 using Redemption.Globals;
 using Redemption.Helpers;
+using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 
@@ -27,38 +28,36 @@ namespace Redemption.Projectiles.Magic
             Projectile.idStaticNPCHitCooldown = 8;
             NewCollision = true;
         }
-
+        public Player Owner => Main.player[Projectile.owner];
+        public override void OnSpawn(IEntitySource source)
+        {
+            Projectile.timeLeft = (int)(Projectile.ai[0] / Owner.GetAttackSpeed(DamageClass.Magic));
+        }
         public override void AI()
         {
-            Player player = Main.player[Projectile.owner];
-            player.itemAnimation = 2;
-            player.itemTime = 2;
-            Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter, true);
-            Projectile.rotation = Projectile.velocity.ToRotation();
-            Projectile.velocity = RedeHelper.PolarVector(1f, Projectile.rotation);
+            Vector2 playerCenter = Owner.RotatedRelativePoint(Owner.MountedCenter);
+            ProjHelper.HoldOutProj_SlowTurn(Projectile, Owner, playerCenter, 0.02f);
 
-            for (int i = 0; i < 2; i++)
-            {
-                int num5 = Dust.NewDust(Projectile.Center + Vector2.UnitX.RotatedBy(Projectile.rotation) * LaserLength - new Vector2(4, 4), 8, 8, ModContent.DustType<GlowDust>(), Scale: .7f);
-                Color dustColor = new(151, 255, 182) { A = 0 };
-                if (Main.rand.NextBool())
-                    dustColor = new(3, 249, 51) { A = 0 };
-                Main.dust[num5].velocity = -Projectile.velocity * Main.rand.NextFloat(.1f, .3f);
-                Main.dust[num5].color = dustColor * Projectile.Opacity;
-                Main.dust[num5].noGravity = true;
-            }
+            Projectile.Center = playerCenter;
+            Projectile.spriteDirection = Projectile.direction;
+            Projectile.rotation = Projectile.velocity.ToRotation();
+
+            Owner.ChangeDir(Projectile.direction);
+            Owner.heldProj = Projectile.whoAmI;
+            Owner.itemRotation = (float)Math.Atan2(Projectile.velocity.Y * Projectile.direction, Projectile.velocity.X * Projectile.direction);
+           
 
             #region Beginning And End Effects
             if (AITimer == 0)
                 LaserScale = 0.1f;
             else
-                Projectile.Center = playerCenter + Vector2.Normalize(Projectile.velocity) * 48f;
+                Projectile.Center = playerCenter + Vector2.Normalize(Projectile.velocity) * 12;
 
             if (AITimer <= 10)
             {
                 LaserScale += 0.09f;
             }
-            else if (Projectile.timeLeft < 10 || !player.active)
+            else if (Projectile.timeLeft < 10 || !Owner.active)
             {
                 if (Projectile.timeLeft > 10)
                 {
@@ -88,7 +87,7 @@ namespace Redemption.Projectiles.Magic
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile p = Main.projectile[i];
-                if (!p.active || p.type != ModContent.ProjectileType<XeniumBubble_Proj>())
+                if (!p.active || p.type != ProjectileType<XeniumBubble_Proj>())
                     continue;
 
                 Vector2 unit = new Vector2(1.5f, 0).RotatedBy(Projectile.rotation);
@@ -100,7 +99,17 @@ namespace Redemption.Projectiles.Magic
                     p.Kill();
                 }
             }
-            if (Main.myPlayer != player.whoAmI)
+            for (int i = 0; i < 2; i++)
+            {
+                int num5 = Dust.NewDust(Projectile.Center + Vector2.UnitX.RotatedBy(Projectile.rotation) * LaserLength - new Vector2(4, 4), 8, 8, DustType<GlowDust>(), Scale: .7f);
+                Color dustColor = new(151, 255, 182) { A = 0 };
+                if (Main.rand.NextBool())
+                    dustColor = new(3, 249, 51) { A = 0 };
+                Main.dust[num5].velocity = -Projectile.velocity * Main.rand.NextFloat(.1f, .3f);
+                Main.dust[num5].color = dustColor * Projectile.Opacity;
+                Main.dust[num5].noGravity = true;
+            }
+            if (Main.myPlayer != Owner.whoAmI)
                 CheckHits();
         }
         #region Drawcode
@@ -133,6 +142,16 @@ namespace Redemption.Projectiles.Magic
 
             Main.spriteBatch.End();
             Main.spriteBatch.BeginDefault();
+
+            SpriteEffects spriteEffects = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipVertically;
+            Texture2D texture = Request<Texture2D>("Redemption/Items/Weapons/PostML/Magic/XeniumStaff").Value;
+            Rectangle rect = new(0, 0, texture.Width, texture.Height);
+            Vector2 origin = new(texture.Width / 2f, texture.Height / 2f);
+
+            Vector2 playerCenter = Owner.RotatedRelativePoint(Owner.MountedCenter);
+            Vector2 drawPos = playerCenter + Projectile.velocity.SafeNormalize(default) * 4;
+
+            Main.EntitySpriteDraw(texture, drawPos - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
             return false;
         }
         #endregion

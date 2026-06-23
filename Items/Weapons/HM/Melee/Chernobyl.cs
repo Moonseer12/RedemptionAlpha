@@ -30,7 +30,7 @@ namespace Redemption.Items.Weapons.HM.Melee
             Item.value = Item.buyPrice(0, 4, 0, 0);
             Item.rare = ItemRarityID.LightRed;
             Item.autoReuse = false;
-            Item.shoot = ModContent.ProjectileType<Chernobyl_Proj>();
+            Item.shoot = ProjectileType<Chernobyl_Proj>();
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.UseSound = SoundID.Item1;
@@ -39,7 +39,7 @@ namespace Redemption.Items.Weapons.HM.Melee
         {
             CreateRecipe()
                 .AddIngredient(ItemID.WoodYoyo)
-                .AddIngredient(ModContent.ItemType<ToxicBile>(), 6)
+                .AddIngredient(ItemType<ToxicBile>(), 6)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }

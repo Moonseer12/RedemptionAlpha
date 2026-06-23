@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.BaseExtension;
 using Redemption.Buffs.NPCBuffs;
@@ -23,7 +22,7 @@ namespace Redemption.Items.Weapons.HM.Melee
         {
             Projectile.width = 16;
             Projectile.height = 16;
-            Projectile.aiStyle = 99;
+            Projectile.aiStyle = ProjAIStyleID.Yoyo;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.MeleeNoSpeed;
@@ -84,7 +83,7 @@ namespace Redemption.Items.Weapons.HM.Melee
                         npc.velocity.X = (npc.velocity.X * (succPower - 1) + x) / succPower;
                         npc.velocity.Y = (npc.velocity.Y * (succPower - 1) + y) / succPower;
                         if (npc.lifeMax > 50)
-                            npc.AddBuff(ModContent.BuffType<TidalWakeDebuff>(), 10);
+                            npc.AddBuff(BuffType<TidalWakeDebuff>(), 10);
                     }
                 }
             }
@@ -117,19 +116,19 @@ namespace Redemption.Items.Weapons.HM.Melee
         {
             SpriteEffects spriteEffects = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D whirl = ModContent.Request<Texture2D>("Redemption/Textures/SpinnyNoise").Value;
+            Texture2D whirl = Request<Texture2D>("Redemption/Textures/SpinnyNoise").Value;
             Vector2 origin = new(texture.Width / 2f, texture.Height / 2f);
             Vector2 origin2 = new(whirl.Width / 2f, whirl.Height / 2f);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
             Main.EntitySpriteDraw(whirl, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(Color.Blue) * 0.2f, Projectile.rotation * 0.75f, origin2, Projectile.scale * 0.4f, spriteEffects, 0);
             Main.EntitySpriteDraw(whirl, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(Color.DeepSkyBlue) * 0.3f, Projectile.rotation * 0.5f, origin2, Projectile.scale * 0.3f, spriteEffects, 0);
             Main.EntitySpriteDraw(whirl, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(Color.LightBlue) * 0.4f, Projectile.rotation * 0.25f, origin2, Projectile.scale * 0.2f, spriteEffects, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
 
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, lightColor, Projectile.rotation, origin, 1, spriteEffects, 0);
             return false;

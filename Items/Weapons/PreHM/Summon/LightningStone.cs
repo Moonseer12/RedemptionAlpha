@@ -1,6 +1,4 @@
-using Microsoft.Xna.Framework;
 using Redemption.Buffs.Minions;
-using Redemption.Items.Materials.PreHM;
 using Redemption.Projectiles.Minions;
 using Terraria;
 using Terraria.DataStructures;
@@ -28,24 +26,18 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             Item.height = 22;
             Item.useTime = 10;
             Item.useAnimation = 10;
-            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useStyle = ItemUseStyleID.Swing;
             Item.noMelee = true;
+            Item.noUseGraphic = true;
             Item.knockBack = 6;
             Item.value = Item.sellPrice(0, 0, 45, 0);
             Item.rare = ItemRarityID.Orange;
             Item.UseSound = SoundID.Item44;
             Item.autoReuse = false;
-            Item.buffType = ModContent.BuffType<LightningStoneBuff>();
-            Item.shoot = ModContent.ProjectileType<LightningStoneMinion>();
-            Item.mana = 10;
+            Item.buffType = BuffType<LightningStoneBuff>();
+            Item.shootSpeed = 20;
+            Item.shoot = ProjectileType<LightningStoneMinion>();
         }
-
-        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
-        {
-            knockback = 0;
-            position = Main.MouseWorld;
-        }
-
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             player.AddBuff(Item.buffType, 2);

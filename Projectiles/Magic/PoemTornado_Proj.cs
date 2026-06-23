@@ -1,5 +1,6 @@
 using Microsoft.Build.Experimental.ProjectCache;
 using Microsoft.Xna.Framework.Graphics;
+using Redemption.Base;
 using Redemption.BaseExtension;
 using Redemption.Globals;
 using System;
@@ -27,7 +28,7 @@ namespace Redemption.Projectiles.Magic
             Projectile.DamageType = DamageClass.Magic;
             Projectile.Redemption().ParryBlacklist = true;
 
-            Projectile.width = 120;
+            Projectile.width = 150;
             Projectile.height = 150;
             Projectile.alpha = 255;
             Projectile.hide = true;
@@ -35,7 +36,7 @@ namespace Redemption.Projectiles.Magic
             Projectile.friendly = true;
             Projectile.tileCollide = false;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 4;
+            Projectile.localNPCHitCooldown = 6;
             Projectile.penetrate = -1;
             Projectile.scale = 2;
         }
@@ -54,6 +55,13 @@ namespace Redemption.Projectiles.Magic
 
             player.itemTime = 2;
             player.itemAnimation = 2;
+
+            if (Projectile.localAI[0] % 30 == 0)
+            {
+                int mana = player.inventory[player.selectedItem].mana;
+                if (!BasePlayer.ReduceMana(player, mana))
+                    player.channel = false;
+            }
 
             if (Projectile.frameCounter++ % 4 == 0)
             {
@@ -107,7 +115,16 @@ namespace Redemption.Projectiles.Magic
         }
         public override void ModifyDamageHitbox(ref Rectangle hitbox)
         {
-            hitbox = new((int)Projectile.position.X + 60, (int)Projectile.position.Y, 88, Projectile.height);
+        }
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            Rectangle hitbox1 = new(projHitbox.X + 60, projHitbox.Y, Projectile.width / 2, Projectile.height);
+            Rectangle hitbox2 = new(projHitbox.X, projHitbox.Y, Projectile.width, Projectile.height / 2);
+
+            if (hitbox1.Intersects(targetHitbox) || hitbox2.Intersects(targetHitbox))
+                return true;
+
+            return false;
         }
         public override bool? CanHitNPC(NPC target) => Projectile.alpha <= 200 ? null : false;
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)

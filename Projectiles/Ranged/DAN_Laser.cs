@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using ParticleLibrary;
+using ParticleLibrary.Core;
 using Redemption.BaseExtension;
 using Redemption.Globals;
 using Redemption.Particles;
@@ -15,7 +14,7 @@ namespace Redemption.Projectiles.Ranged
         public override string Texture => Redemption.EMPTY_TEXTURE;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("D.A.N Laser");
+            ElementID.ProjThunder[Type] = true;
         }
         public override void SetDefaults()
         {
@@ -73,6 +72,7 @@ namespace Redemption.Projectiles.Ranged
                         break;
 
                     int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), origin, new Vector2(0, -6), ProjectileID.GeyserTrap, Projectile.damage / 6, Projectile.knockBack, player.whoAmI);
+                    Main.projectile[p].DamageType = DamageClass.Ranged;
                     Main.projectile[p].hostile = false;
                     Main.projectile[p].friendly = true;
                     Main.projectile[p].netUpdate = true;

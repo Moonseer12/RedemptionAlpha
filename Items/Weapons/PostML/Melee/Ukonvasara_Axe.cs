@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.BaseExtension;
 using Redemption.Buffs;
@@ -8,7 +7,6 @@ using Redemption.Globals;
 using Redemption.Helpers;
 using Redemption.Projectiles.Melee;
 using Redemption.Projectiles.Ranged;
-using ReLogic.Content;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -19,7 +17,6 @@ namespace Redemption.Items.Weapons.PostML.Melee
 {
     public class Ukonvasara_Axe : TrueMeleeProjectile, ITrailProjectile
     {
-        public float[] oldrot = new float[6];
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
@@ -46,11 +43,14 @@ namespace Redemption.Items.Weapons.PostML.Melee
         }
         public void DoTrailCreation(TrailManager tManager)
         {
-            tManager.CreateTrail(Projectile, new GradientTrail(new Color(117, 249, 253), new Color(180, 251, 253)), new RoundCap(), new DefaultTrailPosition(), 100f, 100f, new ImageShader(ModContent.Request<Texture2D>("Redemption/Textures/Trails/Trail_1", AssetRequestMode.ImmediateLoad).Value, 0.1f, 1f, 1f));
+            tManager.CreateTrail(Projectile, new GradientTrail(new Color(117, 249, 253), new Color(180, 251, 253)), new RoundCap(), new DefaultTrailPosition(), 100f, 100f, new ImageShader(Request<Texture2D>("Redemption/Textures/Trails/Trail_1").Value, 0.1f, 1f, 1f));
         }
 
+        private Player Owner => Main.player[Projectile.owner];
         private Vector2 startVector;
-        private Vector2 vector;
+        private Vector2 positionVector;
+        public float[] oldrot = new float[8];
+        public Vector2[] oldPos = new Vector2[8];
         public float Length;
         public float Rot;
         public float spinTimer;
@@ -59,11 +59,10 @@ namespace Redemption.Items.Weapons.PostML.Melee
         public float OpacityTimer;
 
         public float acc;
-        public float SwingSpeed;
         public float progress;
         public bool charged = false;
         public bool rotRight;
-        private Player Owner => Main.player[Projectile.owner];
+        public int maxTime;
         public override void AI()
         {
             if (Owner.noItems || Owner.CCed || Owner.dead || !Owner.active)
@@ -77,92 +76,99 @@ namespace Redemption.Items.Weapons.PostML.Melee
                 return;
             }
 
+            Owner.heldProj = Projectile.whoAmI;
             Owner.itemTime = 2;
             Owner.itemAnimation = 2;
-            Owner.ChangeDir(Main.MouseWorld.X < Owner.Center.X ? -1 : 1);
-            if (Main.MouseWorld.X < Owner.Center.X)
-                rotRight = true;
+            maxTime = SetUseTime(Owner.HeldItem.useTime);
 
-            SwingSpeed = 1 / Owner.GetAttackSpeed(DamageClass.Melee);
-            progress = acc / (120 * SwingSpeed);
+            if (Projectile.owner == Main.myPlayer)
+            {
+                Owner.ChangeDir(Main.MouseWorld.X < Owner.Center.X ? -1 : 1);
+                if (Main.MouseWorld.X < Owner.Center.X)
+                    rotRight = true;
+            }
+
+            progress = spinTimer / (maxTime * 6 * Projectile.MaxUpdates);
 
             Projectile.spriteDirection = Owner.direction;
-            Projectile.rotation = (Projectile.Center - Owner.Center).ToRotation() + MathHelper.PiOver2;
-            Projectile.Center = Owner.MountedCenter + vector;
             Projectile.timeLeft = 360;
 
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, (Owner.Center - Projectile.Center).ToRotation() + MathHelper.PiOver2);
 
-            if (Main.myPlayer == Projectile.owner)
+            if (spinTimer++ == 0)
             {
-                acc++;
-                if (spinTimer++ == 0)
-                {
-                    Projectile.scale *= Projectile.ai[2];
-                    Length = 60 * Projectile.ai[2];
-                    startVector = RedeHelper.PolarVector(1, MathHelper.PiOver2 * Projectile.spriteDirection);
-                }
-
-                spinTimer = MathHelper.Clamp(spinTimer, 0, 400);
-                acc = MathHelper.Max(0, acc);
-                Rot = MathHelper.ToRadians(spinTimer * MathHelper.Lerp(1f, 6f, progress)) * Projectile.spriteDirection;
-                vector = startVector.RotatedBy(Rot) * Length;
-
-                if (progress > 1f && !charged)
-                {
-                    DustHelper.DrawCircle(Owner.Center, DustID.Electric, 2, 2, 2, 1, 2, nogravity: true);
-                    SoundEngine.PlaySound(SoundID.Item88, Projectile.position);
-                    charged = true;
-                }
-                if (charged && !Owner.channel && rollingTimer > 0)
-                {
-                    OpacityTimer++;
-                    if (!Main.dedServ && rollingTimer == 60)
-                        SoundEngine.PlaySound(CustomSounds.ElectricSlash2, Owner.position);
-
-                    if (rollingTimer % 4 == 0)
-                    {
-                        int d = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Owner.Center, Vector2.Zero, ModContent.ProjectileType<UkonSpark_Proj>(), Projectile.damage / 3, 0, Main.myPlayer);
-                        Main.projectile[d].usesIDStaticNPCImmunity = false;
-                        Main.projectile[d].usesLocalNPCImmunity = true;
-                        Main.projectile[d].localNPCHitCooldown = 5;
-                        Main.projectile[d].timeLeft = 60;
-                        Main.projectile[d].noEnchantmentVisuals = true;
-                    }
-
-                    Owner.Redemption().contactImmune = true;
-                    Owner.fullRotation -= rotRight ? 0.25f : -0.25f;
-                    Owner.fullRotationOrigin = new Vector2(10, 20);
-
-                    rollingTimer--;
-                    Owner.AddBuff(ModContent.BuffType<HammerBuff2>(), 10);
-                    Owner.Move(Main.MouseWorld, 50, 10);
-                    Chop();
-
-                    Vector2 position = Owner.Center + (Vector2.Normalize(Owner.velocity) * 30f);
-                    Dust dust = Main.dust[Dust.NewDust(Owner.position, Owner.width, Owner.height, DustID.Electric)];
-                    dust.position = position;
-                    dust.velocity = (Owner.velocity.RotatedBy(1.57) * 0.2f) + (Owner.velocity / 8f);
-                    dust.position += Owner.velocity.RotatedBy(1.57) * 0.5f;
-                    dust.fadeIn = 0.5f;
-                    dust.noGravity = true;
-                    dust = Main.dust[Dust.NewDust(Owner.position, Owner.width, Owner.height, DustID.Electric)];
-                    dust.position = position;
-                    dust.velocity = (Owner.velocity.RotatedBy(-1.57) * 0.2f) + (Owner.velocity / 8f);
-                    dust.position += Owner.velocity.RotatedBy(-1.57) * 0.5f;
-                    dust.fadeIn = 0.5f;
-                    dust.noGravity = true;
-                }
-
-                if (rollingTimer <= 1)
-                    Owner.velocity *= 0.1f;
-                if (rollingTimer <= 0)
-                    Projectile.Kill();
+                Projectile.scale *= Projectile.ai[2];
+                Length = 50 * Projectile.scale;
+                startVector = RedeHelper.PolarVector(1, MathHelper.PiOver2 * Projectile.spriteDirection);
             }
 
+            acc += MathHelper.Clamp(spinTimer * 0.1f, 0, 10);
+            Rot = MathHelper.ToRadians(acc) * Projectile.spriteDirection;
+            positionVector = startVector.RotatedBy(Rot) * Length;
+            Projectile.rotation = positionVector.ToRotation() + MathHelper.PiOver2;
+            Projectile.Center = Owner.MountedCenter + positionVector;
+
+            if (progress > 1f && !charged)
+            {
+                DustHelper.DrawCircle(Owner.Center, DustID.Electric, 2, 2, 2, 1, 2, nogravity: true);
+                SoundEngine.PlaySound(SoundID.Item88, Projectile.position);
+                charged = true;
+            }
+            if (charged && !Owner.channel && rollingTimer > 0)
+            {
+                OpacityTimer++;
+                if (!Main.dedServ && rollingTimer == 60)
+                    SoundEngine.PlaySound(CustomSounds.ElectricSlash2, Owner.position);
+
+                if (rollingTimer % 4 == 0 && Projectile.owner == Main.myPlayer)
+                {
+                    int d = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Owner.Center, Vector2.Zero, ProjectileType<UkonSpark_Proj>(), Projectile.damage / 3, 0, Main.myPlayer);
+                    Main.projectile[d].usesIDStaticNPCImmunity = false;
+                    Main.projectile[d].usesLocalNPCImmunity = true;
+                    Main.projectile[d].localNPCHitCooldown = 5;
+                    Main.projectile[d].timeLeft = 60;
+                    Main.projectile[d].noEnchantmentVisuals = true;
+                }
+
+                Owner.Redemption().contactImmune = true;
+                Owner.fullRotation -= rotRight ? 0.25f : -0.25f;
+                Owner.fullRotationOrigin = new Vector2(10, 20);
+
+                rollingTimer--;
+                Owner.AddBuff(BuffType<HammerBuff2>(), 10);
+
+                if (Projectile.owner == Main.myPlayer)
+                    Owner.Move(Main.MouseWorld, 50, 10);
+
+                Chop();
+
+                Vector2 position = Owner.Center + (Vector2.Normalize(Owner.velocity) * 30f);
+                Dust dust = Main.dust[Dust.NewDust(Owner.position, Owner.width, Owner.height, DustID.Electric)];
+                dust.position = position;
+                dust.velocity = (Owner.velocity.RotatedBy(1.57) * 0.2f) + (Owner.velocity / 8f);
+                dust.position += Owner.velocity.RotatedBy(1.57) * 0.5f;
+                dust.fadeIn = 0.5f;
+                dust.noGravity = true;
+                dust = Main.dust[Dust.NewDust(Owner.position, Owner.width, Owner.height, DustID.Electric)];
+                dust.position = position;
+                dust.velocity = (Owner.velocity.RotatedBy(-1.57) * 0.2f) + (Owner.velocity / 8f);
+                dust.position += Owner.velocity.RotatedBy(-1.57) * 0.5f;
+                dust.fadeIn = 0.5f;
+                dust.noGravity = true;
+            }
+
+            if (rollingTimer <= 1)
+                Owner.velocity *= 0.1f;
+            if (rollingTimer <= 0)
+                Projectile.Kill();
+
             for (int k = Projectile.oldPos.Length - 1; k > 0; k--)
+            {
+                oldPos[k] = oldPos[k - 1];
                 oldrot[k] = oldrot[k - 1];
+            }
             oldrot[0] = Projectile.rotation;
+            oldPos[0] = positionVector;
         }
 
         public bool chop;
@@ -184,7 +190,7 @@ namespace Redemption.Items.Weapons.PostML.Melee
                     {
                         for (int k = -1; k < 2; k++)
                         {
-                            int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Owner.Center + new Vector2(k * 50, 0), Vector2.Zero, ModContent.ProjectileType<UkonArrowStrike>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, 0, 1);
+                            int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Owner.Center + new Vector2(k * 50, 0), Vector2.Zero, ProjectileType<UkonArrowStrike>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, 0, 1);
                             Main.projectile[p].DamageType = DamageClass.Melee;
                             Main.projectile[p].localAI[0] = 35;
                             Main.projectile[p].alpha = 0;
@@ -216,11 +222,11 @@ namespace Redemption.Items.Weapons.PostML.Melee
         {
             Projectile.localNPCImmunity[target.whoAmI] = 30;
             target.immune[Projectile.owner] = 0;
-            target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 180);
+            target.AddBuff(BuffType<ElectrifiedDebuff>(), 180);
 
             if (Main.myPlayer == Projectile.owner)
             {
-                int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center + new Vector2(Main.rand.NextFloat(-2, 2)), Vector2.Zero, ModContent.ProjectileType<UkonArrowStrike>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, 0, 1);
+                int p = Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center + new Vector2(Main.rand.NextFloat(-2, 2)), Vector2.Zero, ProjectileType<UkonArrowStrike>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, 0, 1);
                 Main.projectile[p].DamageType = DamageClass.Melee;
                 Main.projectile[p].localAI[0] = 35;
                 Main.projectile[p].alpha = 0;
@@ -238,16 +244,18 @@ namespace Redemption.Items.Weapons.PostML.Melee
             SpriteEffects spriteEffects = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = new(texture.Width / 2f, texture.Height / 2f);
-            Vector2 v = Projectile.Center - RedeHelper.PolarVector(20, (Projectile.Center - Owner.Center).ToRotation());
+            Vector2 armCenter = Owner.RotatedRelativePoint(Owner.MountedCenter) + new Vector2(Owner.direction * -4, -4);
+            Vector2 drawPos = armCenter + positionVector * 0.8f;
 
             for (int k = 0; k < Projectile.oldPos.Length; k++)
             {
-                Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + new Vector2(20, 20);
+                Vector2 drawPos2 = armCenter + oldPos[k] * 0.8f;
                 Color color = Projectile.GetAlpha(lightColor with { A = 0 }) * ((Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
-                Main.EntitySpriteDraw(texture, drawPos, null, color * 0.5f, oldrot[k], origin, Projectile.scale, spriteEffects, 0);
+                if (spinTimer > 4)
+                    Main.EntitySpriteDraw(texture, drawPos2 - Main.screenPosition, null, color * 0.5f, oldrot[k], origin, Projectile.scale, spriteEffects, 0);
             }
 
-            Main.EntitySpriteDraw(texture, v - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
+            Main.EntitySpriteDraw(texture, drawPos - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
             return false;
         }
     }

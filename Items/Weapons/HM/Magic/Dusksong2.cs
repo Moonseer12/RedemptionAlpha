@@ -24,7 +24,7 @@ namespace Redemption.Items.Weapons.HM.Magic
             Item.value = Item.sellPrice(0, 10, 0, 0);
             Item.rare = ItemRarityID.LightRed;
             Item.shootSpeed = 10;
-            Item.shoot = ModContent.ProjectileType<DusksongWeak_Proj>();
+            Item.shoot = ProjectileType<DusksongWeak_Proj>();
             Item.UseSound = SoundID.NPCDeath6;
         }
         public override void AddRecipes()

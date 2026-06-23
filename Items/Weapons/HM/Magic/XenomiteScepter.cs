@@ -1,6 +1,5 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.BaseExtension;
+using Redemption.Globals.Players;
 using Redemption.Items.Materials.HM;
 using Redemption.Items.Weapons.PreHM.Magic;
 using Redemption.Projectiles.Magic;
@@ -19,8 +18,9 @@ namespace Redemption.Items.Weapons.HM.Magic
             /* Tooltip.SetDefault("Casts infectious helix bolts\n" +
                 "Every consecutive shot increases the velocity of the bolts"); */
             Item.staff[Item.type] = true;
-            Item.ResearchUnlockCount = 1;
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
         public override void SetDefaults()
         {
@@ -39,10 +39,8 @@ namespace Redemption.Items.Weapons.HM.Magic
             Item.rare = ItemRarityID.LightRed;
             Item.UseSound = SoundID.Item117;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<XenomiteScepter_Proj>();
+            Item.shoot = ProjectileType<XenomiteScepter_Proj>();
             Item.shootSpeed = 5f;
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
         }
         private int CastCount;
         public override void HoldItem(Player player)
@@ -66,15 +64,15 @@ namespace Redemption.Items.Weapons.HM.Magic
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             for (int m = 0; m < 2; m++)
-                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<XenomiteScepter_Proj>(), damage, knockback, player.whoAmI, m);
+                Projectile.NewProjectile(source, position, velocity, ProjectileType<XenomiteScepter_Proj>(), damage, knockback, player.whoAmI, m);
             return false;
         }
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<ContagionSpreader>())
-                .AddIngredient(ModContent.ItemType<Xenomite>(), 6)
-                .AddIngredient(ModContent.ItemType<ToxicBile>(), 7)
+                .AddIngredient(ItemType<ContagionSpreader>())
+                .AddIngredient(ItemType<Xenomite>(), 6)
+                .AddIngredient(ItemType<ToxicBile>(), 7)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }

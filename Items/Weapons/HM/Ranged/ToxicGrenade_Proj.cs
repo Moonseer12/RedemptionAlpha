@@ -1,11 +1,10 @@
-using Microsoft.Xna.Framework;
 using Redemption.Base;
 using Redemption.Globals;
+using Redemption.Projectiles.Misc;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Redemption.Projectiles.Misc;
 
 namespace Redemption.Items.Weapons.HM.Ranged
 {
@@ -48,10 +47,10 @@ namespace Redemption.Items.Weapons.HM.Ranged
                 if (!target.active || !target.CanBeChasedBy())
                     continue;
 
-                if (target.immune[Projectile.whoAmI] > 0 || !target.Hitbox.Intersects(boom))
+                if (target.immune[Projectile.owner] > 0 || !target.Hitbox.Intersects(boom))
                     continue;
 
-                target.immune[Projectile.whoAmI] = 20;
+                target.immune[Projectile.owner] = 20;
                 int hitDirection = target.RightOfDir(Projectile);
                 BaseAI.DamageNPC(target, Projectile.damage, Projectile.knockBack, hitDirection, Projectile, crit: Projectile.HeldItemCrit());
             }
@@ -76,11 +75,11 @@ namespace Redemption.Items.Weapons.HM.Ranged
             }
 
             if (Projectile.owner == Main.myPlayer)
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<ToxicGas_Proj>(), Projectile.damage / 2, 0, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ProjectileType<ToxicGas_Proj>(), Projectile.damage / 2, 0, Projectile.owner);
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.immune[Projectile.whoAmI] = 20;
+            target.immune[Projectile.owner] = 20;
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {

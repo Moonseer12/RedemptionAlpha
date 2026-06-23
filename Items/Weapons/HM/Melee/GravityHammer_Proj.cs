@@ -1,14 +1,13 @@
-using Terraria.ID;
-using Terraria;
-using Microsoft.Xna.Framework;
-using Terraria.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent;
-using Redemption.Globals;
-using Terraria.ModLoader;
-using Redemption.Projectiles.Melee;
 using Redemption.Base;
 using Redemption.BaseExtension;
+using Redemption.Globals;
+using Redemption.Globals.Players;
+using Redemption.Projectiles.Melee;
+using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
+using Terraria.ID;
 
 namespace Redemption.Items.Weapons.HM.Melee
 {
@@ -35,7 +34,7 @@ namespace Redemption.Items.Weapons.HM.Melee
 
         public override bool? CanCutTiles() => Projectile.frame is 8;
         public override bool? CanHitNPC(NPC target) => Projectile.frame is 8 ? null : false;
-        public float SwingSpeed;
+        public int maxTime;
         int directionLock = 0;
         private bool miss = false;
         private Vector2 SlamOrigin;
@@ -46,77 +45,74 @@ namespace Redemption.Items.Weapons.HM.Melee
             Player player = Main.player[Projectile.owner];
             player.heldProj = Projectile.whoAmI;
             Projectile.Redemption().swordHitbox = new((int)(Projectile.spriteDirection == -1 ? Projectile.Center.X - 96 : Projectile.Center.X), (int)(Projectile.Center.Y - 66), 96, 94);
+            Projectile.spriteDirection = player.direction;
 
-            SwingSpeed = SetSwingSpeed(52);
+            maxTime = SetUseTime(player.HeldItem.useTime);
 
             if (player.noItems || player.CCed || player.dead || !player.active)
                 Projectile.Kill();
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.ai[0] == 0)
             {
-                if (Projectile.ai[0] == 0)
+                player.itemRotation = MathHelper.ToRadians(-90f * player.direction);
+                player.bodyFrame.Y = 5 * player.bodyFrame.Height;
+                if (!player.channel)
                 {
-                    player.itemRotation = MathHelper.ToRadians(-90f * player.direction);
-                    player.bodyFrame.Y = 5 * player.bodyFrame.Height;
-                    if (!player.channel)
-                    {
-                        Projectile.ai[0] = 1;
-                        directionLock = player.direction;
-                    }
-                    if (++Projectile.frameCounter >= SwingSpeed / 11)
-                    {
-                        Projectile.frameCounter = 0;
-                        Projectile.frame++;
-                        if (Projectile.frame > 3)
-                            Projectile.frame = 3;
-                    }
+                    Projectile.ai[0] = 1;
+                    directionLock = player.direction;
                 }
-                if (Projectile.ai[0] >= 1)
+                if (++Projectile.frameCounter >= maxTime / 11)
                 {
-                    player.direction = directionLock;
-                    Projectile.ai[0]++;
-                    if (Projectile.frame > 2)
-                        player.itemRotation -= MathHelper.ToRadians(-4f * player.direction);
-                    else
-                        player.bodyFrame.Y = 5 * player.bodyFrame.Height;
-                    if (++Projectile.frameCounter >= SwingSpeed / 11)
-                    {
-                        Projectile.frameCounter = 0;
-                        Projectile.frame++;
-                        if (Projectile.frame is 8)
-                        {
-                            tilePosY = BaseWorldGen.GetFirstTileFloor((int)(player.Center.X / 16), (int)(player.Center.Y / 16));
-                            dist = (tilePosY * 16) - (int)player.Center.Y;
-                            player.velocity.X += 2 * player.direction;
-                            player.velocity.Y += 10;
-                        }
-                        if (Projectile.frame > 11)
-                            Projectile.Kill();
-                    }
-                    if (Projectile.frame >= 8 && Projectile.frame <= 10 && SlamOrigin == Vector2.Zero)
+                    Projectile.frameCounter = 0;
+                    Projectile.frame++;
+                    if (Projectile.frame > 3)
+                        Projectile.frame = 3;
+                }
+            }
+            if (Projectile.ai[0] >= 1)
+            {
+                player.direction = directionLock;
+                Projectile.ai[0]++;
+                if (Projectile.frame > 4)
+                    player.itemRotation -= MathHelper.ToRadians(-4f * player.direction);
+                else
+                    player.bodyFrame.Y = 5 * player.bodyFrame.Height;
+                int maxFrameCounter = Projectile.frame < 8 ? maxTime / 11 : 5;
+                if (++Projectile.frameCounter >= maxFrameCounter)
+                {
+                    Projectile.frameCounter = 0;
+                    Projectile.frame++;
+                    if (Projectile.frame is 8)
                     {
                         tilePosY = BaseWorldGen.GetFirstTileFloor((int)(player.Center.X / 16), (int)(player.Center.Y / 16));
-                        dist = MathHelper.Clamp(dist, 0, 500);
-                        player.velocity.Y = 20;
-                        player.position.Y += dist / 10;
-                        if (player.position.Y >= tilePosY * 16 - 32)
-                            player.position.Y = tilePosY * 16 - 32;
-                        Point tileBelow = new Vector2(Projectile.Redemption().swordHitbox.Center.X + (30 * Projectile.spriteDirection), Projectile.Redemption().swordHitbox.Bottom).ToTileCoordinates();
-                        Point tileBelow2 = new Vector2(Projectile.Redemption().swordHitbox.Center.X + (16 * Projectile.spriteDirection), Projectile.Redemption().swordHitbox.Bottom).ToTileCoordinates();
-                        Tile tile = Framing.GetTileSafely(tileBelow.X, tileBelow.Y);
-                        Tile tile2 = Framing.GetTileSafely(tileBelow2.X, tileBelow2.Y);
-                        if ((tile is { HasUnactuatedTile: true } && Main.tileSolid[tile.TileType]) || (tile2 is { HasUnactuatedTile: true } && Main.tileSolid[tile2.TileType]))
-                        {
-                            if (!Main.dedServ)
-                                SoundEngine.PlaySound(CustomSounds.GravityHammerSlam, Projectile.position);
-                            player.RedemptionScreen().ScreenShakeIntensity += 20;
-                            SlamOrigin = new(Projectile.Center.X + (70 * Projectile.spriteDirection), Projectile.Center.Y);
-                            miss = false;
-                        }
-                        else if (!miss)
-                        {
-                            miss = true;
-                            SoundEngine.PlaySound(SoundID.Item1, Projectile.position);
-                        }
+                        dist = (tilePosY * 16) - (int)player.Center.Y;
+                        player.velocity.X += 2 * player.direction;
+                        player.velocity.Y += 25;
+                    }
+                    if (Projectile.frame > 11)
+                        Projectile.Kill();
+                }
+                if (Projectile.frame >= 8 && Projectile.frame <= 10 && SlamOrigin == Vector2.Zero)
+                {
+                    tilePosY = BaseWorldGen.GetFirstTileFloor((int)(player.Center.X / 16), (int)(player.Center.Y / 16));
+                    dist = MathHelper.Clamp(dist, 0, 500);
+
+                    player.GetModPlayer<RedePlayer>().fallSpeedIncrease += 50;
+
+                    Point tileBelow = new Vector2(player.Bottom.X, player.Bottom.Y).ToTileCoordinates();
+                    Tile tile = Framing.GetTileSafely(tileBelow.X, tileBelow.Y);
+
+                    if (Collision.SolidCollision(player.position + new Vector2(0, player.height / 2), player.width, 8 + (player.height / 2)) || tile is { HasUnactuatedTile: true } && Main.tileSolid[tile.TileType])
+                    {
+                        if (!Main.dedServ)
+                            SoundEngine.PlaySound(CustomSounds.GravityHammerSlam, Projectile.position);
+                        player.RedemptionScreen().ScreenShakeIntensity += 20;
+                        SlamOrigin = new(Projectile.Center.X + (70 * Projectile.spriteDirection), Projectile.Center.Y);
+                        miss = false;
+                    }
+                    else if (!miss)
+                    {
+                        miss = true;
+                        SoundEngine.PlaySound(SoundID.Item1, Projectile.position);
                     }
                 }
             }
@@ -146,13 +142,11 @@ namespace Redemption.Items.Weapons.HM.Melee
                             break;
 
                         if (Main.netMode != NetmodeID.Server && Projectile.owner == Main.myPlayer)
-                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), origin + new Vector2(0, -20), Vector2.Zero, ModContent.ProjectileType<GravityHammer_GroundShock>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, SlamOrigin.X);
+                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), origin + new Vector2(0, -20), Vector2.Zero, ProjectileType<GravityHammer_GroundShock>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, SlamOrigin.X);
                     }
                 }
             }
-            Projectile.spriteDirection = player.direction;
-
-            Projectile.Center = player.Center;
+            Projectile.Center = player.RotatedRelativePoint(player.MountedCenter) + new Vector2(player.direction * -4, -4);
             player.itemTime = 2;
             player.itemAnimation = 2;
         }
@@ -164,24 +158,22 @@ namespace Redemption.Items.Weapons.HM.Melee
         {
             Player player = Main.player[Projectile.owner];
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            int height = texture.Height / 11;
-            int y = height * Projectile.frame;
-            Rectangle rect = new(0, y, texture.Width, height);
-            Vector2 drawOrigin = new(texture.Width / 2, Projectile.height / 2);
+            Rectangle rect = texture.Frame(1, 11, 0, Projectile.frame);
+            Vector2 drawOrigin = rect.Size() * 0.5f;
             var effects = Projectile.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            int offset = Projectile.frame >= 8 ? 8 : 0;
+            int offset = Projectile.frame >= 8 ? -4 : 0;
 
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition - new Vector2(-8 * player.direction, 48 - offset) + Vector2.UnitY * Projectile.gfxOffY,
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition - new Vector2(-8 * player.direction, 24),
                 new Rectangle?(rect), Projectile.GetAlpha(lightColor), Projectile.rotation, drawOrigin, Projectile.scale, effects, 0);
 
-            Texture2D slash = ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "_Effect").Value;
+            Texture2D slash = Request<Texture2D>(Texture + "_Effect").Value;
             int height2 = slash.Height / 10;
             int y2 = height2 * (Projectile.frame - 2);
             Rectangle rect2 = new(0, y2, slash.Width, height2);
             Vector2 drawOrigin2 = new(slash.Width / 2, slash.Height / 2);
 
             if (Projectile.frame >= 2 && Projectile.frame <= 12 && !player.channel)
-                Main.EntitySpriteDraw(slash, Projectile.Center - Main.screenPosition + new Vector2(38 * player.direction, 471 - offset) + Vector2.UnitY * Projectile.gfxOffY, new Rectangle?(rect2), Projectile.GetAlpha(Color.White), Projectile.rotation, drawOrigin2, Projectile.scale, effects, 0);
+                Main.EntitySpriteDraw(slash, Projectile.Center - Main.screenPosition + new Vector2(38 * player.direction, 471 - offset), new Rectangle?(rect2), Projectile.GetAlpha(Color.White), Projectile.rotation, drawOrigin2, Projectile.scale, effects, 0);
             return false;
         }
     }

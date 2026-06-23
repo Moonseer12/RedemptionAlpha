@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Magic
 {
-    public class Icefall_Mist : ModProjectile
+    public class Icefall_Mist : ModRedeProjectile
     {
         private float noiseOffset;
 
@@ -128,7 +128,7 @@ namespace Redemption.Projectiles.Magic
             return false;
         }*/
     }
-    public class Icefall_Proj : ModProjectile
+    public class Icefall_Proj : ModRedeProjectile
     {
         public override void SetStaticDefaults()
         {

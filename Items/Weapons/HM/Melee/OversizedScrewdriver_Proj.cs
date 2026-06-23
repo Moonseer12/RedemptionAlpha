@@ -1,11 +1,11 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent;
-using Terraria;
-using Terraria.ID;
-using Redemption.Globals;
 using Redemption.BaseExtension;
+using Redemption.Dusts;
+using Redemption.Globals;
+using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
+using Terraria.ID;
 
 namespace Redemption.Items.Weapons.HM.Melee
 {
@@ -20,6 +20,7 @@ namespace Redemption.Items.Weapons.HM.Melee
         {
             Projectile.width = 16;
             Projectile.height = 16;
+            Projectile.alpha = 255;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
             Length = 40;
@@ -37,6 +38,9 @@ namespace Redemption.Items.Weapons.HM.Melee
             if (player.noItems || !player.channel || player.CCed || player.dead || !player.active)
                 Projectile.Kill();
 
+            if (Rot++ > 2)
+                Projectile.alpha = 0;
+
             if (Projectile.frameCounter++ >= (Projectile.ai[0] == 0 ? 6 : 2))
             {
                 Projectile.frameCounter = 0;
@@ -47,38 +51,42 @@ namespace Redemption.Items.Weapons.HM.Melee
             player.heldProj = Projectile.whoAmI;
             player.itemTime = 2;
             player.itemAnimation = 2;
-            Projectile.Center = player.MountedCenter + vector;
+            Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter, true);
+            Projectile.Center = playerCenter + vector;
 
-            if (Main.MouseWorld.X < player.Center.X)
-                player.direction = -1;
-            else
-                player.direction = 1;
+            if (Projectile.owner == Main.myPlayer)
+            {
+                if (Main.MouseWorld.X < player.Center.X)
+                    player.direction = -1;
+                else
+                    player.direction = 1;
+            }
             Projectile.spriteDirection = player.direction;
             if (Projectile.spriteDirection == 1)
-                Projectile.rotation = (Projectile.Center - player.Center).ToRotation() + MathHelper.PiOver2;
+                Projectile.rotation = (Projectile.Center - playerCenter).ToRotation() + MathHelper.PiOver2;
             else
-                Projectile.rotation = (Projectile.Center - player.Center).ToRotation() + MathHelper.PiOver2;
+                Projectile.rotation = (Projectile.Center - playerCenter).ToRotation() + MathHelper.PiOver2;
 
-            if (Main.myPlayer == Projectile.owner)
+            switch (Projectile.ai[0])
             {
-                switch (Projectile.ai[0])
-                {
-                    case 0:
-                        damageIncrease = 1;
-                        break;
-                    case 1:
-                        if (Timer++ == 4)
-                            player.velocity = -Main.MouseWorld.DirectionTo(player.Center) * 10;
-                        player.Redemption().contactImmune = true;
-                        if (Timer >= 20)
-                            Projectile.ai[0] = 0;
-                        break;
-                }
+                case 0:
+                    damageIncrease = 1;
+                    break;
+                case 1:
+                    if (Timer++ == 4 && Projectile.owner == Main.myPlayer)
+                        player.velocity = -Main.MouseWorld.DirectionTo(player.Center) * 10;
+                    player.Redemption().contactImmune = true;
+                    if (Timer >= 20)
+                        Projectile.ai[0] = 0;
+                    break;
+            }
+            if (Projectile.owner == Main.myPlayer)
+            {
                 startVector = -Main.MouseWorld.DirectionTo(player.Center);
                 vector = startVector * Length;
-                player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, (player.Center - Projectile.Center).ToRotation() + MathHelper.PiOver2);
-                player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, (player.Center - Projectile.Center).ToRotation() + MathHelper.PiOver2);
             }
+            player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, (player.Center - Projectile.Center).ToRotation() + MathHelper.PiOver2);
+            player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, (player.Center - Projectile.Center).ToRotation() + MathHelper.PiOver2);
         }
         private float damageIncrease = 1;
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -87,18 +95,21 @@ namespace Redemption.Items.Weapons.HM.Melee
             target.immune[Projectile.owner] = 0;
 
             Player player = Main.player[Projectile.owner];
-            if (Main.myPlayer == Projectile.owner)
-            {
+            if (Projectile.owner == Main.myPlayer)
                 player.velocity = Main.MouseWorld.DirectionTo(player.Center) * 7;
-                if (player.channel)
-                {
-                    if (Projectile.ai[0] == 1 && damageIncrease <= 3f)
-                        damageIncrease += .04f;
-                    SoundEngine.PlaySound(SoundID.Item23, Projectile.position);
-                    Timer = 0;
-                    Projectile.ai[0] = 1;
-                }
+            if (player.channel)
+            {
+                if (Projectile.ai[0] == 1 && damageIncrease <= 3f)
+                    damageIncrease += .04f;
+                SoundEngine.PlaySound(SoundID.Item23, Projectile.position);
+                Timer = 0;
+                Projectile.ai[0] = 1;
             }
+            Vector2 directionTo = target.DirectionTo(player.Center);
+            Vector2 directionFrom = target.DirectionFrom(player.Center);
+            Vector2 drawPos = Vector2.Lerp(Projectile.Center, target.Center, 0.8f);
+            for (int i = 0; i < 5; i++)
+                Dust.NewDustPerfect(drawPos + directionFrom * 10 + new Vector2(0, 45), DustType<DustSpark>(), directionFrom.RotatedBy(Main.rand.NextFloat(-0.6f, 0.6f) + 3.14f) * -Main.rand.NextFloat(0.5f, 5f), 0, new Color(255, 230, 60) * 0.8f, 1.6f);
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
@@ -128,9 +139,10 @@ namespace Redemption.Items.Weapons.HM.Melee
             Rectangle rect = new(x, 0, width, texture.Height);
 
             Vector2 origin = new(width / 2f, texture.Height / 2f);
-            Vector2 v = RedeHelper.PolarVector(2, (Projectile.Center - player.Center).ToRotation());
+            Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter, true);
+            Vector2 v = RedeHelper.PolarVector(2, (Projectile.Center - playerCenter).ToRotation());
 
-            Main.EntitySpriteDraw(texture, Projectile.Center - v - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY, new Rectangle?(rect), Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center - v - Main.screenPosition, new Rectangle?(rect), Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
             return false;
         }
     }

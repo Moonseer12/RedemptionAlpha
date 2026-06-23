@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.BaseExtension;
 using Redemption.Buffs.Debuffs;
@@ -27,7 +26,7 @@ namespace Redemption.Items.Weapons.HM.Summon
         {
             Item.width = 16;
             Item.height = 40;
-            Item.DefaultToWhip(ModContent.ProjectileType<InfectedTentacle_Proj>(), 46, 2, 8, 26);
+            Item.DefaultToWhip(ProjectileType<InfectedTentacle_Proj>(), 46, 2, 8, 26);
             Item.shootSpeed = 8;
             Item.rare = ItemRarityID.LightRed;
             Item.channel = true;
@@ -36,7 +35,7 @@ namespace Redemption.Items.Weapons.HM.Summon
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<ToxicBile>(), 6)
+                .AddIngredient(ItemType<ToxicBile>(), 6)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }
@@ -61,14 +60,14 @@ namespace Redemption.Items.Weapons.HM.Summon
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
-            target.AddBuff(ModContent.BuffType<GreenRashesDebuff>(), 300);
+            target.AddBuff(BuffType<GreenRashesDebuff>(), 300);
             if (Main.rand.NextBool(5))
-                target.AddBuff(ModContent.BuffType<GlowingPustulesDebuff>(), 150);
+                target.AddBuff(BuffType<GlowingPustulesDebuff>(), 150);
 
-            if (player.whoAmI == Main.myPlayer && player.ownedProjectileCounts[ModContent.ProjectileType<HiveCyst_Proj>()] < 2)
+            if (player.whoAmI == Main.myPlayer && player.ownedProjectileCounts[ProjectileType<HiveCyst_Proj>()] < 2)
             {
                 SoundEngine.PlaySound(SoundID.NPCHit13 with { Volume = .5f }, Projectile.position);
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center, Vector2.Zero, ModContent.ProjectileType<HiveCyst_Proj>(), Projectile.damage / 3, Projectile.knockBack, player.whoAmI);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center, Vector2.Zero, ProjectileType<HiveCyst_Proj>(), Projectile.damage / 3, Projectile.knockBack, player.whoAmI);
             }
             Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
         }

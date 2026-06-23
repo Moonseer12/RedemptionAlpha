@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Items.Materials.PreHM;
 using Redemption.Projectiles.Magic;
 using Terraria;
@@ -18,8 +17,8 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
         public override void SetDefaults()
         {
             // Common Properties
-            Item.width = 24;
-            Item.height = 58;
+            Item.width = 22;
+            Item.height = 54;
             Item.rare = ItemRarityID.Orange;
             Item.value = Item.sellPrice(gold: 1);
 
@@ -44,7 +43,7 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<PureIronAlloy>(), 10)
+                .AddIngredient(ItemType<PureIronAlloy>(), 10)
                 .AddTile(TileID.Anvils)
                 .Register();
         }
@@ -75,9 +74,9 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
         {
             if (!ShotFrom)
                 return;
-            if (mistTimer++ % 3 == 0 && Main.rand.NextBool(2) && Main.myPlayer == projectile.owner && Main.player[projectile.owner].ownedProjectileCounts[ModContent.ProjectileType<Icefall_Mist>()] < 500)
+            if (mistTimer++ % 3 == 0 && Main.rand.NextBool(2) && Main.myPlayer == projectile.owner && Main.player[projectile.owner].ownedProjectileCounts[ProjectileType<Icefall_Mist>()] < 100)
             {
-                Projectile.NewProjectile(Projectile.InheritSource(projectile), projectile.Center, new Vector2(Main.rand.NextFloat(-1, 1), 0), ModContent.ProjectileType<Icefall_Mist>(), 0, 0, projectile.owner, 1, 1);
+                Projectile.NewProjectile(Entity.InheritSource(projectile), projectile.Center, new Vector2(Main.rand.NextFloat(-1, 1), 0), ProjectileType<Icefall_Mist>(), 0, 0, projectile.owner, 1, 1);
             }
         }
         public override void OnKill(Projectile projectile, int timeLeft)

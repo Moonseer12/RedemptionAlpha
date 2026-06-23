@@ -1,24 +1,23 @@
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
-using Terraria.Localization;
-using Microsoft.Xna.Framework;
+using Redemption.Globals;
+using Redemption.Items.Weapons.PostML.Melee;
 using Redemption.Projectiles.Ranged;
 using System.Collections.Generic;
-using Redemption.Globals;
+using Terraria;
 using Terraria.DataStructures;
-using Redemption.Items.Weapons.PostML.Melee;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.PostML.Ranged
 {
     public class DarkSteelBow : ModItem
-	{
+    {
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Daerel's Dark-Steel Bow");
             /* Tooltip.SetDefault("Shoots Dark-Steel arrows that create shadow tendrils upon hitting a target\n" +
                 "20% chance not to consume ammo"); */
-            ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<MythrilsBane>();
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<MythrilsBane>();
             Item.ResearchUnlockCount = 1;
         }
 
@@ -45,8 +44,13 @@ namespace Redemption.Items.Weapons.PostML.Ranged
 
             // Projectile Properties
             Item.shootSpeed = 20f;
-            Item.shoot = ModContent.ProjectileType<DarkSteelArrow>();
+            Item.shoot = ProjectileType<DarkSteelArrow>();
             Item.useAmmo = AmmoID.Arrow;
+        }
+        public override bool ReforgePrice(ref int reforgePrice, ref bool canApplyDiscount)
+        {
+            reforgePrice = Item.value / 10;
+            return true;
         }
         public override Vector2? HoldoutOffset()
         {
@@ -54,7 +58,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
         }
         public override bool CanConsumeAmmo(Item ammo, Player player)
         {
-			return Main.rand.NextFloat() >= .2f;
+            return Main.rand.NextFloat() >= .2f;
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {

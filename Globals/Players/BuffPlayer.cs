@@ -260,7 +260,7 @@ namespace Redemption.Globals.Players
                     if (!Main.dedServ)
                         SoundEngine.PlaySound(CustomSounds.Alarm2, Player.position);
 
-                    Player.AddBuff(BuffType<HardlightCooldown>(), 60 * 60);
+                    Player.AddBuff(BuffType<HardlightCooldown>(), 30 * 60);
                     Vector2 spawn = new(Player.Center.X + Main.rand.Next(-200, 201), Player.Center.Y - 800);
                     switch (hardlightBonus)
                     {
@@ -605,7 +605,7 @@ namespace Redemption.Globals.Players
         }
         public override void OnHitNPCWithProj(Projectile proj, Terraria.NPC target, Terraria.NPC.HitInfo hit, int damageDone)
         {
-            if (RedeProjectile.projOwners.TryGetValue(proj.whoAmI, out (Entity entity, IEntitySource source) value) && value.entity is Terraria.NPC)
+            if (ProjHelper.projOwners.TryGetValue(proj.whoAmI, out (Entity entity, IEntitySource source) value) && value.entity is Terraria.NPC)
                 return;
 
             if (charisma)
@@ -890,7 +890,7 @@ namespace Redemption.Globals.Players
                 shieldGeneratorCD = 3600;
                 info.Damage -= shieldGeneratorLife;
                 info.Damage *= 2;
-                shieldGeneratorLife = 200;
+                shieldGeneratorLife = 250;
                 for (int k = 0; k < 30; k++)
                 {
                     Vector2 vector;

@@ -3,7 +3,6 @@ using Redemption.BaseExtension;
 using Redemption.Globals;
 using Redemption.Globals.Players;
 using Redemption.Items.Materials.HM;
-using Redemption.Projectiles.Ranged;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -20,7 +19,9 @@ namespace Redemption.Items.Weapons.HM.Ranged
         {
             ElementID.ItemThunder[Type] = true;
             ItemID.Sets.SkipsInitialUseSound[Item.type] = true;
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
         public override void SetDefaults()
         {
@@ -42,8 +43,6 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Item.shootSpeed = 90;
             Item.shoot = ProjectileID.PurificationPowder;
             Item.useAmmo = AmmoID.Bullet;
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = Request<Texture2D>(Texture + "_Glow").Value;
 
             Item.Redemption().HideElementTooltip[ElementID.Thunder] = true;
         }
@@ -111,7 +110,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
         {
             if (!ShotFrom)
                 return;
-            if (itemSource != null && itemSource.ModItem is CorruptedDoubleRifle rifle)
+            if (itemSource != null && itemSource.ModItem is CorruptedDoubleRifle rifle && !ProjectileID.Sets.CultistIsResistantTo[projectile.type])
                 rifle.Count++;
             isHit = true;
         }

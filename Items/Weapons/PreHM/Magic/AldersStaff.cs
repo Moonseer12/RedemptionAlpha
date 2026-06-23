@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Base;
 using Redemption.BaseExtension;
@@ -19,7 +18,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
     {
         public override void SetStaticDefaults()
         {
-            ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<CursedGrassBlade>();
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<CursedGrassBlade>();
             Item.staff[Item.type] = true;
             ItemID.Sets.SkipsInitialUseSound[Item.type] = true;
         }
@@ -44,12 +43,12 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.value = Item.buyPrice(0, 0, 44, 0);
             Item.rare = ItemRarityID.Green;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<ArcaneBolt>();
-            Item.shootSpeed = 0f;
+            Item.shoot = ProjectileType<ArcaneBolt>();
+            Item.shootSpeed = 10f;
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            type = ModContent.ProjectileType<AldersStaff_Proj>();
+            type = ProjectileType<AldersStaff_Proj>();
         }
     }
     public class AldersStaff_Proj : ModProjectile
@@ -69,7 +68,6 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Projectile.Redemption().TechnicallyMelee = true;
         }
         private Vector2 vector;
-        private bool swap;
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
@@ -110,7 +108,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
                         {
                             if (!Main.dedServ)
                                 SoundEngine.PlaySound(CustomSounds.Saint9 with { Volume = .1f, Pitch = -.1f }, Projectile.position);
-                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + RedeHelper.OffsetWithRotation(Projectile, 17, -14), RedeHelper.PolarVector(Main.rand.Next(6, 11), -MathHelper.PiOver2 + Main.rand.NextFloat(-0.3f, .3f)), ModContent.ProjectileType<ArcaneBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + RedeHelper.OffsetWithRotation(Projectile, 17, -14), RedeHelper.PolarVector(Main.rand.Next(6, 11), -MathHelper.PiOver2 + Main.rand.NextFloat(-0.3f, .3f)), ProjectileType<ArcaneBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
                         }
                     }
                     if (Projectile.ai[1] >= useTime * 2)
@@ -125,7 +123,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Asset<Texture2D> texture = TextureAssets.Projectile[Type];
             Vector2 origin = new(texture.Width() / 2f - (7 * player.direction), texture.Height() / 2f + 8);
 
-            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
+            Main.EntitySpriteDraw(texture.Value, Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
             return false;
         }
     }

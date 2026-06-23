@@ -1,7 +1,7 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ParticleLibrary.Core;
 using ParticleLibrary.Utilities;
+using Redemption.Base;
 using Redemption.BaseExtension;
 using Redemption.Buffs.NPCBuffs;
 using Redemption.Globals;
@@ -121,7 +121,7 @@ namespace Redemption.Projectiles.Melee
                 RedeParticleManager.CreateSpeedParticle(position, direction.RotatedBy(randomRotation) * randomVel * 10, 0.8f, Color.Salmon.WithAlpha(0));
             }
 
-            target.AddBuff(ModContent.BuffType<DragonblazeDebuff>(), 300);
+            target.AddBuff(BuffType<DragonblazeDebuff>(), 300);
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
@@ -132,8 +132,8 @@ namespace Redemption.Projectiles.Melee
         Asset<Texture2D> bottomTex;
         public override bool PreDraw(ref Color lightColor)
         {
-            topTex ??= ModContent.Request<Texture2D>("Redemption/Projectiles/Melee/DragonSkullTop2_Proj");
-            bottomTex ??= ModContent.Request<Texture2D>("Redemption/Projectiles/Melee/DragonSkullBottom2_Proj");
+            topTex ??= Request<Texture2D>("Redemption/Projectiles/Melee/DragonSkullTop2_Proj");
+            bottomTex ??= Request<Texture2D>("Redemption/Projectiles/Melee/DragonSkullBottom2_Proj");
 
             Vector2 drawOrigin = new(Projectile.width / 2, Projectile.height / 2);
             var effects = Projectile.velocity.X > 0 ? SpriteEffects.None : SpriteEffects.FlipVertically;

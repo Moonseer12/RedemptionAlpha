@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Globals;
 using Redemption.Items.Materials.HM;
 using Redemption.Projectiles.Magic;
@@ -33,7 +32,7 @@ namespace Redemption.Items.Weapons.HM.Magic
             Item.value = Item.sellPrice(0, 4, 0, 0);
             Item.rare = ItemRarityID.LightRed;
             Item.shootSpeed = 10;
-            Item.shoot = ModContent.ProjectileType<HydrasMaw_Proj>();
+            Item.shoot = ProjectileType<HydrasMaw_Proj>();
             Item.UseSound = SoundID.Item13;
         }
         public override bool AltFunctionUse(Player player) => true;
@@ -78,7 +77,7 @@ namespace Redemption.Items.Weapons.HM.Magic
                 player.itemTime = (int)(Item.useTime * 1.5f);
                 player.itemAnimation = (int)(Item.useTime * 1.5f);
                 orbCooldown = 40;
-                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<HydrasMaw_Ball>(), damage, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position, velocity, ProjectileType<HydrasMaw_Ball>(), damage, knockback, player.whoAmI);
                 return false;
             }
             for (int i = 0; i < 2; i++)
@@ -97,9 +96,9 @@ namespace Redemption.Items.Weapons.HM.Magic
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<Plating>(), 4)
-                .AddIngredient(ModContent.ItemType<CarbonMyofibre>(), 8)
-                .AddIngredient(ModContent.ItemType<ToxicBile>(), 12)
+                .AddIngredient(ItemType<Plating>(), 4)
+                .AddIngredient(ItemType<CarbonMyofibre>(), 8)
+                .AddIngredient(ItemType<ToxicBile>(), 12)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }

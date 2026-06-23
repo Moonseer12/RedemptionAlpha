@@ -16,7 +16,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             /* Tooltip.SetDefault("Hitting armed enemies inflicts Disarmed\n" +
                 "Disarmed heavily decreases contact damage and their weapon damage\n" +
                 "Blocks weak physical projectiles"); */
-            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<SilverwoodBow>();
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<DaerelsSilverwoodBow>();
             ItemID.Sets.SkipsInitialUseSound[Item.type] = true;
             Item.ResearchUnlockCount = 1;
         }
@@ -31,8 +31,8 @@ namespace Redemption.Items.Weapons.PreHM.Melee
 
             // Use Properties
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 30;
-            Item.useTime = 30;
+            Item.useAnimation = 27;
+            Item.useTime = 27;
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = true;
 

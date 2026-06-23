@@ -37,17 +37,26 @@ namespace Redemption.Items.Accessories.PostML
         public override void ResetEffects()
         {
             equipped = false;
+            if (Player.potionDelay <= 0)
+            {
+                duration = 0;
+                originalHeal = 0;
+                consume = false;
+            }
         }
         public override void GetHealLife(Item item, bool quickHeal, ref int healValue)
         {
             if (equipped)
             {
-                if (Player.potionDelay >= Player.potionDelayTime)
+                if (!consume)
                 {
-                    originalHeal = healValue;
-                    duration = 300;
+                    if (Player.potionDelay > 0)
+                    {
+                        originalHeal = healValue;
+                        duration = 300;
+                        consume = true;
+                    }
                 }
-
                 if (duration > 0)
                 {
                     for (int i = 1; i <= 14; i++)

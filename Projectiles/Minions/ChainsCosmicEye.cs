@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
@@ -50,7 +49,7 @@ namespace Redemption.Projectiles.Minions
                 {
                     SoundEngine.PlaySound(SoundID.Item125, Projectile.position);
                     if (Main.myPlayer == Projectile.owner)
-                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<ChainsCosmicEye_Beam>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, Projectile.whoAmI);
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.velocity, ProjectileType<ChainsCosmicEye_Beam>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, Projectile.whoAmI);
                     Projectile.localAI[0] = 1;
                 }
             }

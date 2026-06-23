@@ -16,8 +16,7 @@ namespace Redemption.Items.Weapons.PostML.Magic
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ElementID.PoisonS);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Casts two harmless bubble mines\n" +
-                "Right-click to fire a small " + ElementID.PoisonS + " beam that detonates any mine it hits"); */
+            ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;
             Item.ResearchUnlockCount = 1;
         }
 
@@ -42,22 +41,23 @@ namespace Redemption.Items.Weapons.PostML.Magic
         }
         public override Vector2? HoldoutOffset()
         {
-            return new Vector2(-8, 0);
+            return new Vector2(-32, 0);
         }
         public override bool AltFunctionUse(Player player) => true;
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            Vector2 Offset = Vector2.Normalize(velocity) * 70f;
-
-            if (Collision.CanHit(position, 0, 0, position + Offset, 0, 0))
+            Vector2 Offset = Vector2.Normalize(velocity) * 40;
+            if (Collision.CanHit(position, 16, 16, position + Offset, 16, 16))
                 position += Offset;
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
+            Item.noUseGraphic = false;
             if (player.altFunctionUse == 2)
             {
+                Item.noUseGraphic = true;
                 type = ProjectileType<XeniumStaff_Proj>();
-                Projectile.NewProjectile(source, position, velocity, type, damage / 4, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position, velocity, type, damage / 4, knockback, player.whoAmI, Item.useTime * 2);
                 return false;
             }
             int numberProjectiles = 2;
@@ -90,6 +90,10 @@ namespace Redemption.Items.Weapons.PostML.Magic
                 }
             }
             return false;
+        }
+        public override float UseSpeedMultiplier(Player player)
+        {
+            return player.altFunctionUse == 2 ? 0.5f : 1;
         }
         public override void AddRecipes()
         {

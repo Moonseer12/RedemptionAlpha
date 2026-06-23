@@ -1,6 +1,4 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.Base;
 using Redemption.BaseExtension;
 using Redemption.Buffs.NPCBuffs;
 using Redemption.Globals;
@@ -49,7 +47,7 @@ namespace Redemption.Projectiles.Ranged
             }
             Lighting.AddLight(Projectile.Center, Projectile.Opacity, Projectile.Opacity, Projectile.Opacity);
             Projectile.localAI[0]++;
-            NPC npc = Main.npc[0];
+            NPC npc = null;
             if (Projectile.ai[1] == 0)
                 npc = Main.npc[(int)Projectile.ai[0]];
             if (Projectile.localAI[0] == 1)
@@ -65,13 +63,16 @@ namespace Redemption.Projectiles.Ranged
             {
                 Player player = Main.player[Projectile.owner];
                 player.GetModPlayer<ScreenPlayer>().Rumble(4, 10);
-                SoundEngine.PlaySound(CustomSounds.Thunderstrike, Projectile.position);
+                if (!Main.dedServ)
+                    SoundEngine.PlaySound(CustomSounds.Thunderstrike, Projectile.position);
                 for (int i = 0; i < 30; i++)
                 {
                     int dustIndex = Dust.NewDust(new Vector2(Projectile.Center.X - 25, Projectile.Bottom.Y - 25), 50, 50, DustID.Electric, newColor: Color.Yellow, Scale: 1.2f);
                     Main.dust[dustIndex].noGravity = true;
                     Main.dust[dustIndex].velocity *= 2;
                 }
+                Rectangle boom = new((int)Projectile.Center.X - 25, (int)Projectile.Bottom.Y - 25, 50, 50);
+                //RedeHelper.NPCRadiusDamage(boom, Projectile, (int)(Projectile.damage * 1.2f), Projectile.knockBack, Projectile.CritChance);
             }
         }
         private float drawTimer;
@@ -85,21 +86,18 @@ namespace Redemption.Projectiles.Ranged
             Vector2 origin = new(texture.Width / 2f, height / 2f);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
             RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, texture, ref drawTimer, position, new Rectangle?(rect), Projectile.GetAlpha(Color.LightGoldenrodYellow), Projectile.rotation + MathHelper.PiOver2, origin, Projectile.scale, 0);
 
             Main.EntitySpriteDraw(texture, position, new Rectangle?(rect), Projectile.GetAlpha(Color.White), Projectile.rotation + MathHelper.PiOver2, origin, Projectile.scale, 0, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
             return false;
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            Projectile.localNPCImmunity[target.whoAmI] = 10;
-            target.immune[Projectile.owner] = 0;
-
             target.AddBuff(BuffType<ElectrifiedDebuff>(), target.HasBuff(BuffID.Wet) ? 320 : 160);
         }
     }

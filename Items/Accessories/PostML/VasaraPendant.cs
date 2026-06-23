@@ -3,7 +3,6 @@ using Redemption.Base;
 using Redemption.BaseExtension;
 using Redemption.Buffs.Cooldowns;
 using Redemption.Globals;
-using Redemption.Particles;
 using Redemption.Projectiles.Magic;
 using System;
 using System.Collections.Generic;
@@ -96,6 +95,8 @@ namespace Redemption.Items.Accessories.PostML
             Projectile.DamageType = DamageClass.Generic;
             Projectile.alpha = 200;
             Projectile.timeLeft = 300;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 10;
         }
         private Vector2 targetPos;
         private readonly List<int> targets = new();

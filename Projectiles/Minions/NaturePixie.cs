@@ -40,11 +40,7 @@ namespace Redemption.Projectiles.Minions
             Projectile.minionSlots = 1f;
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
-        }
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            Projectile.localNPCImmunity[target.whoAmI] = 10;
-            target.immune[Projectile.owner] = 0;
+            Projectile.localNPCHitCooldown = 10;
         }
 
         public override bool? CanCutTiles() => false;
@@ -73,6 +69,7 @@ namespace Redemption.Projectiles.Minions
                 Main.dust[dust].noGravity = true;
             }
 
+            #region Forest Nymph Interaction
             if (Projectile.ai[1] == 2)
             {
                 int nymphID = NPC.FindFirstNPC(NPCType<ForestNymph>());
@@ -125,6 +122,8 @@ namespace Redemption.Projectiles.Minions
                 }
                 return;
             }
+            #endregion
+
             if (RedeHelper.ClosestNPC(ref target, 600, Projectile.Center, true, owner.MinionAttackTargetNPC) && target.type != NPCType<ForestNymph>())
             {
                 if (Projectile.ai[1] == 1)
@@ -193,6 +192,8 @@ namespace Redemption.Projectiles.Minions
             else
             {
                 Projectile.ai[1] = 0;
+
+                // Forest Nymph Interaction Start
                 if (((RedeWorld.Alignment >= 1 && !RedeBossDowned.downedTreebark) || (RedeWorld.Alignment >= 3 && RedeBossDowned.downedTreebark)) && Projectile.localAI[1]++ % 60 == 0)
                 {
                     int nymphID = NPC.FindFirstNPC(NPCType<ForestNymph>());

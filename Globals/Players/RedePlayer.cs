@@ -172,6 +172,17 @@ namespace Redemption.Globals.Players
                 hitTarget2 = target.whoAmI;
             }
         }
+        public Rectangle parryHitbox;
+        public void CreateParryWindow(Rectangle hitbox, ref bool active)
+        {
+            if (active)
+            {
+                parryHitbox = hitbox;
+                return;
+            }
+            parryHitbox = Rectangle.Empty;
+        }
+
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
             if (Player.HasItem(ItemType<Taikasauva>()) && !Main.dedServ)

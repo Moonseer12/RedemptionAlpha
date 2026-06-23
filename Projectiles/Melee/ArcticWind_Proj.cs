@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Buffs.Debuffs;
 using Redemption.Globals;
@@ -32,8 +31,9 @@ namespace Redemption.Projectiles.Melee
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Projectile.rotation += 0.1f * player.direction;
-            Projectile.Center = player.Center;
+            float dir = Main.MouseWorld.X > player.Center.X ? 1 : -1;
+            Projectile.rotation += 0.1f * dir;
+            Projectile.Center = player.MountedCenter;
 
             for (int i = 0; i < 30; i++)
             {
@@ -71,7 +71,7 @@ namespace Redemption.Projectiles.Melee
                 if (!Projectile.Hitbox.Intersects(target.Hitbox))
                     continue;
 
-                target.AddBuff(ModContent.BuffType<PureChillDebuff>(), 300);
+                target.AddBuff(BuffType<PureChillDebuff>(), 300);
             }
         }
 
@@ -82,12 +82,12 @@ namespace Redemption.Projectiles.Melee
             SpriteEffects effects = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, drawOrigin, Projectile.scale * 2, effects, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
             return false;
         }
     }

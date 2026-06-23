@@ -1,6 +1,6 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Buffs.NPCBuffs;
+using Redemption.Dusts;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -31,6 +31,7 @@ namespace Redemption.Projectiles.Ranged
             Projectile.tileCollide = false;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.extraUpdates = 1;
+            origVelocity = Projectile.velocity;
         }
         private Vector2 origVelocity;
         public override void OnSpawn(IEntitySource source)
@@ -65,7 +66,8 @@ namespace Redemption.Projectiles.Ranged
                     continue;
                 if (!Projectile.Hitbox.Intersects(npc.Hitbox))
                     continue;
-                Projectile.localAI[0] = 1;
+
+                Projectile.localAI[0] = 2;
             }
 
             if (Projectile.localAI[0] == 1)
@@ -73,16 +75,10 @@ namespace Redemption.Projectiles.Ranged
                 Projectile.velocity = origVelocity / 8;
                 if (Projectile.localAI[1]++ % 10 == 0)
                 {
-                    for (int i = 0; i < 6; i++)
-                    {
-                        int d = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke,
-                            -Projectile.velocity.X * 0.4f, -Projectile.velocity.Y * 0.4f);
-                        Main.dust[d].noGravity = true;
-                    }
                     for (int i = 0; i < 10; i++)
                     {
-                        int d = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.MartianSaucerSpark,
-                            -Projectile.velocity.X * 2f, -Projectile.velocity.Y * 2f, Scale: 0.5f);
+                        int d = Dust.NewDust(Projectile.Center + (Projectile.velocity * 10) + new Vector2(-1, 22), 2, 2, DustType<DustSpark>(),
+                            -Projectile.velocity.X * 2f, -Projectile.velocity.Y * 2f, 0, new Color(255, 230, 60) * 0.8f, Scale: 1);
                         Main.dust[d].noGravity = true;
                     }
                 }
@@ -91,8 +87,30 @@ namespace Redemption.Projectiles.Ranged
                     SoundEngine.PlaySound(SoundID.Item23 with { Volume = .4f, Pitch = .2f }, Projectile.position);
                 }
             }
+            else if (Projectile.localAI[0] == 2)
+            {
+                if (Projectile.localAI[2]++ % 10 == 1)
+                {
+                    SoundEngine.PlaySound(SoundID.DD2_CrystalCartImpact with { Volume = 1f, Pitch = -.4f }, Projectile.position);
+                    for (int i = 0; i < 10; i++)
+                    {
+                        int d = Dust.NewDust(Projectile.Center + (Projectile.velocity * 10) + new Vector2(-1, 22), 2, 2, DustType<DustSpark>(),
+                            -Projectile.velocity.X * 2f, -Projectile.velocity.Y * 2f, 0, new Color(255, 230, 60) * 0.8f, Scale: 1);
+                        Main.dust[d].noGravity = true;
+                    }
+                }
+                if (Projectile.localAI[2] < 10)
+                {
+                    Projectile.velocity *= 0.1f;
+                }
+                else
+                    Projectile.velocity = origVelocity / 8;
+            }
             else
+            {
                 Projectile.velocity = origVelocity;
+                Projectile.localAI[2] = 0;
+            }
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
@@ -104,7 +122,7 @@ namespace Redemption.Projectiles.Ranged
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<BrokenArmorDebuff>(), 40);
+            target.AddBuff(BuffType<BrokenArmorDebuff>(), 40);
             Projectile.localNPCImmunity[target.whoAmI] = 8;
             target.immune[Projectile.owner] = 0;
         }
@@ -117,14 +135,8 @@ namespace Redemption.Projectiles.Ranged
         {
             for (int i = 0; i < 6; i++)
             {
-                int d = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke,
-                    -Projectile.velocity.X * 0.4f, -Projectile.velocity.Y * 0.4f);
-                Main.dust[d].noGravity = true;
-            }
-            for (int i = 0; i < 6; i++)
-            {
-                int d = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.SparksMech,
-                    -Projectile.velocity.X * 0.7f, -Projectile.velocity.Y * 0.7f);
+                int d = Dust.NewDust(Projectile.position + Projectile.velocity + new Vector2(0, 20), Projectile.width, Projectile.height, DustType<DustSpark>(),
+                    -Projectile.velocity.X * 0.7f, -Projectile.velocity.Y * 0.7f, 0, new Color(255, 230, 60) * 0.8f);
                 Main.dust[d].noGravity = true;
             }
         }

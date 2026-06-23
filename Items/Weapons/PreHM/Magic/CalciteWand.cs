@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Globals;
 using Redemption.Items.Materials.PreHM;
 using Redemption.Projectiles.Magic;
@@ -35,7 +34,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.rare = ItemRarityID.Blue;
             Item.UseSound = SoundID.Item42;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<CalciteWand_Proj>();
+            Item.shoot = ProjectileType<CalciteWand_Proj>();
             Item.shootSpeed = 0f;
         }
         public override bool CanUseItem(Player player)

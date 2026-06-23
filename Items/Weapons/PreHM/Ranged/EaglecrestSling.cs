@@ -39,10 +39,10 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
             Item.channel = true;
 
             // Projectile Properties
-            Item.shootSpeed = 5f;
+            Item.shootSpeed = 10f;
             Item.shoot = ProjectileType<EaglecrestSling_Throw>();
         }
-
+        public override bool WeaponPrefix() => true;
         public int shot;
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {

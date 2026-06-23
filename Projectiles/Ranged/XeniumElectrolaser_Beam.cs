@@ -53,12 +53,9 @@ namespace Redemption.Projectiles.Ranged
 
                 Color emberColor = Color.Multiply(Color.Lerp(bright, dark, (float)(timeLeftMax - Projectile.timeLeft) / timeLeftMax), 1);
                 float Scale = (1 + Projectile.ai[0] / 10);
-                float squish = 4;
-                if (Projectile.ai[0] != 1)
-                    squish = 3;
 
                 Vector2 drawPos = Projectile.Center + Projectile.velocity * Projectile.ai[0];
-                RedeParticleManager.CreateLaserParticle(drawPos, Projectile.velocity, Scale * 2, emberColor, squish);
+                RedeParticleManager.CreateLaserParticle(drawPos, Projectile.velocity, Scale * 3, emberColor);
             }
         }
         public void DrawParticle()
@@ -122,7 +119,7 @@ namespace Redemption.Projectiles.Ranged
                 Color emberColor = Color.Multiply(Color.Lerp(bright, dark, (float)(timeLeftMax - Projectile.timeLeft) / timeLeftMax), 1);
 
                 Vector2 drawPos = Projectile.Center;
-                RedeParticleManager.CreateLaserParticle(drawPos, Projectile.velocity, 1, emberColor, 2);
+                RedeParticleManager.CreateLaserParticle(drawPos, Projectile.velocity, 3, emberColor);
             }
         }
     }

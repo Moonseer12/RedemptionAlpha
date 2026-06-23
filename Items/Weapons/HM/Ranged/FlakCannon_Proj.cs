@@ -34,8 +34,8 @@ namespace Redemption.Items.Weapons.HM.Ranged
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter, true);
-            RedeProjectile.HoldOutProjBasics(Projectile, player, vector);
+            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter);
+            ProjHelper.HoldOutProjBasics(Projectile, player, vector);
             Projectile.Center = vector;
             Projectile.spriteDirection = Projectile.direction;
             Projectile.timeLeft = 2;
@@ -51,6 +51,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Projectile.rotation = Projectile.velocity.ToRotation() + num;
 
             offset -= 6;
+            float maxTime = (player.HeldItem.useTime / player.GetAttackSpeed(DamageClass.Ranged));
             if (!player.channel)
             {
                 if (Projectile.localAI[0]++ == 0)
@@ -73,7 +74,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
                                 grenade = ProjectileType<FlakGrenade_Bee>();
                                 break;
                         }
-                        
+
                         Vector2 gunPos = Projectile.Center + RedeHelper.PolarVector(36 * Projectile.spriteDirection, Projectile.rotation) + RedeHelper.PolarVector(-9, Projectile.rotation + MathHelper.PiOver2);
                         Vector2 gunSmokePos = Projectile.Center + RedeHelper.PolarVector(66 * Projectile.spriteDirection, Projectile.rotation) + RedeHelper.PolarVector(-19, Projectile.rotation + MathHelper.PiOver2);
                         for (int i = 0; i < 5; i++)
@@ -99,21 +100,21 @@ namespace Redemption.Items.Weapons.HM.Ranged
                     }
                 }
 
-                if (Projectile.localAI[0] >= 4 && Projectile.localAI[1] >= 30)
+                if (Projectile.localAI[0] >= 4 && Projectile.localAI[1] >= (int)maxTime - 3)
                 {
-                    Projectile.localAI[1] -= 20;
+                    Projectile.localAI[1] -= 20 * maxTime / 33f;
                     Projectile.localAI[0] = 0;
                 }
 
-                if (Projectile.localAI[0] >= 33)
+                if (Projectile.localAI[0] >= (int)maxTime)
                     Projectile.Kill();
             }
             else
             {
-                Projectile.localAI[1] += player.GetAttackSpeed(DamageClass.Ranged);
-                if (Projectile.localAI[1] >= 30)
+                Projectile.localAI[1]++;
+                if (Projectile.localAI[1] >= (int)maxTime - 3)
                     shake += 0.02f;
-                if (Projectile.localAI[1] >= 140 / player.GetAttackSpeed(DamageClass.Ranged) && !Main.dedServ && !fullcharge)
+                if (Projectile.localAI[1] >= (int)(maxTime * 4) && !Main.dedServ && !fullcharge)
                 {
                     SoundEngine.PlaySound(CustomSounds.ShootChange, Projectile.position);
                     fullcharge = true;
@@ -121,7 +122,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
                 Projectile.position += new Vector2(Main.rand.NextFloat(-shake, shake), Main.rand.NextFloat(-shake, shake));
             }
             shake = MathHelper.Min(shake, 0.8f);
-            Projectile.localAI[1] = MathHelper.Min(Projectile.localAI[1], 140);
+            Projectile.localAI[1] = MathHelper.Min(Projectile.localAI[1], (int)(maxTime * 4));
             offset = MathHelper.Clamp(offset, 0, 40);
             if (Projectile.ai[1]++ > 1)
                 Projectile.alpha = 0;

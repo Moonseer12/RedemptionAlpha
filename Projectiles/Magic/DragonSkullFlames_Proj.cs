@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using ParticleLibrary;
+﻿using ParticleLibrary.Core;
 using Redemption.BaseExtension;
 using Redemption.Buffs.NPCBuffs;
 using Redemption.Globals;
@@ -72,7 +71,7 @@ namespace Redemption.Projectiles.Magic
             target.AddBuff(BuffID.OnFire, 200);
 
             if (Projectile.ModProjectile is DragonSkullFlames_Proj && Main.player[Projectile.owner].RedemptionPlayerBuff().dragonLeadBonus)
-                target.AddBuff(ModContent.BuffType<DragonblazeDebuff>(), 300);
+                target.AddBuff(BuffType<DragonblazeDebuff>(), 300);
         }
     }
 }

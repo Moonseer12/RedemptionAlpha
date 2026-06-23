@@ -1,8 +1,8 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.BaseExtension;
 using Redemption.Buffs.NPCBuffs;
 using Redemption.Globals;
+using Redemption.Globals.Players;
 using Redemption.Items.Materials.PreHM;
 using Redemption.Projectiles.Ranged;
 using System.Collections.Generic;
@@ -19,8 +19,10 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 1;
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
+
         public override void SetDefaults()
         {
             // Common Properties
@@ -46,13 +48,11 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
             Item.shootSpeed = 20f;
             Item.shoot = ProjectileID.WoodenArrowFriendly;
             Item.useAmmo = AmmoID.Arrow;
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
         }
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<DragonLeadAlloy>(), 10)
+                .AddIngredient(ItemType<DragonLeadAlloy>(), 10)
                 .AddIngredient(ItemID.Bone, 2)
                 .AddTile(TileID.Anvils)
                 .Register();
@@ -89,7 +89,7 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
             }
             if (breath)
             {
-                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<DragonBreathStart>(), damage, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position, velocity, ProjectileType<DragonBreathStart>(), damage, knockback, player.whoAmI);
                 breath = false;
                 ready = false;
             }
@@ -102,7 +102,7 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
         {
             for (int k = 0; k < 15; k++)
             {
-                count[k] = Main.projectile.Count(n => n.type == ModContent.ProjectileType<DragonSlayersBowHitcheck>() && n.owner == player.whoAmI && (int)n.ai[0] == k);
+                count[k] = Main.projectile.Count(n => n.type == ProjectileType<DragonSlayersBowHitcheck>() && n.owner == player.whoAmI && (int)n.ai[0] == k);
                 if (count[k] >= 4)
                 {
                     breath = true;
@@ -131,13 +131,12 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
             if (NPCLists.Dragonlike.Contains(target.type))
                 modifiers.FinalDamage *= 4;
         }
-
         public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (!ShotFrom)
                 return;
             if (Main.player[projectile.owner].RedemptionPlayerBuff().dragonLeadBonus)
-                target.AddBuff(ModContent.BuffType<DragonblazeDebuff>(), 300);
+                target.AddBuff(BuffType<DragonblazeDebuff>(), 300);
 
             isHit = true;
         }
@@ -148,7 +147,7 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
 
             if (isHit)
             {
-                Projectile.NewProjectile(projectile.GetSource_FromAI(), projectile.Center, Vector2.Zero, ModContent.ProjectileType<DragonSlayersBowHitcheck>(), projectile.damage, projectile.knockBack, projectile.owner, Flag);
+                Projectile.NewProjectile(projectile.GetSource_FromAI(), projectile.Center, Vector2.Zero, ProjectileType<DragonSlayersBowHitcheck>(), projectile.damage, projectile.knockBack, projectile.owner, Flag);
             }
         }
     }
@@ -175,8 +174,8 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
 
             for (int k = 0; k < 15; k++)
             {
-                IEnumerable<Projectile> list = Main.projectile.Where(n => n.type == ModContent.ProjectileType<DragonSlayersBowHitcheck>() && n.owner == player.whoAmI && (int)n.ai[0] == k);
-                count[k] = Main.projectile.Count(n => n.type == ModContent.ProjectileType<DragonSlayersBowHitcheck>() && n.owner == player.whoAmI && (int)n.ai[0] == k);
+                IEnumerable<Projectile> list = Main.projectile.Where(n => n.type == ProjectileType<DragonSlayersBowHitcheck>() && n.owner == player.whoAmI && (int)n.ai[0] == k);
+                count[k] = Main.projectile.Count(n => n.type == ProjectileType<DragonSlayersBowHitcheck>() && n.owner == player.whoAmI && (int)n.ai[0] == k);
                 if (count[k] >= 4)
                     foreach (Projectile proj in list)
                         proj.Kill();

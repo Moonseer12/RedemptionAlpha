@@ -27,13 +27,12 @@ namespace Redemption.Items.Weapons.PostML.Summon
 
         public override void SetDefaults()
         {
-            Item.damage = 240;
+            Item.damage = 180;
             Item.DamageType = DamageClass.Summon;
             Item.width = 38;
             Item.height = 30;
-            Item.mana = 20;
-            Item.useTime = 20;
-            Item.useAnimation = 20;
+            Item.useTime = 10;
+            Item.useAnimation = 10;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.noMelee = true;
             Item.knockBack = 2;
@@ -54,7 +53,8 @@ namespace Redemption.Items.Weapons.PostML.Summon
         {
             player.AddBuff(Item.buffType, 2);
 
-            var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
+            int flag = UkkonenGlobalNPC.GetUkkonenCount();
+            var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer, flag);
             projectile.originalDamage = Item.damage;
 
             return false;

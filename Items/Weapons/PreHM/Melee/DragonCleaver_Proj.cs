@@ -71,6 +71,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             Owner.itemAnimation = 2;
 
             Vector2 armCenter = Owner.RotatedRelativePoint(Owner.MountedCenter) + new Vector2(Owner.direction * -4, -4);
+            bool parryActive = false;
             if (--pauseTimer <= 0)
             {
                 switch (Projectile.ai[0])
@@ -86,6 +87,11 @@ namespace Redemption.Items.Weapons.PreHM.Melee
                         {
                             if (!Main.dedServ)
                                 SoundEngine.PlaySound(CustomSounds.Swing1 with { Pitch = -.6f }, Owner.position);
+                        }
+                        if (progress > 0.5f && progress < 0.58f)
+                        {
+                            parryActive = true;
+                            ProjHelper.SwordClashFriendly(Projectile, Owner, ref parried);
                         }
 
                         if (progress < 1f)
@@ -121,6 +127,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
                         break;
                 }
             }
+            Owner.Redemption().CreateParryWindow(Projectile.Hitbox, ref parryActive);
             Projectile.Center = armCenter + positionVector;
             if (Projectile.spriteDirection == 1)
                 Projectile.rotation = (Projectile.Center - armCenter).ToRotation() + MathHelper.PiOver4;
@@ -204,7 +211,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
                     RedeDraw.SpawnRing(Owner.Center, new Color(255, 65, 65), 0.12f, 0.86f, 4);
                 }
             }
-            RedeProjectile.Decapitation(target, ref damageDone, ref hit.Crit);
+            ProjHelper.Decapitation(target, ref damageDone, ref hit.Crit);
 
             if (Owner.RedemptionPlayerBuff().dragonLeadBonus)
                 target.AddBuff(BuffType<DragonblazeDebuff>(), 300);

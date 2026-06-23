@@ -15,21 +15,25 @@ namespace Redemption.Projectiles.Minions
         private new const float FirstSegmentDrawDist = 7;
         public override void SetSafeStaticDefaults()
         {
-            ProjectileID.Sets.MinionShot[Projectile.type] = true;
             ElementID.ProjHoly[Type] = true;
             ElementID.ProjArcane[Type] = true;
         }
-
         public override void SetSafeDefaults()
         {
-            Projectile.penetrate = -1;
-            Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Summon;
+            Projectile.Redemption().FromMinion = true;
+            Projectile.hostile = false;
+            Projectile.friendly = true;
+
+            Projectile.tileCollide = false;
             Projectile.timeLeft = 180;
+            Projectile.penetrate = -1;
+
             LaserSegmentLength = 16;
             LaserWidth = 20;
             LaserEndSegmentLength = 14;
             MaxLaserLength = 112;
+            NewCollision = true;
             StopsOnTiles = false;
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
@@ -41,16 +45,13 @@ namespace Redemption.Projectiles.Minions
         {
             Projectile proj = Main.projectile[(int)Projectile.ai[0]];
             Projectile.rotation = Projectile.velocity.ToRotation();
+
             if (proj.type == ProjectileType<Erhan_Bible>())
             {
                 MaxLaserLength = 77;
                 Projectile.hostile = true;
-                Projectile.friendly = false;
-            }
-            else
-            {
-                Projectile.hostile = false;
                 Projectile.friendly = true;
+                Projectile.Redemption().friendlyHostile = true;
             }
             #region Beginning And End Effects
             if (AITimer == 0)
@@ -72,16 +73,8 @@ namespace Redemption.Projectiles.Minions
             }
             #endregion
 
-            #region Length Setting
-            if (StopsOnTiles)
-            {
-                EndpointTileCollision();
-            }
-            else
-            {
-                LaserLength = MaxLaserLength;
-            }
-            #endregion
+            endPoint = Projectile.Center + Vector2.UnitX.RotatedBy(Projectile.rotation) * (MaxLaserLength + 10);
+            LaserLength = LengthSetting(Projectile, endPoint);
 
             ++AITimer;
         }
@@ -116,24 +109,6 @@ namespace Redemption.Projectiles.Minions
             Main.spriteBatch.End();
             Main.spriteBatch.BeginDefault();
             return false;
-        }
-        #endregion
-
-        #region Collisions
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            Vector2 unit = new Vector2(1.5f, 0).RotatedBy(Projectile.rotation);
-            float point = 0f;
-            // Run an AABB versus Line check to look for collisions
-            if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center,
-                Projectile.Center + unit * LaserLength, 48 * LaserScale, ref point))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
         }
         #endregion
     }

@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Buffs.Minions;
 using System.Collections.Generic;
 using Terraria;
@@ -16,6 +15,7 @@ namespace Redemption.Projectiles.Minions
             ProjectileID.Sets.DontAttachHideToAlpha[Type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
+            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
         }
 
         public override void SetDefaults()
@@ -47,7 +47,7 @@ namespace Redemption.Projectiles.Minions
             if (Projectile.localAI[0]++ % 80 == 0 && Projectile.localAI[0] >= 80 && Projectile.owner == Main.myPlayer)
             {
                 SoundEngine.PlaySound(SoundID.Item61 with { Volume = .5f }, Projectile.position);
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center - new Vector2(0, 8), new Vector2(Main.rand.Next(10, 13) * Projectile.spriteDirection, -Main.rand.Next(4, 7)), ModContent.ProjectileType<AcornBomb_Proj>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center - new Vector2(0, 8), new Vector2(Main.rand.Next(10, 13) * Projectile.spriteDirection, -Main.rand.Next(4, 7)), ProjectileType<AcornBomb_Proj>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
             }
             Projectile.velocity.Y += 1;
         }
@@ -66,12 +66,12 @@ namespace Redemption.Projectiles.Minions
         {
             if (owner.dead || !owner.active)
             {
-                owner.ClearBuff(ModContent.BuffType<LogStaffBuff>());
+                owner.ClearBuff(BuffType<LogStaffBuff>());
                 return false;
             }
 
-            if (owner.HasBuff(ModContent.BuffType<LogStaffBuff>()))
-                Projectile.timeLeft = 2;
+            if (!owner.HasBuff(BuffType<LogStaffBuff>()))
+                Projectile.Kill();
 
             return true;
         }

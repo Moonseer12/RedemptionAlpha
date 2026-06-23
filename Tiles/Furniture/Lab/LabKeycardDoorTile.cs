@@ -55,7 +55,7 @@ namespace Redemption.Tiles.Furniture.Lab
             AdjTiles = new int[] { TileID.ClosedDoor };
             AnimationFrameHeight = 72;
         }
-        public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => Main.LocalPlayer.HasItem(ItemType<Keycard>());
+        public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => Main.LocalPlayer.HasItemInInventoryOrOpenVoidBag(ItemType<Keycard>());
         public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
         public override bool CanExplode(int i, int j) => false;
         public override void NearbyEffects(int i, int j, bool closer)
@@ -87,7 +87,7 @@ namespace Redemption.Tiles.Furniture.Lab
         public override bool RightClick(int i, int j)
         {
             Player player = Main.LocalPlayer;
-            if (player.HasItem(ItemType<Keycard>()))
+            if (player.HasItemInInventoryOrOpenVoidBag(ItemType<Keycard>()))
             {
                 SoundEngine.PlaySound(SoundID.Unlock);
                 int left = i - Main.tile[i, j].TileFrameX / 18 % 1;

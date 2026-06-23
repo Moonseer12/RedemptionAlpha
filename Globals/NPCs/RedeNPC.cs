@@ -196,6 +196,16 @@ namespace Redemption.Globals.NPCs
             return true;
         }
 
+        public Rectangle parryHitbox;
+        public void CreateParryWindow(Rectangle hitbox, ref bool active)
+        {
+            if (active)
+            {
+                parryHitbox = hitbox;
+                return;
+            }
+            parryHitbox = Rectangle.Empty;
+        }
         public override void ModifyHitByItem(Terraria.NPC npc, Terraria.Player player, Item item, ref Terraria.NPC.HitModifiers modifiers)
         {
             // Decapitation
@@ -203,9 +213,9 @@ namespace Redemption.Globals.NPCs
             if (npc.life < npc.lifeMax && npc.life < item.damage * 100 && item.CountsAsClass(DamageClass.Melee) && !item.noUseGraphic && item.damage > 0 && item.useStyle == ItemUseStyleID.Swing && humanoid)
             {
                 if (Main.rand.NextBool(200) && !ItemLists.BluntSwing.Contains(item.type) && item.pick == 0 && item.hammer == 0)
-                    RedeProjectile.DecapitationEffect(npc, ref modifiers);
+                    ProjHelper.DecapitationEffect(npc, ref modifiers);
                 else if (Main.rand.NextBool(80) && (item.axe > 0 || item.Redemption().TechnicallyAxe))
-                    RedeProjectile.DecapitationEffect(npc, ref modifiers);
+                    ProjHelper.DecapitationEffect(npc, ref modifiers);
             }
         }
         public override void ModifyHitByProjectile(Terraria.NPC npc, Projectile projectile, ref Terraria.NPC.HitModifiers modifiers)
@@ -225,7 +235,7 @@ namespace Redemption.Globals.NPCs
         }
         public override void OnHitByProjectile(Terraria.NPC npc, Projectile projectile, Terraria.NPC.HitInfo hit, int damageDone)
         {
-            if (!npc.Redemption().ignoreNewTargeting && RedeProjectile.projOwners.TryGetValue(projectile.whoAmI, out (Entity entity, IEntitySource source) value))
+            if (!npc.Redemption().ignoreNewTargeting && ProjHelper.projOwners.TryGetValue(projectile.whoAmI, out (Entity entity, IEntitySource source) value))
             {
                 bool g = false;
                 if (value.entity is Terraria.NPC valueNPC && valueNPC.whoAmI == npc.whoAmI)

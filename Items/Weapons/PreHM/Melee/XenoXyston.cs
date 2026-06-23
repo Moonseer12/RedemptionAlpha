@@ -1,9 +1,7 @@
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.BaseExtension;
 using Redemption.Globals.Players;
 using Redemption.Items.Materials.PreHM;
 using Redemption.Items.Weapons.PreHM.Ritualist;
-using Redemption.Items.Weapons.PreHM.Summon;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -15,8 +13,11 @@ namespace Redemption.Items.Weapons.PreHM.Melee
         public override void SetStaticDefaults()
         {
             // Tooltip.SetDefault("Hold left-click to increase acceleration of the spin");
-            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<CystlingSummon>();
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<XenomiteSecespita>();
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
+
         public override void SetDefaults()
         {
             Item.damage = 16;
@@ -33,8 +34,6 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             Item.shoot = ProjectileType<XenoXyston_Proj>();
             Item.noUseGraphic = true;
             Item.noMelee = true;
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
         }
         public override bool MeleePrefix() => true;
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)

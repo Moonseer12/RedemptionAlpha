@@ -1,6 +1,5 @@
-using System;
-using Microsoft.Xna.Framework;
 using Redemption.Buffs.NPCBuffs;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
@@ -30,7 +29,8 @@ namespace Redemption.Projectiles.Misc
             Projectile.rotation += 0.16f;
             if (Projectile.localAI[0]++ == 5f)
             {
-                SoundEngine.PlaySound(CustomSounds.sans, Projectile.position);
+                if (!Main.dedServ)
+                    SoundEngine.PlaySound(CustomSounds.sans, Projectile.position);
                 Projectile.localAI[0] = 1;
             }
             if (Projectile.localAI[0] == 0f)
@@ -71,7 +71,7 @@ namespace Redemption.Projectiles.Misc
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            target.AddBuff(ModContent.BuffType<sansDebuff>(), 10);
+            target.AddBuff(BuffType<sansDebuff>(), 10);
         }
     }
 }

@@ -1,6 +1,5 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.BaseExtension;
+using Redemption.Globals.Players;
 using Redemption.Items.Materials.HM;
 using Redemption.Projectiles.Magic;
 using Terraria;
@@ -14,10 +13,9 @@ namespace Redemption.Items.Weapons.HM.Magic
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Fires a barrage of nanites that enter enemies and destroy them from within\n" +
-                "'Nanomachines, son'"); */
-            Item.ResearchUnlockCount = 1;
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
         public override void SetDefaults()
         {
@@ -36,14 +34,12 @@ namespace Redemption.Items.Weapons.HM.Magic
             Item.rare = ItemRarityID.LightPurple;
             Item.UseSound = SoundID.Item40;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<Nanite_Proj>();
+            Item.shoot = ProjectileType<Nanite_Proj>();
             Item.shootSpeed = 20f;
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            for (int i = 0; i < Main.rand.Next(2, 5); i++)
+            for (int i = 0; i < Main.rand.Next(3, 5); i++)
             {
                 Vector2 perturbedSpeed = velocity.RotatedByRandom(MathHelper.ToRadians(10));
                 float scale = 1f - (Main.rand.NextFloat() * 0.4f);
@@ -59,9 +55,9 @@ namespace Redemption.Items.Weapons.HM.Magic
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<CyberPlating>(), 8)
-                .AddIngredient(ModContent.ItemType<Capacitor>())
-                .AddIngredient(ModContent.ItemType<AIChip>())
+                .AddIngredient(ItemType<CyberPlating>(), 8)
+                .AddIngredient(ItemType<Capacitor>())
+                .AddIngredient(ItemType<AIChip>())
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }

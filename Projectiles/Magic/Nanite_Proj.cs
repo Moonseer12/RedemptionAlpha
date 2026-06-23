@@ -1,7 +1,6 @@
-using System;
-using Microsoft.Xna.Framework;
 using Redemption.Globals;
 using Redemption.Globals.NPCs;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -62,34 +61,11 @@ namespace Redemption.Projectiles.Magic
                     Projectile.position += new Vector2(Main.rand.Next(-2, 3), Main.rand.Next(-2, 3));
                 }
 
-                if (Projectile.localAI[0] == 0)
+                if(Projectile.timeLeft < 280)
                 {
-                    AdjustMagnitude(ref Projectile.velocity);
-                    Projectile.localAI[0] = 1;
-                }
-                Vector2 move = Vector2.Zero;
-                float distance = 400f;
-                bool target = false;
-                for (int k = 0; k < 200; k++)
-                {
-                    NPC npc = Main.npc[k];
-                    if (npc.active && !npc.dontTakeDamage && !npc.friendly && npc.lifeMax > 5 && !npc.immortal && !npc.GetGlobalNPC<RedeNPC>().invisible)
-                    {
-                        Vector2 newMove = npc.Center - Projectile.Center;
-                        float distanceTo = (float)Math.Sqrt(newMove.X * newMove.X + newMove.Y * newMove.Y);
-                        if (distanceTo < distance)
-                        {
-                            move = newMove;
-                            distance = distanceTo;
-                            target = true;
-                        }
-                    }
-                }
-                if (target)
-                {
-                    AdjustMagnitude(ref move);
-                    Projectile.velocity = (10 * Projectile.velocity + move) / 11f;
-                    AdjustMagnitude(ref Projectile.velocity);
+                    NPC target = null;
+                    if (RedeHelper.ClosestNPC(ref target, 400, Projectile.Center))
+                        Projectile.Move(target.Center, 20, 10);
                 }
             }
             Projectile.scale = MathHelper.Clamp(Projectile.scale, 0.1f, 1);
@@ -119,7 +95,7 @@ namespace Redemption.Projectiles.Magic
                 npcInside = target;
                 float x = MathHelper.Distance(Projectile.position.X, target.position.X);
                 float y = MathHelper.Distance(Projectile.position.Y, target.position.Y);
-                npcOrigin = new Vector2(x, y);
+                npcOrigin = new Vector2(x, y) - Projectile.velocity;
             }
             Projectile.localNPCImmunity[target.whoAmI] = 60;
             target.immune[Projectile.owner] = 0;

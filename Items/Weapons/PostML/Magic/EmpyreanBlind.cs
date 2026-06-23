@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Items.Weapons.HM.Magic;
 using Redemption.Projectiles.Magic;
 using Terraria;
@@ -19,7 +18,7 @@ namespace Redemption.Items.Weapons.PostML.Magic
 
         public override void SetDefaults()
         {
-            Item.damage = 104;
+            Item.damage = 90;
             Item.DamageType = DamageClass.Magic;
             Item.mana = 16;
             Item.width = 42;
@@ -33,10 +32,9 @@ namespace Redemption.Items.Weapons.PostML.Magic
             Item.rare = ItemRarityID.Purple;
             Item.UseSound = SoundID.Item105;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<LightOrb_Proj>();
+            Item.shoot = ProjectileType<LightOrb_Proj>();
             Item.shootSpeed = 18f;
         }
-        public override bool AltFunctionUse(Player player) => true;
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             int numberProjectiles = Main.rand.Next(1, 3);
@@ -51,7 +49,7 @@ namespace Redemption.Items.Weapons.PostML.Magic
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<SunshardGreatstaff>())
+                .AddIngredient(ItemType<SunshardGreatstaff>())
                 .AddIngredient(ItemID.LunarBar, 7)
                 .AddTile(TileID.LunarCraftingStation)
                 .Register();

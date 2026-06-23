@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Buffs.Debuffs;
 using Redemption.Globals;
 using Terraria;
@@ -24,14 +23,16 @@ namespace Redemption.Projectiles.Ranged
         {
             Projectile.width = 26;
             Projectile.height = 26;
-            Projectile.penetrate = 12;
+            Projectile.penetrate = 10;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.hostile = false;
             Projectile.friendly = true;
             Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
-            Projectile.timeLeft = 300;
+            Projectile.timeLeft = 600;
+            Projectile.extraUpdates = 1;
             Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 20;
         }
         private NPC target;
         public override void AI()
@@ -45,7 +46,7 @@ namespace Redemption.Projectiles.Ranged
             Projectile.rotation = Projectile.velocity.ToRotation() + 1.57f;
             if (RedeHelper.ClosestNPC(ref target, 1000, Projectile.Center, false, Main.player[Projectile.owner].MinionAttackTargetNPC))
             {
-                Projectile.Move(target.Center, 30, 20);
+                Projectile.Move(target.Center, 30, 40);
             }
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
@@ -79,7 +80,7 @@ namespace Redemption.Projectiles.Ranged
             Projectile.localNPCImmunity[target.whoAmI] = 10;
             target.immune[Projectile.owner] = 0;
 
-            target.AddBuff(ModContent.BuffType<GlowingPustulesDebuff>(), 300);
+            target.AddBuff(BuffType<GlowingPustulesDebuff>(), 300);
         }
     }
 }

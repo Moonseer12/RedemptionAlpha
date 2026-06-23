@@ -4542,16 +4542,31 @@ Mods: {
 			SkySquiresGreaves: {
 				DisplayName: Sky Squire's Greaves
 				Tooltip: ""
+				Lore:
+					'''
+					'Greaves made of Kanite, worn by the Sky Squires of Ithon. The metal has a blue hue and a cold touch,
+					being used as a replacement for iron which is lacking in southern Ithon.'
+					'''
 			}
 
 			SkySquiresHelm: {
 				DisplayName: Sky Squire's Helm
 				Tooltip: ""
+				Lore:
+					'''
+					'A sallet helm made of Kanite, worn by the Sky Squires of Ithon. The Sky Squires are a unit of the south,
+					protecting the kingdoms of Yln, Klycub, and Norapass.'
+					'''
 			}
 
 			SkySquiresTabard: {
 				DisplayName: Sky Squire's Tabard
 				Tooltip: ""
+				Lore:
+					'''
+					'A tabard made of Kanite and cloth in a checkered pattern, worn by the Sky Squires of Ithon. The armour
+					allows better flexibility than most, useful for marching to the rescue swiftly.'
+					'''
 			}
 
 			SwordHeadband: {

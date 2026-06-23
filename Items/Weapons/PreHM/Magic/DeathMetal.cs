@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Dusts;
 using Redemption.Globals;
@@ -23,6 +22,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.mana = 12;
             Item.width = 40;
             Item.height = 40;
+            Item.crit = 16;
             Item.useTime = 30;
             Item.useAnimation = 30;
             Item.useStyle = ItemUseStyleID.Guitar;
@@ -32,7 +32,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.rare = ItemRarityID.Orange;
             Item.UseSound = SoundID.Item47 with { PitchVariance = .2f, Pitch = .5f };
             Item.autoReuse = false;
-            Item.shoot = ModContent.ProjectileType<DeathCoil_Proj>();
+            Item.shoot = ProjectileType<DeathCoil_Proj>();
             Item.shootSpeed = 20f;
         }
         public override void AddRecipes()
@@ -49,10 +49,10 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             if (player.ownedProjectileCounts[Item.shoot] <= 0)
             {
                 SoundEngine.PlaySound(SoundID.Zombie83, player.position);
-                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<DeathCoil_Proj>(), damage, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position, velocity, ProjectileType<DeathCoil_Proj>(), damage, knockback, player.whoAmI);
             }
             Vector2 Offset = Vector2.Normalize(velocity) * 30f;
-            Projectile.NewProjectile(source, position + Offset, velocity * .1f, ModContent.ProjectileType<DeathMetal_Pulse>(), damage, knockback, player.whoAmI);
+            Projectile.NewProjectile(source, position + Offset, velocity * .1f, ProjectileType<DeathMetal_Pulse>(), damage, knockback, player.whoAmI);
             return false;
         }
     }
@@ -79,14 +79,15 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Player player = Main.player[Projectile.owner];
             direction = Projectile.velocity.SafeNormalize(Vector2.Zero);
             Projectile.rotation = direction.ToRotation() - MathHelper.PiOver2;
-            Projectile.Center = player.Center + (direction * 30);
+            Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter);
+            Projectile.Center = playerCenter + (direction * 30);
 
             progress = Timer / 30;
             if (Timer++ == 0)
             {
                 for (int i = 0; i < 15; i++)
                 {
-                    int dust = Dust.NewDust(Projectile.Center, 1, 1, ModContent.DustType<GlowDust>(), direction.X, direction.Y, Scale: .5f);
+                    int dust = Dust.NewDust(Projectile.Center, 1, 1, DustType<GlowDust>(), direction.X, direction.Y, Scale: .5f);
                     Main.dust[dust].velocity *= 3;
                     Main.dust[dust].noGravity = true;
                     Color dustColor = new(61, 255, 178) { A = 0 };
@@ -98,7 +99,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
                 for (int p = 0; p < Main.maxProjectiles; p++)
                 {
                     Projectile proj = Main.projectile[p];
-                    if (!proj.active || proj.owner != Projectile.owner || proj.type != ModContent.ProjectileType<DeathCoil_Proj>())
+                    if (!proj.active || proj.owner != Projectile.owner || proj.type != ProjectileType<DeathCoil_Proj>())
                         continue;
 
                     if (proj.ai[0] != 1 || !proj.Hitbox.Intersects(Projectile.Hitbox))
@@ -137,8 +138,8 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             scale *= MathF.Pow(progress, 0.3f);
             float opacity = 1 - progress;
             Color color = new(61, 255, 178);
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle?(rect), Projectile.GetAlpha(color) * opacity, Projectile.rotation, drawOrigin, scale * 0.6f, spriteEffects, 0);
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle?(rect), Projectile.GetAlpha(color) * opacity, Projectile.rotation, drawOrigin, scale * 0.3f, spriteEffects, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center + direction * 20 - Main.screenPosition, new Rectangle?(rect), Projectile.GetAlpha(color) * opacity, Projectile.rotation, drawOrigin, scale * 0.6f, spriteEffects, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center + direction * 20 - Main.screenPosition, new Rectangle?(rect), Projectile.GetAlpha(color) * opacity, Projectile.rotation, drawOrigin, scale * 0.3f, spriteEffects, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.BeginDefault();

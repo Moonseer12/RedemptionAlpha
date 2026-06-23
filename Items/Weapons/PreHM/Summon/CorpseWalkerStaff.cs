@@ -25,8 +25,8 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             Item.DamageType = DamageClass.Summon;
             Item.width = 44;
             Item.height = 44;
-            Item.useTime = 36;
-            Item.useAnimation = 36;
+            Item.useTime = 10;
+            Item.useAnimation = 10;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.noMelee = true;
             Item.knockBack = 3;
@@ -36,7 +36,6 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             Item.autoReuse = false;
             Item.buffType = BuffType<CorpseSkullBuff>();
             Item.shoot = ProjectileType<CorpseWalkerSkull>();
-            Item.mana = 5;
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {

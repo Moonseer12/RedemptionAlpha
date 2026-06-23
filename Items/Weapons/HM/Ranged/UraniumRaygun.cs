@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Redemption.Globals.Players;
 using Redemption.Items.Materials.HM;
 using Redemption.Projectiles.Ranged;
@@ -9,29 +9,26 @@ using Terraria.ModLoader;
 namespace Redemption.Items.Weapons.HM.Ranged
 {
     public class UraniumRaygun : ModItem
-	{
+    {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Uranium Raygun");
-            /* Tooltip.SetDefault("(2[i:" + ModContent.ItemType<EnergyPack>() + "]) Fires rings of uranium"
-                + "\nCan pierce through tiles and enemies\n" +
-                "Requires an Energy Pack to be in your inventory"); */
-            Item.ResearchUnlockCount = 1;
+            ItemID.Sets.IsRangedSpecialistWeapon[Type] = true;
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
-
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
         public override void SetDefaults()
-		{
+        {
             Item.damage = 86;
             Item.useTime = 5;
             Item.useAnimation = 20;
             Item.reuseDelay = 25;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<UraniumRaygun_Proj>();
+            Item.shoot = ProjectileType<UraniumRaygun_Proj>();
             Item.shootSpeed = 11f;
             Item.UseSound = CustomSounds.RaygunShot.WithVolumeScale(0.3f);
             Item.DamageType = DamageClass.Ranged;
-            Item.width = 48;
-            Item.height = 32;
+            Item.width = 58;
+            Item.height = 36;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.knockBack = 0;
@@ -51,9 +48,9 @@ namespace Redemption.Items.Weapons.HM.Ranged
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<Uranium>(), 18)
-                .AddIngredient(ModContent.ItemType<Plating>(), 3)
-                .AddIngredient(ModContent.ItemType<Capacitor>())
+                .AddIngredient(ItemType<Uranium>(), 18)
+                .AddIngredient(ItemType<Plating>(), 3)
+                .AddIngredient(ItemType<Capacitor>())
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }

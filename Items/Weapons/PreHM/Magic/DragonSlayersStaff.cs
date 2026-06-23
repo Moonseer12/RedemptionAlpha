@@ -1,11 +1,10 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Redemption.Globals.Players;
 using Redemption.Items.Materials.PreHM;
 using Redemption.Projectiles.Magic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Redemption.BaseExtension;
 
 namespace Redemption.Items.Weapons.PreHM.Magic
 {
@@ -19,19 +18,20 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.staff[Item.type] = true;
             ItemID.Sets.SkipsInitialUseSound[Item.type] = true;
 
-            Item.ResearchUnlockCount = 1;
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
         public override void SetDefaults()
         {
-            Item.damage = 26;
+            Item.damage = 32;
             Item.DamageType = DamageClass.Magic;
-            Item.mana = 15;
+            Item.mana = 10;
             Item.width = 48;
             Item.height = 58;
-            Item.useTime = 26;
-            Item.useAnimation = 26;
-            Item.reuseDelay = 26;
+            Item.useTime = 30;
+            Item.useAnimation = 30;
+            Item.reuseDelay = 30;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.noUseGraphic = false;
@@ -41,9 +41,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.rare = ItemRarityID.Orange;
             Item.UseSound = SoundID.DD2_BetsySummon;
             Item.shootSpeed = 0;
-            Item.shoot = ModContent.ProjectileType<DragonSkull_Proj>();
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
+            Item.shoot = ProjectileType<DragonSkull_Proj>();
         }
 
         public override bool CanUseItem(Player player)
@@ -63,7 +61,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
         public override void AddRecipes()
         {
             CreateRecipe()
-            .AddIngredient(ModContent.ItemType<DragonLeadAlloy>(), 10)
+            .AddIngredient(ItemType<DragonLeadAlloy>(), 10)
             .AddIngredient(ItemID.Bone, 5)
             .AddTile(TileID.Anvils)
             .Register();

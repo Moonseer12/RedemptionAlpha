@@ -1,13 +1,13 @@
-﻿using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Redemption.BaseExtension;
-using Terraria.DataStructures;
 using Redemption.Globals;
+using Redemption.Globals.Players;
 using Redemption.Items.Materials.HM;
 using Redemption.Items.Materials.PostML;
+using Terraria;
+using Terraria.DataStructures;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.PostML.Ranged
 {
@@ -15,12 +15,10 @@ namespace Redemption.Items.Weapons.PostML.Ranged
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("'Prepare for obliteration'"
-                + "\nLeft-Click to mark a single enemy and fire a stream of missiles at their position" +
-                "\nRight-Click to mark your cursor position with a barrage of missiles" +
-                "\nUses rockets as ammo"); */
-            Item.ResearchUnlockCount = 1;
+            ItemID.Sets.IsRangedSpecialistWeapon[Type] = true;
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
         public override void SetDefaults()
         {
@@ -41,10 +39,13 @@ namespace Redemption.Items.Weapons.PostML.Ranged
             Item.useTurn = true;
             Item.noMelee = true;
             Item.noUseGraphic = false;
-            Item.shoot = ModContent.ProjectileType<BlastBattery_Missile>();
+            Item.shoot = ProjectileType<BlastBattery_Missile>();
             Item.useAmmo = AmmoID.Rocket;
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
+        }
+        public override bool ReforgePrice(ref int reforgePrice, ref bool canApplyDiscount)
+        {
+            reforgePrice = Item.value / 3;
+            return true;
         }
         public override bool CanConsumeAmmo(Item ammo, Player player)
         {
@@ -61,14 +62,18 @@ namespace Redemption.Items.Weapons.PostML.Ranged
         public override bool CanUseItem(Player player)
         {
             if (player.altFunctionUse == 2)
-                Item.useTime = 5;
+                Item.useLimitPerAnimation = 6;
             else
-                Item.useTime = 30;
-            return player.ownedProjectileCounts[Item.shoot] < 1;
+                Item.useLimitPerAnimation = 1;
+            return true;
+        }
+        public override float UseTimeMultiplier(Player player)
+        {
+            return player.altFunctionUse == 2 ? 1 : 6;
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            type = ModContent.ProjectileType<BlastBattery_Crosshair>();
+            type = ProjectileType<BlastBattery_Crosshair>();
             position = Main.MouseWorld;
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -83,12 +88,12 @@ namespace Redemption.Items.Weapons.PostML.Ranged
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<RoboBrain>())
-                .AddIngredient(ModContent.ItemType<OmegaPowerCell>(), 2)
-                .AddIngredient(ModContent.ItemType<CorruptedXenomite>(), 12)
-                .AddIngredient(ModContent.ItemType<CarbonMyofibre>(), 4)
-                .AddIngredient(ModContent.ItemType<Plating>(), 2)
-                .AddIngredient(ModContent.ItemType<Capacitor>())
+                .AddIngredient(ItemType<RoboBrain>())
+                .AddIngredient(ItemType<OmegaPowerCell>(), 2)
+                .AddIngredient(ItemType<CorruptedXenomite>(), 12)
+                .AddIngredient(ItemType<CarbonMyofibre>(), 4)
+                .AddIngredient(ItemType<Plating>(), 2)
+                .AddIngredient(ItemType<Capacitor>())
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }

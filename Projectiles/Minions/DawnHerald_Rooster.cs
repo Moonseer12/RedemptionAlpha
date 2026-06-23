@@ -1,5 +1,5 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Redemption.BaseExtension;
 using Redemption.Buffs;
 using Redemption.Globals;
 using System.Collections.Generic;
@@ -36,6 +36,7 @@ namespace Redemption.Projectiles.Minions
             Projectile.DamageType = DamageClass.Summon;
             Projectile.penetrate = -1;
             Projectile.hide = true;
+            Projectile.Redemption().auraSentry = true;
         }
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
@@ -52,7 +53,7 @@ namespace Redemption.Projectiles.Minions
 
             Projectile.velocity.Y += 1;
 
-            if (Projectile.ai[0]++ == 120)
+            if (Projectile.ai[0]++ == 120 && !Main.dedServ)
                 SoundEngine.PlaySound(CustomSounds.RoosterRoar with { Volume = .2f, Pitch = -.2f }, Projectile.position);
             if (Projectile.ai[0] >= 120 && Projectile.ai[0] < 300)
             {
@@ -65,7 +66,7 @@ namespace Redemption.Projectiles.Minions
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
                     Projectile chicken = Main.projectile[i];
-                    if (!chicken.active || chicken.type != ModContent.ProjectileType<NestWand_Proj>() || Projectile.DistanceSQ(chicken.Center) > 460 * 460)
+                    if (!chicken.active || chicken.type != ProjectileType<NestWand_Proj>() || Projectile.DistanceSQ(chicken.Center) > 460 * 460)
                         continue;
 
                     chicken.ai[1] = 10;
@@ -76,7 +77,7 @@ namespace Redemption.Projectiles.Minions
                     if (!player.active || player.dead || Projectile.DistanceSQ(player.Center) > 460 * 460)
                         continue;
 
-                    player.AddBuff(ModContent.BuffType<RoosterAuraBuff>(), 180);
+                    player.AddBuff(BuffType<RoosterAuraBuff>(), 180);
                 }
                 if (Projectile.ai[0] % 20 == 0)
                     RedeDraw.SpawnCirclePulse(Projectile.Center, Color.IndianRed, 1.3f, Projectile);
@@ -110,8 +111,8 @@ namespace Redemption.Projectiles.Minions
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D chickenTex = ModContent.Request<Texture2D>("Redemption/Projectiles/Minions/DawnHerald_Rooster").Value;
-            Texture2D nestBack = ModContent.Request<Texture2D>(Texture + "_Back").Value;
+            Texture2D chickenTex = Request<Texture2D>("Redemption/Projectiles/Minions/DawnHerald_Rooster").Value;
+            Texture2D nestBack = Request<Texture2D>(Texture + "_Back").Value;
             var effects = Projectile.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             int height = chickenTex.Height / 3;
             int y = height * Projectile.frame;

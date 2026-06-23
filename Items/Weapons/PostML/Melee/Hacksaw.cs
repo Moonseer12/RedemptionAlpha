@@ -50,6 +50,7 @@ namespace Redemption.Items.Weapons.PostML.Melee
 
         public int AttackMode;
         public override bool AltFunctionUse(Player player) => true;
+        public override bool MeleePrefix() => true;
         public override bool CanUseItem(Player player)
         {
             if (player.altFunctionUse == 2)

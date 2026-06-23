@@ -1,18 +1,18 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ParticleLibrary.Core;
+using Redemption.BaseExtension;
+using Redemption.Dusts;
+using Redemption.Effects.PrimitiveTrails;
 using Redemption.Globals;
+using Redemption.Particles;
+using Redemption.Textures;
 using ReLogic.Content;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Redemption.BaseExtension;
-using Redemption.Effects.PrimitiveTrails;
-using ParticleLibrary;
-using Redemption.Particles;
-using Redemption.Dusts;
-using Terraria.Audio;
 
 namespace Redemption.Projectiles.Melee
 {
@@ -42,7 +42,7 @@ namespace Redemption.Projectiles.Melee
 
         public void DoTrailCreation(TrailManager tManager)
         {
-            tManager.CreateTrail(Projectile, new RainbowTrail(5f, 0.002f, 1f, .75f), new RoundCap(), new DefaultTrailPosition(), 100f, 300f, new ImageShader(ModContent.Request<Texture2D>("Redemption/Textures/Trails/Trail_4", AssetRequestMode.ImmediateLoad).Value, 0.01f, 1f, 1f));
+            tManager.CreateTrail(Projectile, new RainbowTrail(5f, 0.002f, 1f, .75f), new RoundCap(), new DefaultTrailPosition(), 100f, 300f, new ImageShader(CommonTextures.Trail_4.Value, 0.01f, 1f, 1f));
         }
 
         public override void AI()
@@ -56,7 +56,7 @@ namespace Redemption.Projectiles.Melee
                 if (Main.rand.NextBool(30) && Main.myPlayer == Projectile.owner)
                 {
                     SoundEngine.PlaySound(SoundID.Item9 with { Volume = .5f }, Projectile.position);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, RedeHelper.PolarVector(8, RedeHelper.RandomRotation()), ModContent.ProjectileType<NebulaSpark>(), Projectile.damage / 2, 1, player.whoAmI);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.PolarVector(8, RedeHelper.RandomRotation()), ProjectileType<NebulaSpark>(), Projectile.damage, 1, player.whoAmI);
                 }
                 Vector2 move = Vector2.Zero;
                 float distance = 900f;
@@ -93,13 +93,13 @@ namespace Redemption.Projectiles.Melee
             Vector2 drawOrigin = new(texture.Width / 2, texture.Height / 2);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Main.DiscoColor * 0.5f, -Projectile.rotation, drawOrigin, Projectile.scale * 2f, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
             return false;
         }
         public override void OnKill(int timeLeft)
@@ -116,6 +116,7 @@ namespace Redemption.Projectiles.Melee
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
             ElementID.ProjShadow[Type] = true;
             ElementID.ProjCelestial[Type] = true;
+            ElementID.ProjArcane[Type] = true;
         }
         public override void SetDefaults()
         {
@@ -136,7 +137,7 @@ namespace Redemption.Projectiles.Melee
             c.A = 0;
             Color c2 = Color.LightPink;
             c.A = 0;
-            tManager.CreateTrail(Projectile, new GradientTrail(c, c2), new RoundCap(), new DefaultTrailPosition(), 20f, 160f, new ImageShader(ModContent.Request<Texture2D>("Redemption/Textures/Trails/Trail_4", AssetRequestMode.ImmediateLoad).Value, 0.01f, 1f, 1f));
+            tManager.CreateTrail(Projectile, new GradientTrail(c, c2), new RoundCap(), new DefaultTrailPosition(), 20f, 160f, new ImageShader(CommonTextures.Trail_4.Value, 0.01f, 1f, 1f));
         }
 
         public override void AI()
@@ -178,17 +179,17 @@ namespace Redemption.Projectiles.Melee
             Vector2 drawOrigin = new(texture.Width / 2, texture.Height / 2);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, RedeColor.NebColour, Projectile.rotation, drawOrigin, Projectile.scale * 0.8f, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
             return false;
         }
         public override void OnKill(int timeLeft)
         {
-            Dust dust = Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<GlowDust>(), Vector2.Zero, 1);
+            Dust dust = Dust.NewDustPerfect(Projectile.Center, DustType<GlowDust>(), Vector2.Zero, 1);
             dust.noGravity = true;
             Color dustColor = new(RedeColor.NebColour.R, RedeColor.NebColour.G, RedeColor.NebColour.B) { A = 0 };
             dust.color = dustColor;

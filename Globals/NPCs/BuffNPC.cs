@@ -58,6 +58,7 @@ namespace Redemption.Globals.NPCs
         public bool contagionShard;
         public bool soaked;
         public bool xeniumGas;
+        public bool cosmosChainsDebuff;
 
         public override void ResetEffects(Terraria.NPC npc)
         {
@@ -88,6 +89,7 @@ namespace Redemption.Globals.NPCs
             contagionShard = false;
             soaked = false;
             xeniumGas = false;
+            cosmosChainsDebuff = false;
 
             if (!npc.HasBuff(ModContent.BuffType<InfestedDebuff>()))
             {

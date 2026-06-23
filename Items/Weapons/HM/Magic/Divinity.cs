@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.BaseExtension;
 using Redemption.Globals.Players;
 using Redemption.Items.Weapons.PreHM.Summon;
 using Terraria;
@@ -10,6 +9,12 @@ namespace Redemption.Items.Weapons.HM.Magic
 {
     public class Divinity : ModItem
     {
+        public override void SetStaticDefaults()
+        {
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
+        }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
+
         public override void SetDefaults()
         {
             Item.damage = 200;
@@ -31,8 +36,6 @@ namespace Redemption.Items.Weapons.HM.Magic
             Item.UseSound = SoundID.Item123;
             Item.shootSpeed = 2f;
             Item.shoot = ProjectileType<Divinity_Sun>();
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
         }
         public override bool CanUseItem(Player player)
         {

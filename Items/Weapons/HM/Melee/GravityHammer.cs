@@ -1,8 +1,8 @@
-using Terraria.ModLoader;
-using Terraria.ID;
-using Terraria;
 using Redemption.BaseExtension;
 using Redemption.Items.Weapons.HM.Ranged;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.HM.Melee
 {
@@ -10,7 +10,9 @@ namespace Redemption.Items.Weapons.HM.Melee
     {
         public override void SetStaticDefaults()
         {
-            ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<PrototypeAtomRifle>();
+            // Tooltip.SetDefault("Slamming the ground creates a shockwave");
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<PrototypeAtomRifle>();
+            Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()
@@ -23,10 +25,10 @@ namespace Redemption.Items.Weapons.HM.Melee
 
             // Use Properties
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 40;
-            Item.useTime = 40;
+            Item.useAnimation = 52;
+            Item.useTime = 52;
             Item.UseSound = SoundID.Item1;
-            Item.autoReuse = false;	
+            Item.autoReuse = false;
 
             // Weapon Properties
             Item.damage = 135;
@@ -38,8 +40,9 @@ namespace Redemption.Items.Weapons.HM.Melee
 
             // Projectile Properties
             Item.shootSpeed = 3.7f;
-            Item.shoot = ModContent.ProjectileType<GravityHammer_Proj>();
+            Item.shoot = ProjectileType<GravityHammer_Proj>();
             Item.Redemption().TechnicallyHammer = true;
         }
+        public override bool MeleePrefix() => true;
     }
 }

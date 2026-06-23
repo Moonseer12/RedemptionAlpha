@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Base;
 using Redemption.Buffs.Minions;
 using Redemption.Projectiles.Minions;
@@ -27,8 +26,8 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             Item.sentry = true;
             Item.width = 32;
             Item.height = 32;
-            Item.useTime = 36;
-            Item.useAnimation = 36;
+            Item.useTime = 30;
+            Item.useAnimation = 30;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.noMelee = true;
             Item.knockBack = 5;
@@ -36,9 +35,8 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             Item.rare = ItemRarityID.Blue;
             Item.UseSound = SoundID.DD2_DefenseTowerSpawn;
             Item.autoReuse = false;
-            Item.buffType = ModContent.BuffType<NestWandBuff>();
-            Item.shoot = ModContent.ProjectileType<NestWand_Proj>();
-            Item.mana = 4;
+            Item.buffType = BuffType<NestWandBuff>();
+            Item.shoot = ProjectileType<NestWand_Proj>();
         }
         public override bool CanUseItem(Player player)
         {

@@ -28,8 +28,8 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             Item.sentry = true;
             Item.width = 36;
             Item.height = 36;
-            Item.useTime = 36;
-            Item.useAnimation = 36;
+            Item.useTime = 30;
+            Item.useAnimation = 30;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.noMelee = true;
             Item.knockBack = 7;
@@ -39,7 +39,6 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             Item.autoReuse = false;
             Item.buffType = BuffType<LogStaffBuff>();
             Item.shoot = ProjectileType<LogStaff_Proj>();
-            Item.mana = 4;
         }
         public override void AddRecipes()
         {

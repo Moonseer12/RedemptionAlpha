@@ -28,20 +28,10 @@ namespace Redemption.Items.Weapons.PreHM.Summon
         }
         public override void SpawnSpirits(Player player)
         {
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                NewSpirit(player, (int)player.Center.X + 10, (int)player.Center.Y + 10, 0);
-                NewSpirit(player, (int)player.Center.X + 10, (int)player.Center.Y + 10, 0);
-                NewSpirit(player, (int)player.Center.X + 10, (int)player.Center.Y + 10, 1);
-                NewSpirit(player, (int)player.Center.X + 10, (int)player.Center.Y + 10, 1);
-            }
-            else
-            {
-                NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, number: player.whoAmI, number2: SpiritTypes[0]);
-                NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, number: player.whoAmI, number2: SpiritTypes[0]);
-                NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, number: player.whoAmI, number2: SpiritTypes[1]);
-                NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, number: player.whoAmI, number2: SpiritTypes[1]);
-            }
+            NewSpirit(player, (int)player.Center.X + 10, (int)player.Center.Y + 10, 0);
+            NewSpirit(player, (int)player.Center.X + 10, (int)player.Center.Y + 10, 0);
+            NewSpirit(player, (int)player.Center.X + 10, (int)player.Center.Y + 10, 1);
+            NewSpirit(player, (int)player.Center.X + 10, (int)player.Center.Y + 10, 1);
         }
     }
 }

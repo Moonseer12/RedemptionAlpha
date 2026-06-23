@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.BaseExtension;
 using Redemption.Globals;
@@ -18,7 +17,7 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             /* Tooltip.SetDefault("4 summon tag damage\n" +
                 "Your summons will focus struck enemies\n" +
                 "Striking enemies with the tip of the whip will heal the user"); */
-            ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<AldersStaff>();
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<AldersStaff>();
             Item.ResearchUnlockCount = 1;
         }
 
@@ -26,7 +25,7 @@ namespace Redemption.Items.Weapons.PreHM.Summon
         {
             Item.width = 30;
             Item.height = 30;
-            Item.DefaultToWhip(ModContent.ProjectileType<RootTendril_Proj>(), 16, 1, 6);
+            Item.DefaultToWhip(ProjectileType<RootTendril_Proj>(), 16, 1, 6);
             Item.shootSpeed = 6;
             Item.rare = ItemRarityID.Green;
             Item.autoReuse = true;
@@ -48,13 +47,21 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             Projectile.DefaultToWhip();
 
             Projectile.WhipSettings.Segments = 19;
-            Projectile.WhipSettings.RangeMultiplier = 0.9f;
+            Projectile.WhipSettings.RangeMultiplier = 0.6f;
             Projectile.Redemption().TechnicallyMelee = true;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
-            if (target.DistanceSQ(player.Center) > 230 * 230)
+            target.AddBuff(BuffID.BlandWhipEnemyDebuff, 180);
+            player.MinionAttackTargetNPC = target.whoAmI;
+        }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            Player player = Main.player[Projectile.owner];
+            Rectangle hitbox1 = target.Hitbox;
+            Rectangle hitbox2 = new((int)Projectile.WhipPointsForCollision[^1].X - 16, (int)Projectile.WhipPointsForCollision[^1].Y - 16, 32, 32);
+
             {
                 int steps = (int)player.Distance(target.Center) / 8;
                 for (int i = 0; i < steps; i++)
@@ -69,8 +76,6 @@ namespace Redemption.Items.Weapons.PreHM.Summon
                 player.statLife += 3;
                 player.HealEffect(3);
             }
-            target.AddBuff(BuffID.BlandWhipEnemyDebuff, 180);
-            player.MinionAttackTargetNPC = target.whoAmI;
         }
         private static void DrawLine(List<Vector2> list)
         {

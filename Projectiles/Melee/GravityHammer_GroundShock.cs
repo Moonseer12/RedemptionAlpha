@@ -1,11 +1,10 @@
-using Microsoft.Xna.Framework;
+using Redemption.BaseExtension;
 using Redemption.Buffs.Debuffs;
 using Redemption.Buffs.NPCBuffs;
 using Redemption.Globals;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
-using Redemption.BaseExtension;
 
 namespace Redemption.Projectiles.Melee
 {
@@ -43,9 +42,9 @@ namespace Redemption.Projectiles.Melee
             if (target.knockBackResist != 0)
                 target.velocity.Y -= 8 * target.knockBackResist;
             if (Main.rand.NextBool(3))
-                target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 60);
+                target.AddBuff(BuffType<ElectrifiedDebuff>(), 60);
             if (Main.rand.NextBool(5) && target.knockBackResist > 0)
-                target.AddBuff(ModContent.BuffType<StunnedDebuff>(), 60);
+                target.AddBuff(BuffType<StunnedDebuff>(), (int)(120 * target.knockBackResist));
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {

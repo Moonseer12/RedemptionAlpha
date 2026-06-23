@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Globals;
 using Redemption.Projectiles.Minions;
@@ -12,6 +11,10 @@ namespace Redemption.Items.Weapons.PreHM.Summon
 {
     public class HolyBible_Proj : ModProjectile
     {
+        public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+        }
         public override void SetDefaults()
         {
             Projectile.width = 42;
@@ -46,26 +49,36 @@ namespace Redemption.Items.Weapons.PreHM.Summon
                 Projectile.velocity *= 0.9f;
                 Projectile.rotation.SlowRotation(0, (float)Math.PI / 20);
             }
-            else if (Projectile.owner == player.whoAmI)
+            else
             {
                 if (Projectile.ai[0] < 30)
                 {
                     Projectile.timeLeft = 600;
                     Projectile.ai[0] = 0;
-                    Projectile.Move(Main.MouseWorld, 10, 10);
-                    if (Projectile.DistanceSQ(Main.MouseWorld) < 60 * 60)
-                        Projectile.ai[0] = 30;
+                    if (Projectile.owner == Main.myPlayer)
+                    {
+                        Projectile.Move(Main.MouseWorld, 10, 10);
+                        Projectile.netUpdate = true;
+                        if (Projectile.DistanceSQ(Main.MouseWorld) < 60 * 60)
+                        {
+                            Projectile.ai[0] = 30;
+                            Projectile.netUpdate = true;
+                        }
+                    }
                 }
                 Projectile.LookByVelocity();
                 Projectile.rotation += Projectile.velocity.Length() / 50 * Projectile.spriteDirection;
             }
-            if (Projectile.ai[0] == 60 && Main.myPlayer == Projectile.owner)
+            if (Projectile.ai[0] == 60)
             {
                 Projectile.ai[1] = 10;
                 SoundEngine.PlaySound(SoundID.Item122, Projectile.position);
-                for (int i = 0; i < 4; i++)
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.PolarVector(2, MathHelper.PiOver2 * i),
-                        ModContent.ProjectileType<HolyBible_Ray>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    for (int i = 0; i < 4; i++)
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.PolarVector(2, MathHelper.PiOver2 * i),
+                            ProjectileType<HolyBible_Ray>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
+                }
             }
             if (Projectile.ai[0] >= 240)
             {
@@ -79,12 +92,12 @@ namespace Redemption.Items.Weapons.PreHM.Summon
 
         public override void PostDraw(Color lightColor)
         {
-            Texture2D glowTex = ModContent.Request<Texture2D>("Redemption/Textures/Star").Value;
+            Texture2D glowTex = Request<Texture2D>("Redemption/Textures/Star").Value;
             Rectangle rectGlow = new(0, 0, glowTex.Width, glowTex.Height);
             Vector2 drawOriginGlow = new(glowTex.Width / 2, glowTex.Height / 2);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
             if (Projectile.ai[0] >= 60 && Projectile.ai[0] <= 240)
             {
@@ -93,7 +106,7 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             }
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
         }
     }
 }

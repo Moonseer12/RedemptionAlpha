@@ -1,8 +1,8 @@
-﻿using Terraria;
-using Terraria.ModLoader;
-using Terraria.Audio;
-using Redemption.Buffs;
+﻿using Redemption.Buffs;
 using Redemption.Buffs.Debuffs;
+using Terraria;
+using Terraria.Audio;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.HM.Ranged
 {
@@ -34,13 +34,14 @@ namespace Redemption.Items.Weapons.HM.Ranged
                 {
                     if (player.Hitbox.Intersects(Projectile.Hitbox))
                     {
-                        SoundEngine.PlaySound(CustomSounds.ShootChange, Projectile.Center);
+                        if (!Main.dedServ)
+                            SoundEngine.PlaySound(CustomSounds.ShootChange, Projectile.Center);
                         if (player.HasBuff<RevolverTossBuff2>())
-                            player.AddBuff(ModContent.BuffType<RevolverTossBuff2>(), 420);
+                            player.AddBuff(BuffType<RevolverTossBuff2>(), 420);
                         else if (player.HasBuff<RevolverTossBuff3>())
-                            player.AddBuff(ModContent.BuffType<RevolverTossBuff3>(), 420);
+                            player.AddBuff(BuffType<RevolverTossBuff3>(), 420);
                         else
-                            player.AddBuff(ModContent.BuffType<RevolverTossBuff>(), 420);
+                            player.AddBuff(BuffType<RevolverTossBuff>(), 420);
                         Projectile.localAI[0] = 1;
                         Projectile.Kill();
                     }
@@ -54,16 +55,16 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Player player = Main.player[Projectile.owner];
             if (Projectile.localAI[0] != 1)
             {
-                player.AddBuff(ModContent.BuffType<RevolverTossDebuff>(), 300);
-                player.ClearBuff(ModContent.BuffType<RevolverTossBuff3>());
-                player.ClearBuff(ModContent.BuffType<RevolverTossBuff2>());
-                player.ClearBuff(ModContent.BuffType<RevolverTossBuff>());
+                player.AddBuff(BuffType<RevolverTossDebuff>(), 300);
+                player.ClearBuff(BuffType<RevolverTossBuff3>());
+                player.ClearBuff(BuffType<RevolverTossBuff2>());
+                player.ClearBuff(BuffType<RevolverTossBuff>());
             }
             else
             {
                 for (int g = 0; g < Main.maxProjectiles; ++g)
                 {
-                    if (Main.projectile[g].active && Main.projectile[g].owner == player.whoAmI && Main.projectile[g].type == ModContent.ProjectileType<HyperTechRevolvers_Proj>())
+                    if (Main.projectile[g].active && Main.projectile[g].owner == player.whoAmI && Main.projectile[g].type == ProjectileType<HyperTechRevolvers_Proj>())
                     {
                         Main.projectile[g].Kill();
                         break;

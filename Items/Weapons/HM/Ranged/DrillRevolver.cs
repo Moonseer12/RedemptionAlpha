@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Items.Materials.HM;
 using Redemption.Projectiles.Ranged;
 using Terraria;
@@ -31,23 +30,23 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Item.rare = ItemRarityID.Yellow;
             Item.UseSound = SoundID.Item40;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<DrillRevolver_Bullet>();
+            Item.shoot = ProjectileType<DrillRevolver_Bullet>();
             Item.shootSpeed = 7;
             Item.useAmmo = AmmoID.Bullet;
         }
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<OmegaPowerCell>())
-                .AddIngredient(ModContent.ItemType<CorruptedXenomite>(), 7)
-                .AddIngredient(ModContent.ItemType<CarbonMyofibre>(), 4)
-                .AddIngredient(ModContent.ItemType<Plating>(), 5)
+                .AddIngredient(ItemType<OmegaPowerCell>())
+                .AddIngredient(ItemType<CorruptedXenomite>(), 7)
+                .AddIngredient(ItemType<CarbonMyofibre>(), 4)
+                .AddIngredient(ItemType<Plating>(), 5)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            type = ModContent.ProjectileType<DrillRevolver_Bullet>();
+            type = ProjectileType<DrillRevolver_Bullet>();
         }
         public override Vector2? HoldoutOffset()
         {

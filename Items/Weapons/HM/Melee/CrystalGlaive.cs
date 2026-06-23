@@ -1,10 +1,9 @@
-using Terraria.ModLoader;
-using Terraria.ID;
-using Terraria;
-using Microsoft.Xna.Framework;
-using Terraria.DataStructures;
-using Terraria.Audio;
 using Redemption.BaseExtension;
+using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.HM.Melee
 {
@@ -17,6 +16,7 @@ namespace Redemption.Items.Weapons.HM.Melee
                 "Completing the left-click combo on an enemy empowers the right-click ability for 5 shots"); */
             ItemID.Sets.SkipsInitialUseSound[Item.type] = true;
             ItemID.Sets.Spears[Item.type] = true;
+            ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;
             Item.ResearchUnlockCount = 1;
         }
 
@@ -30,13 +30,13 @@ namespace Redemption.Items.Weapons.HM.Melee
 
             // Use Properties
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 23;
-            Item.useTime = 23;
+            Item.useAnimation = 18;
+            Item.useTime = 18;
             Item.UseSound = SoundID.Item1;
-            Item.autoReuse = false;
+            Item.autoReuse = true;
 
             // Weapon Properties
-            Item.damage = 90;
+            Item.damage = 50;
             Item.knockBack = 7f;
             Item.noUseGraphic = true;
             Item.DamageType = DamageClass.Melee;
@@ -44,7 +44,7 @@ namespace Redemption.Items.Weapons.HM.Melee
 
             // Projectile Properties
             Item.shootSpeed = 3.7f;
-            Item.shoot = ModContent.ProjectileType<CrystalGlaive_Proj>();
+            Item.shoot = ProjectileType<CrystalGlaive_Proj>();
         }
         private int Cooldown;
         public override void UpdateInventory(Player player)
@@ -53,15 +53,17 @@ namespace Redemption.Items.Weapons.HM.Melee
                 return;
             Cooldown--;
         }
+        public override bool MeleePrefix() => true;
         public override bool AltFunctionUse(Player player) => true;
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
+            float adjustedItemScale2 = player.GetAdjustedItemScale(Item);
             bool sp = player.Redemption().crystalGlaiveShotCount > 0;
             if (player.altFunctionUse == 2)
             {
                 if (!Main.dedServ)
                     SoundEngine.PlaySound(CustomSounds.Swoosh1 with { Pitch = .1f }, player.position);
-                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<CrystalGlaive_Proj>(), damage, knockback, player.whoAmI, 3, sp ? 1 : 0);
+                Projectile.NewProjectile(source, position, velocity, ProjectileType<CrystalGlaive_Proj>(), damage, knockback, player.whoAmI, 3, sp ? 1 : 0, adjustedItemScale2);
                 player.Redemption().crystalGlaiveShotCount--;
             }
             else
@@ -73,20 +75,20 @@ namespace Redemption.Items.Weapons.HM.Melee
                         case 0:
                             player.Redemption().crystalGlaiveLevel = 0;
                             if (!Main.dedServ)
-                                SoundEngine.PlaySound(CustomSounds.Swing1 with { Pitch = .1f }, player.position);
-                            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<CrystalGlaive_Proj>(), damage, knockback, player.whoAmI, 0, sp ? 1 : 0);
+                                SoundEngine.PlaySound(CustomSounds.PlungingJavelin with { Pitch = .1f }, player.position);
+                            Projectile.NewProjectile(source, position, velocity, ProjectileType<CrystalGlaive_Proj>(), damage, knockback, player.whoAmI, 0, sp ? 1 : 0, adjustedItemScale2);
                             break;
                         case 1:
                             player.Redemption().crystalGlaiveLevel = 0;
                             if (!Main.dedServ)
-                                SoundEngine.PlaySound(CustomSounds.Swing1 with { Pitch = .1f }, player.position);
-                            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<CrystalGlaive_Proj>(), damage, knockback, player.whoAmI, 1, sp ? 1 : 0);
+                                SoundEngine.PlaySound(CustomSounds.PlungingJavelin with { Pitch = .1f }, player.position);
+                            Projectile.NewProjectile(source, position, velocity, ProjectileType<CrystalGlaive_Proj>(), damage, knockback, player.whoAmI, 1, sp ? 1 : 0, adjustedItemScale2);
                             break;
                         case 2:
                             player.Redemption().crystalGlaiveLevel = 0;
                             if (!Main.dedServ)
                                 SoundEngine.PlaySound(CustomSounds.Swoosh1 with { Pitch = .1f }, player.position);
-                            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<CrystalGlaive_Proj>(), damage, knockback, player.whoAmI, 2, sp ? 1 : 0);
+                            Projectile.NewProjectile(source, position, velocity, ProjectileType<CrystalGlaive_Proj>(), damage, knockback, player.whoAmI, 2, sp ? 1 : 0, adjustedItemScale2);
                             return false;
                     }
                 }
@@ -94,8 +96,8 @@ namespace Redemption.Items.Weapons.HM.Melee
                 {
                     player.Redemption().crystalGlaiveLevel = 0;
                     if (!Main.dedServ)
-                        SoundEngine.PlaySound(CustomSounds.Swing1 with { Pitch = .1f }, player.position);
-                    Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<CrystalGlaive_Proj>(), damage, knockback, player.whoAmI, 0, sp ? 1 : 0);
+                        SoundEngine.PlaySound(CustomSounds.PlungingJavelin with { Pitch = .1f }, player.position);
+                    Projectile.NewProjectile(source, position, velocity, ProjectileType<CrystalGlaive_Proj>(), damage, knockback, player.whoAmI, 0, sp ? 1 : 0, adjustedItemScale2);
                 }
 
                 Cooldown = 40;
@@ -104,7 +106,7 @@ namespace Redemption.Items.Weapons.HM.Melee
         }
         public override bool CanUseItem(Player player)
         {
-            return player.ownedProjectileCounts[ModContent.ProjectileType<CrystalGlaive_Proj>()] < 1;
+            return player.ownedProjectileCounts[ProjectileType<CrystalGlaive_Proj>()] < 1;
         }
         public override void AddRecipes()
         {

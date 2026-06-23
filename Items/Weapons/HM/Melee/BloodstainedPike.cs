@@ -29,8 +29,8 @@ namespace Redemption.Items.Weapons.HM.Melee
 
             // Use Properties
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 23;
-            Item.useTime = 23;
+            Item.useAnimation = 30;
+            Item.useTime = 30;
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = false;
 
@@ -46,6 +46,7 @@ namespace Redemption.Items.Weapons.HM.Melee
             Item.shootSpeed = 3.7f;
             Item.shoot = ProjectileType<BloodstainedPike_Proj>();
         }
+        public override bool MeleePrefix() => true;
         public override bool CanUseItem(Player player)
         {
             return player.ownedProjectileCounts[ProjectileType<BloodstainedPike_Proj2>()] < 1;

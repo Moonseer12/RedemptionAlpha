@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Dusts;
 using Redemption.Globals;
@@ -69,26 +68,33 @@ namespace Redemption.Projectiles.Magic
             }
             else
             {
-                if (RedeHelper.ClosestNPC(ref target, 2000, Projectile.Center))
+                if (RedeHelper.ClosestNPC(ref target, 2000, Projectile.Center, true))
+                {
                     Projectile.rotation.SlowRotation((Projectile.Center - target.Center).ToRotation() - MathHelper.PiOver2, MathHelper.Pi / 10);
+                }
                 for (int j = 0; j < Main.maxProjectiles; j++)
                 {
                     Projectile proj = Main.projectile[j];
-                    if (!proj.active || proj.type != ModContent.ProjectileType<GigapeiliBolt>() || proj.ai[0] == 1)
+                    if (!proj.active || proj.type != ProjectileType<GigapeiliBolt>() || proj.ai[0] == 1)
                         continue;
                     if (!Helper.CheckCircularCollision(Projectile.Center, 80, proj.Hitbox))
                         continue;
 
                     for (int i = 0; i < 3; i++)
                     {
-                        int dust = Dust.NewDust(proj.Center - Vector2.One, 1, 1, ModContent.DustType<GlowDust>(), 0, 0, 0, default, .5f);
+                        int dust = Dust.NewDust(proj.Center - Vector2.One, 1, 1, DustType<GlowDust>(), 0, 0, 0, default, .5f);
                         Main.dust[dust].noGravity = true;
                         Main.dust[dust].velocity *= 0;
                         Color dustColor = new(255, 176, 70) { A = 0 };
                         Main.dust[dust].color = dustColor;
                     }
                     SoundEngine.PlaySound(SoundID.NPCHit34, Projectile.position);
-                    proj.velocity = -proj.velocity * 2;
+                    if (target == null)
+                        proj.velocity = RedeHelper.PolarVector(12, Projectile.rotation - MathHelper.PiOver2);
+                    else
+                        proj.velocity = proj.Center.DirectionTo(target.Center) * 12;
+
+                    proj.extraUpdates += 1;
                     proj.damage = (int)(proj.damage * 1.5f);
                     proj.timeLeft = 120;
                     proj.ai[0] = 1;
@@ -107,13 +113,13 @@ namespace Redemption.Projectiles.Magic
         {
             //example apply of shader on sprite, not on texture
             Main.spriteBatch.End();
-            Texture2D texture = ModContent.Request<Texture2D>("Redemption/Textures/PlainCircle").Value;
+            Texture2D texture = Request<Texture2D>("Redemption/Textures/PlainCircle").Value;
             var effects = Projectile.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle rect = new(0, 0, texture.Width, texture.Height);
             Vector2 origin = new(texture.Width / 2, texture.Height / 2);
 
-            Effect ShieldEffect = ModContent.Request<Effect>("Redemption/Effects/Shield", AssetRequestMode.ImmediateLoad).Value;
-            Texture2D HexagonTexture = ModContent.Request<Texture2D>("Redemption/Textures/Hexagons", AssetRequestMode.ImmediateLoad).Value;
+            Effect ShieldEffect = Request<Effect>("Redemption/Effects/Shield").Value;
+            Texture2D HexagonTexture = Request<Texture2D>("Redemption/Textures/Hexagons").Value;
             Vector2 pos = Projectile.Center - Main.screenPosition;
 
             ShieldEffect.Parameters["offset"].SetValue(new Vector2(0.2f, 0f));
@@ -138,8 +144,8 @@ namespace Redemption.Projectiles.Magic
 
         public override void PostDraw(Color lightColor)
         {
-            Texture2D circle = ModContent.Request<Texture2D>("Redemption/Textures/RadialTelegraph3", AssetRequestMode.ImmediateLoad).Value;
-            Texture2D conical = ModContent.Request<Texture2D>("Redemption/Textures/RadialTelegraph2", AssetRequestMode.ImmediateLoad).Value;
+            Texture2D circle = Request<Texture2D>("Redemption/Textures/RadialTelegraph3").Value;
+            Texture2D conical = Request<Texture2D>("Redemption/Textures/RadialTelegraph2").Value;
 
             Rectangle rect = new(0, 0, circle.Width, circle.Height);
             Vector2 origin = new(circle.Width / 2, circle.Height / 2);

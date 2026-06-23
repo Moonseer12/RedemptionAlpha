@@ -38,8 +38,8 @@ namespace Redemption.Items.Weapons.PostML.Ranged
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter, true);
-            RedeProjectile.HoldOutProjBasics(Projectile, player, vector);
+            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter);
+            ProjHelper.HoldOutProjBasics(Projectile, player, vector);
             Projectile.Center = vector;
             Projectile.spriteDirection = Projectile.direction;
             Projectile.timeLeft = 2;
@@ -55,6 +55,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
             Projectile.rotation = Projectile.velocity.ToRotation() + num;
 
             offset -= 1;
+            float maxTime = (player.HeldItem.useTime / player.GetAttackSpeed(DamageClass.Ranged));
             switch (Case)
             {
                 case 0:
@@ -66,11 +67,11 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                     }
 
                     Charge++;
-                    if (Charge >= (int)(30 / player.GetAttackSpeed(DamageClass.Ranged)))
+                    if (Charge >= (int)maxTime)
                         shake += 0.01f;
-                    if (Charge % (int)(30 / player.GetAttackSpeed(DamageClass.Ranged)) == 0 && !Main.dedServ)
+                    if (Charge % (int)maxTime == (int)maxTime - 1 && !Main.dedServ)
                         SoundEngine.PlaySound(CustomSounds.WindUp, Projectile.position);
-                    if (Charge >= (int)(90 / player.GetAttackSpeed(DamageClass.Ranged)))
+                    if (Charge >= (int)(maxTime * 3))
                     {
                         Case = 1;
                         if (!Main.dedServ)
@@ -112,24 +113,28 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                                 Main.dust[num5].noGravity = true;
                             }
                             offset = 4;
-                            player.RedemptionScreen().ScreenShakeIntensity += 1;
+                            player.RedemptionScreen().ScreenShakeIntensity += 0.5f;
                             SoundEngine.PlaySound(SoundID.Item40, Projectile.position);
 
                             if (Projectile.owner == Main.myPlayer)
                                 Projectile.NewProjectile(Projectile.GetSource_FromAI(), gunPos, RedeHelper.PolarVector(shootSpeed, (Main.MouseWorld - gunPos).ToRotation() + Main.rand.NextFloat(-0.1f, 0.1f)), bullet, Projectile.damage, Projectile.knockBack, player.whoAmI);
                         }
                     }
-                    if (Timer >= 2 && Charge >= 1)
+                    if (Timer >= 2 && Charge > 0)
                     {
-                        Charge -= 1;
+                        Charge -= maxTime / 30f;
                         Timer = 0;
                     }
+
+                    if (Charge <= 0)
+                        Projectile.frame = 0;
+
                     if (Timer >= 10)
                         Projectile.Kill();
 
                     if (player.controlUseItem)
                     {
-                        if (Timer2++ % (int)(30 / player.GetAttackSpeed(DamageClass.Ranged)) == 0)
+                        if (Timer2++ % (int)(maxTime) == 0)
                             SoundEngine.PlaySound(CustomSounds.WindUp, Projectile.position);
                         player.velocity.X *= 0.1f;
                         Charge++;
@@ -141,7 +146,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                     break;
             }
             shake = MathHelper.Min(shake, 0.8f);
-            Charge = MathHelper.Min(Charge, 90);
+            Charge = MathHelper.Clamp(Charge, 0, (int)(maxTime * 3));
             offset = MathHelper.Clamp(offset, 0, 20);
             if (Projectile.ai[1]++ > 1)
                 Projectile.alpha = 0;

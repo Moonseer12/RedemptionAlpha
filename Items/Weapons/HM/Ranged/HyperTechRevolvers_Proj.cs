@@ -76,8 +76,8 @@ namespace Redemption.Items.Weapons.HM.Ranged
                 return;
             }
 
-            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter, true);
-            RedeProjectile.HoldOutProjBasics(Projectile, player, vector);
+            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter);
+            ProjHelper.HoldOutProjBasics(Projectile, player, vector);
             Projectile.Center = vector;
             Projectile.spriteDirection = Projectile.direction;
             Projectile.timeLeft = 2;
@@ -98,13 +98,13 @@ namespace Redemption.Items.Weapons.HM.Ranged
 
             offset -= 5;
             rotOffset += 0.1f;
-            int firerate = 10;
+            int firerate = player.HeldItem.useTime;
             if (player.HasBuff<RevolverTossBuff>())
-                firerate = 8;
+                firerate = (int)(player.HeldItem.useTime * 0.8f);
             else if (player.HasBuff<RevolverTossBuff2>())
-                firerate = 6;
+                firerate = (int)(player.HeldItem.useTime * 0.6f);
             else if (player.HasBuff<RevolverTossBuff3>())
-                firerate = 4;
+                firerate = (int)(player.HeldItem.useTime * 0.4f);
 
             if (!player.channel)
                 Projectile.Kill();

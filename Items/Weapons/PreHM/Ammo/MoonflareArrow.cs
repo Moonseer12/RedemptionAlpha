@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.BaseExtension;
 using Redemption.Globals;
 using Redemption.Globals.Players;
 using Redemption.Items.Materials.PreHM;
@@ -19,7 +18,10 @@ namespace Redemption.Items.Weapons.PreHM.Ammo
 				"\nFlame intensity is based on moon phase"); */
             ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.ShimmerArrow;
             Item.ResearchUnlockCount = 99;
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
+
         public override void SetDefaults()
         {
             Item.damage = 5;
@@ -34,8 +36,6 @@ namespace Redemption.Items.Weapons.PreHM.Ammo
             Item.shoot = ProjectileType<MoonflareArrow_Proj>();
             Item.shootSpeed = 7f;
             Item.ammo = AmmoID.Arrow;
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

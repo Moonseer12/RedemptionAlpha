@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Base;
 using Redemption.BaseExtension;
@@ -8,6 +5,8 @@ using Redemption.Buffs.Debuffs;
 using Redemption.Buffs.NPCBuffs;
 using Redemption.Dusts;
 using Redemption.Globals;
+using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -31,16 +30,16 @@ namespace Redemption.Projectiles.Ranged
             Projectile.aiStyle = -1;
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Ranged;
-            Projectile.penetrate = 3;
+            Projectile.penetrate = -1;
             Projectile.timeLeft = 600;
             Projectile.hide = true;
-            Projectile.extraUpdates = 1;
+            Projectile.extraUpdates = 2;
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glowTex = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
+            Texture2D glowTex = Request<Texture2D>(Texture + "_Glow").Value;
             var effects = Projectile.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Vector2 drawOrigin = new(texture.Width / 2, Projectile.height / 2);
 
@@ -57,13 +56,13 @@ namespace Redemption.Projectiles.Ranged
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, drawOrigin, Projectile.scale, effects, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
             Main.EntitySpriteDraw(glowTex, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(Color.LightCyan) * glow, Projectile.rotation, drawOrigin, Projectile.scale, effects, 0);
             Main.EntitySpriteDraw(glowTex, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(new Color(255, 255, 255, 0)) * glow * .5f, Projectile.rotation, drawOrigin, Projectile.scale + 1f, effects, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
             return false;
         }
 
@@ -112,6 +111,7 @@ namespace Redemption.Projectiles.Ranged
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            target.immune[Projectile.owner] = 0;
             if (Projectile.localAI[0] < 400 && origDamage == 0)
             {
                 origDamage = Projectile.damage;
@@ -124,7 +124,7 @@ namespace Redemption.Projectiles.Ranged
             TargetWhoAmI = target.whoAmI;
             Projectile.velocity = (target.Center - Projectile.Center) * 0.75f;
             Projectile.netUpdate = true;
-            target.AddBuff(ModContent.BuffType<PureChillDebuff>(), 200);
+            target.AddBuff(BuffType<PureChillDebuff>(), 200);
 
             int maxStickingJavelins = 5;
             Point[] stickingJavelins = new Point[maxStickingJavelins];
@@ -187,7 +187,7 @@ namespace Redemption.Projectiles.Ranged
                         SoundEngine.PlaySound(SoundID.Item30, Projectile.position);
                         SoundEngine.PlaySound(SoundID.Item50, Projectile.position);
                         if (Main.npc[projTargetIndex].knockBackResist > 0 && !Main.npc[projTargetIndex].RedemptionNPCBuff().iceFrozen)
-                            Main.npc[projTargetIndex].AddBuff(ModContent.BuffType<IceFrozen>(), 1800 - ((int)MathHelper.Clamp(Main.npc[projTargetIndex].lifeMax, 60, 1780)));
+                            Main.npc[projTargetIndex].AddBuff(BuffType<IceFrozen>(), 1800 - ((int)MathHelper.Clamp(Main.npc[projTargetIndex].lifeMax, 60, 1780)));
                         for (int i = 0; i < 10; i++)
                             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Ice, Scale: Main.rand.NextFloat(.5f, 1));
                         for (int k = 0; k < 20; k++)
@@ -196,7 +196,7 @@ namespace Redemption.Projectiles.Ranged
                             double angle = Main.rand.NextDouble() * 2d * Math.PI;
                             vector.X = (float)(Math.Sin(angle) * 60);
                             vector.Y = (float)(Math.Cos(angle) * 60);
-                            Dust dust2 = Main.dust[Dust.NewDust(Projectile.Center + vector, 2, 2, ModContent.DustType<GlowDust>(), 0f, 0f, 100, default, 1f)];
+                            Dust dust2 = Main.dust[Dust.NewDust(Projectile.Center + vector, 2, 2, DustType<GlowDust>(), 0f, 0f, 100, default, 1f)];
                             dust2.noGravity = true;
                             dust2.noGravity = true;
                             Color dustColor = new(Color.LightCyan.R, Color.LightCyan.G, Color.LightCyan.B) { A = 0 };
@@ -219,7 +219,7 @@ namespace Redemption.Projectiles.Ranged
                             int hitDirection = target.RightOfDir(Projectile);
                             BaseAI.DamageNPC(target, origDamage, Projectile.knockBack * 2, hitDirection, Projectile, crit: Projectile.HeldItemCrit());
                             if (Main.rand.NextBool(2) && target.knockBackResist > 0 && !target.RedemptionNPCBuff().iceFrozen)
-                                target.AddBuff(ModContent.BuffType<IceFrozen>(), 1800 - ((int)MathHelper.Clamp(target.lifeMax, 60, 1780)));
+                                target.AddBuff(BuffType<IceFrozen>(), 1800 - ((int)MathHelper.Clamp(target.lifeMax, 60, 1780)));
                         }
                         for (int i = 0; i < Main.maxProjectiles; i++)
                         {

@@ -12,13 +12,7 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Fan o' Shivs");
-            /* Tooltip.SetDefault("Not consumable" +
-                "\nConsumes throwing knives if any are in your inventory, increasing damage" +
-                "\n'I'm sorry, Edwin...'"); */
-            ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<SoulScepter>();
-
-            Item.ResearchUnlockCount = 1;
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<SoulScepter>();
         }
 
         public override void SetDefaults()
@@ -45,7 +39,7 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
 
             // Projectile Properties
             Item.shootSpeed = 10f;
-            Item.shoot = ModContent.ProjectileType<FanOShivs_Proj>();
+            Item.shoot = ProjectileType<FanOShivs_Proj>();
         }
 
         public override bool NeedsAmmo(Player player) => false;
@@ -75,6 +69,12 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
                 {
                     type = ProjectileType<FanOShivs_Proj>();
                     velocity *= 1.25f;
+                    damage += 3;
+                }
+                else if (proj == ProjectileID.BoneDagger)
+                {
+                    type = ProjectileType<FanOShivs_Proj>();
+                    velocity *= 2f;
                     damage += 3;
                 }
             }

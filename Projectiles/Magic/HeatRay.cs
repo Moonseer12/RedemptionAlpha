@@ -1,15 +1,15 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Redemption.BaseExtension;
+using Redemption.Buffs.NPCBuffs;
+using Redemption.Dusts;
+using Redemption.Globals;
+using Redemption.Helpers;
+using Redemption.Particles;
+using System;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.GameContent;
 using Terraria.ID;
-using Redemption.Globals;
-using System;
-using Redemption.Buffs.NPCBuffs;
-using Redemption.BaseExtension;
-using Redemption.Particles;
-using ParticleLibrary;
+using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Magic
 {
@@ -31,6 +31,8 @@ namespace Redemption.Projectiles.Magic
             Projectile.timeLeft = 180;
             Projectile.usesIDStaticNPCImmunity = true;
             Projectile.idStaticNPCHitCooldown = 10;
+
+            NewCollision = true;
         }
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
@@ -46,7 +48,7 @@ namespace Redemption.Projectiles.Magic
                 target.AddBuff(BuffID.OnFire3, 60);
 
             if (player.RedemptionPlayerBuff().dragonLeadBonus)
-                target.AddBuff(ModContent.BuffType<DragonblazeDebuff>(), 300);
+                target.AddBuff(BuffType<DragonblazeDebuff>(), 300);
         }
 
         public override void AI()
@@ -54,8 +56,21 @@ namespace Redemption.Projectiles.Magic
             Player player = Main.player[Projectile.owner];
             Projectile host = Main.projectile[(int)Projectile.ai[0]];
             Projectile.rotation = host.rotation + (host.spriteDirection == -1 ? (float)Math.PI : 0);
+            Projectile.velocity = RedeHelper.PolarVector(1f, Projectile.rotation);
 
             RedeParticleManager.CreateEmberParticle(Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Main.rand.Next(0, Projectile.height)), RedeHelper.PolarVector(5, Projectile.rotation), 1, Main.rand.Next(90, 121));
+            RedeParticleManager.CreateAdditiveGlowParticle(Projectile.Center + RedeHelper.PolarVector(24, Projectile.rotation), Vector2.Zero, Vector2.One , new Color(255, 151, 101) * 0.5f, 12);
+
+            for (int i = 0; i < 2; i++)
+            {
+                int num5 = Dust.NewDust(Projectile.Center + Vector2.UnitX.RotatedBy(Projectile.rotation) * (LaserLength + 10) - new Vector2(4, 4), 8, 8, DustType<GlowDust>());
+                Color dustColor = new(255, 151, 101) { A = 0 };
+                if (Main.rand.NextBool())
+                    dustColor = new(249, 71, 3) { A = 0 };
+                Main.dust[num5].velocity = -Projectile.velocity * Main.rand.NextFloat(.1f, .3f);
+                Main.dust[num5].color = dustColor * Projectile.Opacity;
+                Main.dust[num5].noGravity = true;
+            }
 
             #region Beginning And End Effects
             if (AITimer == 0)
@@ -77,18 +92,25 @@ namespace Redemption.Projectiles.Magic
             }
             #endregion
 
-            #region Length Setting
-            if (StopsOnTiles)
+            #region length
+            // code from slr
+            for (int k = 0; k < MaxLaserLength; k++)
             {
-                EndpointTileCollision();
+                Vector2 posCheck = Projectile.Center + Vector2.UnitX.RotatedBy(Projectile.rotation) * k * 8;
+
+                if (Helper.PointInTile(posCheck) || k == MaxLaserLength - 1)
+                {
+                    endPoint = posCheck;
+                    break;
+                }
             }
-            else
-            {
-                LaserLength = MaxLaserLength;
-            }
+
+            LaserLength = LengthSetting(host, endPoint);
             #endregion
 
             ++AITimer;
+            if (Main.myPlayer != player.whoAmI)
+                CheckHits();
         }
         #region Drawcode
         // The core function of drawing a Laser, you shouldn't need to touch this
@@ -98,9 +120,6 @@ namespace Redemption.Projectiles.Magic
             // Draws the Laser 'body'
             for (float i = transDist; i <= (maxDist * (1 / LaserScale)); i += LaserSegmentLength)
             {
-                //Color c = Color.White;
-
-
                 var origin = start + i * unit;
                 Main.EntitySpriteDraw(texture, origin - Main.screenPosition + new Vector2(0, Projectile.gfxOffY),
                     new Rectangle((int)(LaserWidth * Frame), LaserEndSegmentLength, LaserWidth, LaserSegmentLength), color, r,
@@ -116,12 +135,12 @@ namespace Redemption.Projectiles.Magic
         public override bool PreDraw(ref Color lightColor)
         {
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
-            DrawLaser(TextureAssets.Projectile[Projectile.type].Value, Projectile.Center + (new Vector2(Projectile.width, 0).RotatedBy(Projectile.rotation) * LaserScale), new Vector2(1f, 0).RotatedBy(Projectile.rotation) * LaserScale, -1.57f, LaserScale, LaserLength, Color.White, (int)FirstSegmentDrawDist);
+            DrawLaser(TextureAssets.Projectile[Projectile.type].Value, Projectile.Center + (new Vector2(Projectile.width, 0).RotatedBy(Projectile.rotation) * LaserScale), new Vector2(1f, 0).RotatedBy(Projectile.rotation) * LaserScale, -1.57f, LaserScale, LaserLength - LaserSegmentLength * 2, Color.White, (int)FirstSegmentDrawDist);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
             return false;
         }
         #endregion

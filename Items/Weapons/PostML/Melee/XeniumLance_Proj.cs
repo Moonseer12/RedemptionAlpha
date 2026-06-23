@@ -143,9 +143,6 @@ namespace Redemption.Items.Weapons.PostML.Melee
                     {
                         Owner.ChangeDir(Projectile.velocity.X >= 0 ? 1 : -1);
                         startRotation = Owner.direction == 1 ? Projectile.velocity.ToRotation() : -Projectile.velocity.ToRotation() + MathHelper.Pi;
-
-                        if (!Main.dedServ)
-                            SoundEngine.PlaySound(CustomSounds.Swoosh1.WithPitchOffset(.2f).WithVolumeScale(.5f), Owner.position);
                     }
                     if (progress <= 1)
                     {
@@ -244,7 +241,7 @@ namespace Redemption.Items.Weapons.PostML.Melee
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Main.myPlayer == Projectile.owner)
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center, Vector2.Zero, ProjectileType<XeniumLanceSpark_Proj>(), Projectile.damage / 5, 0, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center, Vector2.Zero, ProjectileType<XeniumLanceSpark_Proj>(), Projectile.damage / 3, 0, Projectile.owner);
 
             SoundEngine.PlaySound(CustomSounds.Gun2KS with { Volume = 1f }, Projectile.position);
             Vector2 drawPos = Vector2.Lerp(target.Center, Projectile.Center, 0.01f) + Main.rand.NextVector2Square(-10, 0);
@@ -267,8 +264,8 @@ namespace Redemption.Items.Weapons.PostML.Melee
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            if (SwingType == 3 && Timer >= 10 * Projectile.MaxUpdates)
-                modifiers.FlatBonusDamage += Timer * 100;
+            if (SwingType == 3)
+                modifiers.FinalDamage *= 1.5f;
         }
         public override bool PreDraw(ref Color lightColor)
         {

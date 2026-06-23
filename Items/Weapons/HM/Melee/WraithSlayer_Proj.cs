@@ -50,6 +50,7 @@ namespace Redemption.Items.Weapons.HM.Melee
         public ref float Rot => ref Projectile.localAI[1];
         private Player Owner => Main.player[Projectile.owner];
         public float Timer;
+        private bool parried;
         public int pauseTimer;
         public float progress;
         public int maxTime;
@@ -66,6 +67,7 @@ namespace Redemption.Items.Weapons.HM.Melee
             Vector2 armCenter = Owner.RotatedRelativePoint(Owner.MountedCenter) + new Vector2(-Owner.direction * 4, -4);
             maxTime = SetUseTime(Owner.HeldItem.useTime);
             progress = (Projectile.ai[0] == 0) ? Timer / (maxTime * 0.8f * Projectile.MaxUpdates) : Timer / (maxTime * Projectile.MaxUpdates);
+            bool parryActive = false;
             if (--pauseTimer <= 0)
             {
                 switch (Projectile.ai[0])
@@ -77,6 +79,11 @@ namespace Redemption.Items.Weapons.HM.Melee
                             if (!Main.dedServ)
                                 SoundEngine.PlaySound(CustomSounds.Swing1.WithVolumeScale(.7f), Owner.position);
                             startRotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
+                        }
+                        if (progress >= .5f && progress <= .58f)
+                        {
+                            parryActive = true;
+                            ProjHelper.SwordClashFriendly(Projectile, Owner, ref parried);
                         }
                         if (progress < 1f)
                         {
@@ -109,6 +116,11 @@ namespace Redemption.Items.Weapons.HM.Melee
                                 SoundEngine.PlaySound(SoundID.Item71, Owner.position);
                             startRotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
                         }
+                        if (progress >= .5f && progress <= .58f)
+                        {
+                            parryActive = true;
+                            ProjHelper.SwordClashFriendly(Projectile, Owner, ref parried);
+                        }
                         if (progress < 1f)
                         {
                             float modifiedProgress = -0.6f + 1 / (1 + MathF.Pow(3, -15 * (progress - 0.5f)));
@@ -122,6 +134,7 @@ namespace Redemption.Items.Weapons.HM.Melee
                         break;
                 }
             }
+            Owner.Redemption().CreateParryWindow(Projectile.Hitbox, ref parryActive);
             Projectile.Center = armCenter + positionVector;
             if (Projectile.spriteDirection == 1)
                 Projectile.rotation = (Projectile.Center - armCenter).ToRotation() + MathHelper.PiOver4 - (Projectile.ai[0] == 0 ? 0 : MathHelper.PiOver2);
@@ -159,7 +172,7 @@ namespace Redemption.Items.Weapons.HM.Melee
         public bool strike;
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            RedeProjectile.Decapitation(target, ref damageDone, ref hit.Crit);
+            ProjHelper.Decapitation(target, ref damageDone, ref hit.Crit);
 
             if (!strike)
             {

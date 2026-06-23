@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Redemption.BaseExtension;
 using Redemption.Buffs.NPCBuffs;
 using Redemption.Globals;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -37,7 +37,7 @@ namespace Redemption.Projectiles.Ranged
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glow = ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "_Glow").Value;
+            Texture2D glow = Request<Texture2D>(Texture + "_Glow").Value;
             var effects = Projectile.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Vector2 drawOrigin = new(texture.Width / 2, Projectile.height / 2);
 
@@ -54,12 +54,12 @@ namespace Redemption.Projectiles.Ranged
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, drawOrigin, Projectile.scale, effects, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
             RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, glow, ref drawTimer, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(Color.LightGoldenrodYellow), Projectile.rotation, drawOrigin, Projectile.scale, effects);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
             return false;
         }
 
@@ -122,7 +122,7 @@ namespace Redemption.Projectiles.Ranged
             TargetWhoAmI = target.whoAmI;
             Projectile.velocity = (target.Center - Projectile.Center) * 0.75f;
             Projectile.netUpdate = true;
-            target.AddBuff(ModContent.BuffType<UkonArrowDebuff>(), 156);
+            target.AddBuff(BuffType<UkonArrowDebuff>(), 156);
 
             int maxStickingJavelins = 20;
             Point[] stickingJavelins = new Point[maxStickingJavelins];
@@ -168,7 +168,7 @@ namespace Redemption.Projectiles.Ranged
                 int projTargetIndex = (int)TargetWhoAmI;
                 if (Projectile.localAI[0] > 156 || projTargetIndex < 0 || projTargetIndex >= 200)
                     killProj = true;
-                else if (Main.npc[projTargetIndex].active && !Main.npc[projTargetIndex].dontTakeDamage)
+                else if (Main.npc[projTargetIndex].active && !Main.npc[projTargetIndex].dontTakeDamage && Main.npc[projTargetIndex].RedemptionNPCBuff().ukonArrow)
                 {
                     Projectile.Center = Main.npc[projTargetIndex].Center - Projectile.velocity * 2f;
                     Projectile.gfxOffY = Main.npc[projTargetIndex].gfxOffY;
@@ -179,11 +179,11 @@ namespace Redemption.Projectiles.Ranged
                     {
                         if (Main.IsItStorming && Projectile.localAI[0] == 70)
                         {
-                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Main.npc[projTargetIndex].Center, Vector2.Zero, ModContent.ProjectileType<UkonArrowStrike>(), origDamage, Projectile.knockBack, Main.myPlayer, Main.npc[projTargetIndex].whoAmI);
+                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Main.npc[projTargetIndex].Center, Vector2.Zero, ProjectileType<UkonArrowStrike>(), origDamage, Projectile.knockBack, Main.myPlayer, Main.npc[projTargetIndex].whoAmI);
                         }
                         if (Projectile.localAI[0] == 120)
                         {
-                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Main.npc[projTargetIndex].Center, Vector2.Zero, ModContent.ProjectileType<UkonArrowStrike>(), origDamage, Projectile.knockBack, Main.myPlayer, Main.npc[projTargetIndex].whoAmI);
+                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Main.npc[projTargetIndex].Center, Vector2.Zero, ProjectileType<UkonArrowStrike>(), origDamage, Projectile.knockBack, Main.myPlayer, Main.npc[projTargetIndex].whoAmI);
                         }
                     }
                 }

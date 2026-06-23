@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Buffs.Minions;
 using Redemption.Items.Critters;
 using Redemption.Items.Materials.PreHM;
@@ -11,58 +10,57 @@ using Terraria.ModLoader;
 namespace Redemption.Items.Weapons.PreHM.Summon
 {
     public class AntlerStaff : ModItem
-	{
-		public override void SetStaticDefaults()
-		{
-            // Tooltip.SetDefault("Summons a Forret to fight for you");
-			Item.ResearchUnlockCount = 1;
-
-			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true;
-			ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-		}
-
-		public override void SetDefaults()
-		{
-			Item.damage = 46;
-			Item.DamageType = DamageClass.Summon;
-			Item.width = 52;
-			Item.height = 52;
-			Item.useTime = 36;
-			Item.useAnimation = 36;
-			Item.useStyle = ItemUseStyleID.Swing;
-			Item.noMelee = true;
-			Item.knockBack = 4;
-			Item.value = Item.sellPrice(0, 0, 45, 0);
-			Item.rare = ItemRarityID.Orange;
-			Item.UseSound = SoundID.Item44;
-			Item.autoReuse = false;
-			Item.buffType = ModContent.BuffType<ForretBuff>();
-			Item.shoot = ModContent.ProjectileType<Forret_Proj>();
-			Item.mana = 10;
-		}
-
-		public override void AddRecipes()
+    {
+        public override void SetStaticDefaults()
         {
-			CreateRecipe()
-				.AddIngredient(ModContent.ItemType<PureIronAlloy>(), 7)
-				.AddIngredient<ForretItem>()
-				.AddTile(TileID.Anvils)
-				.Register();
+            // Tooltip.SetDefault("Summons a Forret to fight for you");
+            Item.ResearchUnlockCount = 1;
+
+            ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true;
+            ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
         }
 
-		public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
-		{
-			position = Main.MouseWorld;
-		}
+        public override void SetDefaults()
+        {
+            Item.damage = 46;
+            Item.DamageType = DamageClass.Summon;
+            Item.width = 52;
+            Item.height = 52;
+            Item.useTime = 10;
+            Item.useAnimation = 10;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.noMelee = true;
+            Item.knockBack = 4;
+            Item.value = Item.sellPrice(0, 0, 45, 0);
+            Item.rare = ItemRarityID.Orange;
+            Item.UseSound = SoundID.Item44;
+            Item.autoReuse = false;
+            Item.buffType = BuffType<ForretBuff>();
+            Item.shoot = ProjectileType<Forret_Proj>();
+        }
 
-		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
-		{
-			player.AddBuff(Item.buffType, 2);
+        public override void AddRecipes()
+        {
+            CreateRecipe()
+                .AddIngredient<PureIronAlloy>(7)
+                .AddIngredient<ForretItem>()
+                .AddTile(TileID.Anvils)
+                .Register();
+        }
 
-			var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
-			projectile.originalDamage = Item.damage;
+        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+        {
+            position = Main.MouseWorld;
+        }
 
-			return false;
-		}
-	}
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            player.AddBuff(Item.buffType, 2);
+
+            var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
+            projectile.originalDamage = Item.damage;
+
+            return false;
+        }
+    }
 }

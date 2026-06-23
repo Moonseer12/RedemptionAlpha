@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.BaseExtension;
 using Redemption.Globals;
 using Redemption.Globals.Players;
 using Redemption.Items.Weapons.HM.Summon;
@@ -21,7 +20,9 @@ namespace Redemption.Items.Weapons.HM.Ranged
             ElementID.ItemExplosive[Type] = true;
 
             ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<TeslaGenerator>();
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
         public override void SetDefaults()
         {
@@ -42,8 +43,11 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Item.shoot = ProjectileType<PlasmaRound>();
             Item.shootSpeed = 12;
             Item.useAmmo = AmmoID.Bullet;
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
+        }
+        public override bool ReforgePrice(ref int reforgePrice, ref bool canApplyDiscount)
+        {
+            reforgePrice = Item.value / 4;
+            return true;
         }
         public override bool CanUseItem(Player player)
         {

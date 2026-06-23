@@ -1,16 +1,19 @@
-
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ParticleLibrary;
+using ParticleLibrary.Core;
 using Redemption.Base;
 using Redemption.BaseExtension;
 using Redemption.Globals;
+using Redemption.Globals.Players;
 using Redemption.Items.Weapons.PostML.Melee;
 using Redemption.Particles;
+using Redemption.Textures;
+using ReLogic.Content;
 using ReLogic.Utilities;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.GameInput;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -46,15 +49,22 @@ namespace Redemption.Projectiles.Melee
         }
         private SlotId rumble;
         private ActiveSound sound;
+        private float SwingSpeed;
+        public float SetSwingSpeed(float speed)
+        {
+            Player player = Main.player[Projectile.owner];
+            return speed / player.GetAttackSpeed(DamageClass.Melee);
+        }
         public override void AI()
         {
+            SwingSpeed = SetSwingSpeed(1);
             Projectile proj = Main.projectile[(int)Projectile.ai[0]];
             Player player = Main.player[Projectile.owner];
             Projectile.width = Projectile.height = (int)(140 * Projectile.scale);
             switch (Projectile.localAI[0])
             {
                 case 0:
-                    if (sound == null)
+                    if (sound == null && !Main.dedServ)
                         rumble = SoundEngine.PlaySound(CustomSounds.EnergyCharge2 with { Pitch = -.4f }, Projectile.position);
                     Projectile.scale = 0.1f;
                     Projectile.localAI[0] = 1;
@@ -63,34 +73,33 @@ namespace Redemption.Projectiles.Melee
                     Vector2 Pos = proj.Center + proj.DirectionFrom(player.Center) * 40 * Projectile.scale;
                     Projectile.Center = Pos;
                     Projectile.timeLeft = 10;
-                    if (!proj.active || proj.type != ModContent.ProjectileType<SunInThePalm_Proj>())
+                    if (!proj.active || proj.type != ProjectileType<SunInThePalm_Proj>())
                         Projectile.Kill();
 
-                    if (Projectile.scale >= 1)
+                    if (Projectile.scale >= 1 / SwingSpeed)
                     {
-                        for (int i = 0; i < Main.maxProjectiles; i++)
+                        foreach (Projectile target in Main.ActiveProjectiles)
                         {
-                            Projectile target = Main.projectile[i];
-                            if (!target.active || target.whoAmI == Projectile.whoAmI || !target.hostile)
+                            if (!ProjReflect.FriendlyReflectCheck(Projectile, target, 400))
                                 continue;
 
-                            if (target.damage > 160 / 4 || target.width + target.height > Projectile.width + Projectile.height)
+                            if (target.width + target.height > Projectile.width + Projectile.height)
                                 continue;
 
-                            if (target.velocity.Length() == 0 || !Projectile.Hitbox.Intersects(target.Hitbox) || target.ProjBlockBlacklist(true))
+                            if (target.velocity.Length() == 0 || !Projectile.Hitbox.Intersects(target.Hitbox) || ProjReflect.ProjBlockBlacklist(target, true))
                                 continue;
 
                             target.Redemption().DissolveTimer++;
                             int d = Dust.NewDust(target.position, target.width, target.height, DustID.RedTorch, Scale: 3);
                             Main.dust[d].noGravity = true;
-                            if (target.Redemption().DissolveTimer >= target.damage / 2)
+                            if (target.Redemption().DissolveTimer >= (int)(target.damage * .75f))
                             {
-                                DustHelper.DrawCircle(target.Center, DustID.RedTorch, 1, 4, 4, dustSize: 3, nogravity: true);
+                                RedeDraw.SpawnExplosion(target.Center, Color.IndianRed, shakeAmount: 0, scale: 1f, noDust: true, rot: RedeHelper.RandomRotation(), tex: "Redemption/Textures/SwordClash");
                                 target.Kill();
                             }
                         }
                     }
-                    if (Projectile.scale > 2f)
+                    if (Projectile.scale > 2f / SwingSpeed)
                     {
                         if (Projectile.localAI[1]++ >= 70)
                         {
@@ -102,14 +111,14 @@ namespace Redemption.Projectiles.Melee
                     }
                     if (player.channel)
                     {
-                        if (Projectile.scale <= 2f)
+                        if (Projectile.scale <= 2f / SwingSpeed)
                         {
                             Projectile.localAI[1] = 0;
 
-                            if (sound == null)
+                            if (sound == null && !Main.dedServ)
                                 rumble = SoundEngine.PlaySound(CustomSounds.EnergyCharge2 with { Pitch = -.4f }, Projectile.position);
 
-                            Projectile.scale += 0.01f;
+                            Projectile.scale += 0.01f / SwingSpeed;
                             if (Projectile.alpha > 0)
                                 Projectile.alpha -= 10;
                         }
@@ -124,7 +133,7 @@ namespace Redemption.Projectiles.Melee
                             sound.Stop();
                             rumble = SlotId.Invalid;
                         }
-                        Projectile.scale -= 0.04f;
+                        Projectile.scale -= 0.04f / SwingSpeed;
                         if (Projectile.scale <= .1f)
                             Projectile.Kill();
                     }
@@ -150,8 +159,8 @@ namespace Redemption.Projectiles.Melee
             int shader = GameShaders.Armor.GetShaderIdFromItemId(ItemID.BloodbathDye);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-            GameShaders.Armor.ApplySecondary(shader, Main.player[Main.myPlayer], null);
+            Main.spriteBatch.BeginAdditive(true);
+            GameShaders.Armor.ApplySecondary(shader, Main.LocalPlayer, null);
 
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Rectangle rect = new(0, 0, texture.Width, texture.Height);
@@ -166,9 +175,9 @@ namespace Redemption.Projectiles.Melee
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle?(rect), Projectile.GetAlpha(Color.White), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
-            Texture2D flare = ModContent.Request<Texture2D>("Redemption/Textures/RedEyeFlare").Value;
+            Texture2D flare = Request<Texture2D>("Redemption/Textures/RedEyeFlare").Value;
             Rectangle rect2 = new(0, 0, flare.Width, flare.Height);
             Vector2 origin2 = new(flare.Width / 2, flare.Height / 2);
             if (Projectile.localAI[0] < 2)
@@ -177,7 +186,7 @@ namespace Redemption.Projectiles.Melee
                 Main.EntitySpriteDraw(flare, Projectile.Center - Main.screenPosition, new Rectangle?(rect2), Projectile.GetAlpha(Color.OrangeRed) * 0.6f, -Projectile.rotation, origin2, Projectile.scale * 2f, SpriteEffects.None, 0);
             }
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
             return false;
         }
         public override void OnKill(int timeLeft)
@@ -193,7 +202,8 @@ namespace Redemption.Projectiles.Melee
                 RedeParticleManager.CreateEmberBurstParticle(Projectile.Center, RedeHelper.Spread(10 * Projectile.scale), 3 * Projectile.scale, RedeParticleManager.redColors, Main.rand.Next(90, 121), .9f);
             for (int i = 0; i < 20; i++)
                 RedeParticleManager.CreateEmberParticle(Projectile.Center, RedeHelper.Spread(10 * Projectile.scale), 1, RedeParticleManager.redColors, Main.rand.Next(90, 121));
-            SoundEngine.PlaySound(CustomSounds.MissileExplosion with { Volume = 1 * Projectile.scale, Pitch = -.5f }, Projectile.position);
+            if (!Main.dedServ)
+                SoundEngine.PlaySound(CustomSounds.MissileExplosion with { Volume = 1 * Projectile.scale, Pitch = -.5f }, Projectile.position);
 
             int boomOrigin = (int)(140 * Projectile.scale);
             Rectangle boom = new((int)Projectile.Center.X - boomOrigin, (int)Projectile.Center.Y - boomOrigin, boomOrigin * 2, boomOrigin * 2);
@@ -203,10 +213,10 @@ namespace Redemption.Projectiles.Melee
                 if (!target.active || !target.CanBeChasedBy())
                     continue;
 
-                if (target.immune[Projectile.whoAmI] > 0 || !target.Hitbox.Intersects(boom))
+                if (target.immune[Projectile.owner] > 0 || !target.Hitbox.Intersects(boom))
                     continue;
 
-                target.immune[Projectile.whoAmI] = 20;
+                target.immune[Projectile.owner] = 20;
                 int hitDirection = target.RightOfDir(Projectile);
                 BaseAI.DamageNPC(target, (int)(Projectile.damage * (Projectile.scale * 1.5f)), 7, hitDirection, Projectile, crit: Projectile.HeldItemCrit());
                 BaseAI.DamageNPC(target, (int)(Projectile.damage * (Projectile.scale * 1.25f)), 4, hitDirection, Projectile, crit: Projectile.HeldItemCrit());

@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Buffs.Minions;
 using Redemption.Buffs.NPCBuffs;
@@ -21,6 +20,7 @@ namespace Redemption.Projectiles.Minions
 
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
+            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
         }
 
         public override void SetDefaults()
@@ -56,7 +56,7 @@ namespace Redemption.Projectiles.Minions
                 if (Projectile.DistanceSQ(target.Center) > 400 * 400)
                     continue;
 
-                target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 10);
+                target.AddBuff(BuffType<ElectrifiedDebuff>(), 10);
             }
             if (RedeHelper.ClosestNPC(ref target, 400, Projectile.Center, false, owner.MinionAttackTargetNPC))
             {
@@ -64,7 +64,7 @@ namespace Redemption.Projectiles.Minions
                 {
                     Vector2 ai = RedeHelper.PolarVector(10, (target.Center - Projectile.Center).ToRotation());
                     float ai2 = Main.rand.Next(100);
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.PolarVector(10, (target.Center - Projectile.Center).ToRotation()), ModContent.ProjectileType<TeslaGenerator_Lightning>(), Projectile.damage, 0, Main.myPlayer, ai.ToRotation(), ai2);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.PolarVector(10, (target.Center - Projectile.Center).ToRotation()), ProjectileType<TeslaGenerator_Lightning>(), Projectile.damage, 0, Main.myPlayer, ai.ToRotation(), ai2);
                 }
             }
             for (int k = 0; k < 2; k++)
@@ -93,12 +93,12 @@ namespace Redemption.Projectiles.Minions
         {
             if (owner.dead || !owner.active)
             {
-                owner.ClearBuff(ModContent.BuffType<TeslaGeneratorBuff>());
+                owner.ClearBuff(BuffType<TeslaGeneratorBuff>());
                 return false;
             }
 
-            if (owner.HasBuff(ModContent.BuffType<TeslaGeneratorBuff>()))
-                Projectile.timeLeft = 2;
+            if (!owner.HasBuff(BuffType<TeslaGeneratorBuff>()))
+                Projectile.Kill();
 
             return true;
         }
@@ -170,7 +170,7 @@ namespace Redemption.Projectiles.Minions
                     return;
                 for (int index1 = 0; index1 < 2; ++index1)
                 {
-                    float num1 = Projectile.rotation + (float)((Main.rand.NextBool(2)? -1.0 : 1.0) * 1.57079637050629);
+                    float num1 = Projectile.rotation + (float)((Main.rand.NextBool(2) ? -1.0 : 1.0) * 1.57079637050629);
                     float num2 = (float)(Main.rand.NextDouble() * 0.800000011920929 + 1.0);
                     Vector2 vector2 = new((float)Math.Cos(num1) * num2, (float)Math.Sin(num1) * num2);
                     int index2 = Dust.NewDust(Projectile.Center, 0, 0, DustID.Electric, vector2.X, vector2.Y, 0, new Color(), 1f);
@@ -251,7 +251,7 @@ namespace Redemption.Projectiles.Minions
 
         public override void OnKill(int timeLeft)
         {
-            float num2 = (float)(Projectile.rotation + 1.57079637050629 + (Main.rand.NextBool(2)? -1.0 : 1.0) * 1.57079637050629);
+            float num2 = (float)(Projectile.rotation + 1.57079637050629 + (Main.rand.NextBool(2) ? -1.0 : 1.0) * 1.57079637050629);
             float num3 = (float)(Main.rand.NextDouble() * 2.0 + 2.0);
             Vector2 vector2 = new((float)Math.Cos(num2) * num3, (float)Math.Sin(num2) * num3);
             for (int i = 0; i < Projectile.oldPos.Length; i++)

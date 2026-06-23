@@ -40,8 +40,8 @@ namespace Redemption.Items.Weapons.PreHM.Melee
 
             // Use Properties
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 60;
-            Item.useTime = 60;
+            Item.useAnimation = 25;
+            Item.useTime = 25;
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = true;
 

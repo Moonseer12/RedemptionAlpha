@@ -203,7 +203,7 @@ namespace Redemption.Items.Usable
 
     public class ZoneAccessPanel5 : ZoneAccessPanel1
     {
-        public override string Texture { get { return "Redemption/Items/Usable/ZoneAccessPanel6"; } }
+        public override string Texture { get { return "Redemption/Items/Usable/ZoneAccessPanel5"; } }
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Lab Access Panel - 0");

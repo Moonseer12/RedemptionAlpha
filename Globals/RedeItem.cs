@@ -387,6 +387,8 @@ namespace Redemption.Globals
                 elementsLine.Text += "[i:Redemption/Hammer]";
             if (ItemID.Sets.Spears[item.type] || ProjectileLists.ProjSpear[item.shoot] || item.type is ItemID.PygmyStaff)
                 elementsLine.Text += "[i:Redemption/Spear]";
+            if (CanSwordClash)
+                elementsLine.Text += "[i:Redemption/Clash]";
 
             if (!RedeConfigServer.Instance.ElementDisable && !ItemLists.NoElement.Contains(item.type) && !ProjectileLists.NoElement.Contains(item.shoot))
             {

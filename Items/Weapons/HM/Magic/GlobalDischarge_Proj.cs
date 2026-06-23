@@ -1,17 +1,15 @@
-﻿using System;
-using Terraria;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Terraria.ID;
-using Microsoft.Xna.Framework.Graphics;
-using Redemption.Globals;
-using Terraria.Audio;
-using Redemption.BaseExtension;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Redemption.Base;
+using Redemption.BaseExtension;
 using Redemption.Buffs.NPCBuffs;
-using Terraria.GameContent;
-using Redemption.Particles;
+using Redemption.Globals;
 using ReLogic.Utilities;
+using System;
+using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.HM.Magic
 {
@@ -39,6 +37,9 @@ namespace Redemption.Items.Weapons.HM.Magic
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
+            if (player.noItems || player.CCed || player.dead || !player.active)
+                Projectile.Kill();
+
             float num = MathHelper.ToRadians(0f);
             Vector2 vector = player.RotatedRelativePoint(player.MountedCenter, true);
             if (Projectile.spriteDirection == -1)
@@ -47,30 +48,7 @@ namespace Redemption.Items.Weapons.HM.Magic
             if (!player.channel)
                 Projectile.Kill();
 
-            if (Main.myPlayer == Projectile.owner)
-            {
-                float scaleFactor6 = 1f;
-                if (player.inventory[player.selectedItem].shoot == Projectile.type)
-                {
-                    scaleFactor6 = player.inventory[player.selectedItem].shootSpeed * Projectile.scale;
-                }
-                Vector2 vector13 = Main.MouseWorld - vector;
-                vector13.Normalize();
-                if (vector13.HasNaNs())
-                {
-                    vector13 = Vector2.UnitX * player.direction;
-                }
-                vector13 *= scaleFactor6;
-                if (vector13.X != Projectile.velocity.X || vector13.Y != Projectile.velocity.Y)
-                    Projectile.netUpdate = true;
-
-                Projectile.velocity = vector13;
-                if (player.noItems || player.CCed || player.dead || !player.active)
-                {
-                    Projectile.Kill();
-                }
-                Projectile.netUpdate = true;
-            }
+            ProjHelper.HoldOutProjBasics(Projectile, player, vector);
             Projectile.position = player.RotatedRelativePoint(player.MountedCenter + RedeHelper.PolarVector(30, Projectile.velocity.ToRotation()), true) - Projectile.Size / 2f;
             Projectile.rotation = Projectile.velocity.ToRotation() + num + MathHelper.PiOver4;
             Projectile.spriteDirection = Projectile.direction;
@@ -81,16 +59,17 @@ namespace Redemption.Items.Weapons.HM.Magic
             player.itemAnimation = 2;
             player.itemRotation = (float)Math.Atan2(Projectile.velocity.Y * Projectile.direction, Projectile.velocity.X * Projectile.direction);
 
-            if (Projectile.localAI[0]++ == 0 && Projectile.owner == Main.myPlayer)
+            if (Projectile.localAI[0]++ == 0)
             {
                 Projectile.alpha = 0;
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.Center + Vector2.Normalize(Projectile.velocity) * 58f, RedeHelper.PolarVector(18, (Main.MouseWorld - player.Center).ToRotation()), ModContent.ProjectileType<GlobalDischarge_Sphere>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
+                if (Projectile.owner == Main.myPlayer)
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.Center + Vector2.Normalize(Projectile.velocity) * 58f, RedeHelper.PolarVector(18, (Main.MouseWorld - player.Center).ToRotation()), ProjectileType<GlobalDischarge_Sphere>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
             }
         }
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glow = ModContent.Request<Texture2D>("Redemption/Items/Weapons/HM/Magic/GlobalDischarge_Glow").Value;
+            Texture2D glow = Request<Texture2D>("Redemption/Items/Weapons/HM/Magic/GlobalDischarge_Glow").Value;
             SpriteEffects effects = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, new Vector2(texture.Width / 2, texture.Height / 2), Projectile.scale, effects, 0);
             Main.EntitySpriteDraw(glow, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, new Vector2(texture.Width / 2, texture.Height / 2), Projectile.scale, effects, 0);
@@ -136,7 +115,7 @@ namespace Redemption.Items.Weapons.HM.Magic
             Projectile.timeLeft = 10;
             Projectile staff = Main.projectile[(int)Projectile.ai[0]];
             Player player = Main.player[staff.owner];
-            if ((!staff.active || staff.type != ModContent.ProjectileType<GlobalDischarge_Proj>() || player.DistanceSQ(Projectile.Center) > 1400 * 1400))
+            if ((!staff.active || staff.type != ProjectileType<GlobalDischarge_Proj>() || player.DistanceSQ(Projectile.Center) > 1400 * 1400))
             {
                 if (Projectile.ai[1] > 0)
                 {
@@ -175,99 +154,96 @@ namespace Redemption.Items.Weapons.HM.Magic
                 DustHelper.DrawParticleElectricity(Projectile.Center, Projectile.Center + RedeHelper.PolarVector(180 * Projectile.scale, RedeHelper.RandomRotation()), 1.5f, 20, 0.1f);
             }
 
-            if (Projectile.owner == Main.myPlayer)
+            switch (Projectile.ai[1])
             {
-                switch (Projectile.ai[1])
-                {
-                    case -2:
-                        if (sound != null)
-                        {
-                            sound.Stop();
-                            loop = SlotId.Invalid;
-                        }
+                case -2:
+                    if (sound != null)
+                    {
+                        sound.Stop();
+                        loop = SlotId.Invalid;
+                    }
 
-                        godrayFade += 0.04f;
-                        Projectile.scale += 0.01f;
-                        Projectile.alpha -= 1;
-                        Projectile.velocity = new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-2f, 2f));
-                        if (godrayFade >= 1f)
-                        {
-                            RedeDraw.SpawnExplosion(Projectile.Center, Color.White, DustID.Electric, 28, 40);
-                            Projectile.Kill();
-                        }
-                        break;
-                    case -1:
-                        if (sound != null)
-                        {
-                            sound.Stop();
-                            loop = SlotId.Invalid;
-                        }
+                    godrayFade += 0.04f;
+                    Projectile.scale += 0.01f;
+                    Projectile.alpha -= 1;
+                    Projectile.velocity = new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-2f, 2f));
+                    if (godrayFade >= 1f)
+                    {
+                        RedeDraw.SpawnExplosion(Projectile.Center, Color.White, DustID.Electric, 28, 40);
+                        Projectile.Kill();
+                    }
+                    break;
+                case -1:
+                    if (sound != null)
+                    {
+                        sound.Stop();
+                        loop = SlotId.Invalid;
+                    }
 
-                        godrayFade += 0.02f;
-                        Projectile.scale += 0.01f;
-                        Projectile.alpha -= 1;
-                        Projectile.velocity = new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-2f, 2f));
-                        if (godrayFade >= 1.2f)
+                    godrayFade += 0.02f;
+                    Projectile.scale += 0.01f;
+                    Projectile.alpha -= 1;
+                    Projectile.velocity = new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-2f, 2f));
+                    if (godrayFade >= 1.2f)
+                    {
+                        for (int i = 0; i < Main.maxNPCs; i++)
                         {
-                            for (int i = 0; i < Main.maxNPCs; i++)
-                            {
-                                NPC npc = Main.npc[i];
-                                if (!npc.active || npc.friendly || npc.dontTakeDamage)
-                                    continue;
+                            NPC npc = Main.npc[i];
+                            if (!npc.active || npc.friendly || npc.dontTakeDamage)
+                                continue;
 
-                                if (Projectile.DistanceSQ(npc.Center) > 600 * 600)
-                                    continue;
+                            if (Projectile.DistanceSQ(npc.Center) > 600 * 600)
+                                continue;
 
-                                DustHelper.DrawParticleElectricity(Projectile.Center, npc.Center, 2f, 20, 0.05f);
-                                DustHelper.DrawParticleElectricity(Projectile.Center, npc.Center, 2f, 20, 0.05f);
-                                int hitDirection = npc.RightOfDir(Projectile);
-                                BaseAI.DamageNPC(npc, Projectile.damage * 2, Projectile.knockBack, hitDirection, Projectile, crit: Projectile.HeldItemCrit());
-                            }
-                            RedeDraw.SpawnExplosion(Projectile.Center, Color.White, DustID.Electric, 60, 40, 2, 5);
-                            Projectile.Kill();
+                            DustHelper.DrawParticleElectricity(Projectile.Center, npc.Center, 2f, 20, 0.05f);
+                            DustHelper.DrawParticleElectricity(Projectile.Center, npc.Center, 2f, 20, 0.05f);
+                            int hitDirection = npc.RightOfDir(Projectile);
+                            BaseAI.DamageNPC(npc, Projectile.damage * 2, Projectile.knockBack, hitDirection, Projectile, crit: Projectile.HeldItemCrit());
                         }
-                        break;
-                    case 0:
-                        if (Projectile.localAI[0] == 0)
-                        {
-                            if (sound == null)
-                                loop = SoundEngine.PlaySound(CustomSounds.ElectricLoop, Projectile.position);
-                            Projectile.scale = .1f;
-                            Projectile.localAI[0] = 1;
-                        }
-                        Projectile.scale += 0.03f;
-                        Projectile.velocity *= 0.95f;
-                        if (Projectile.alpha > 0)
-                            Projectile.alpha -= 8;
-                        if (Projectile.scale >= 1)
-                        {
-                            Projectile.localAI[0] = 0;
-                            Projectile.localAI[1] = 30;
-                            Projectile.scale = 1;
-                            if (player.channel)
-                                Projectile.ai[1] = 1;
-                            else
-                            {
-                                if (!Main.dedServ)
-                                    SoundEngine.PlaySound(CustomSounds.Spark1, Projectile.position);
-                                Projectile.ai[1] = -1;
-                            }
-                            Projectile.netUpdate = true;
-                        }
-                        break;
-                    case 1:
-                        if (sound == null)
+                        RedeDraw.SpawnExplosion(Projectile.Center, Color.White, DustID.Electric, 60, 40, 2, 5);
+                        Projectile.Kill();
+                    }
+                    break;
+                case 0:
+                    if (Projectile.localAI[0] == 0)
+                    {
+                        if (sound == null && !Main.dedServ)
                             loop = SoundEngine.PlaySound(CustomSounds.ElectricLoop, Projectile.position);
-
-                        if (Projectile.DistanceSQ(staff.Center + RedeHelper.PolarVector(140, staff.velocity.ToRotation())) >= 300 * 300)
+                        Projectile.scale = .1f;
+                        Projectile.localAI[0] = 1;
+                    }
+                    Projectile.scale += 0.03f;
+                    Projectile.velocity *= 0.95f;
+                    if (Projectile.alpha > 0)
+                        Projectile.alpha -= 8;
+                    if (Projectile.scale >= 1)
+                    {
+                        Projectile.localAI[0] = 0;
+                        Projectile.localAI[1] = 30;
+                        Projectile.scale = 1;
+                        if (player.channel)
+                            Projectile.ai[1] = 1;
+                        else
                         {
-                            Projectile.Move(staff.Center + RedeHelper.PolarVector(80, staff.velocity.ToRotation()), speed, 6);
-                            speed *= 1.04f;
+                            if (!Main.dedServ)
+                                SoundEngine.PlaySound(CustomSounds.Spark1, Projectile.position);
+                            Projectile.ai[1] = -1;
                         }
-                        speed *= .98f;
-                        speed = MathHelper.Clamp(speed, 4, 34);
-                        break;
-                }
+                        Projectile.netUpdate = true;
+                    }
+                    break;
+                case 1:
+                    if (sound == null && !Main.dedServ)
+                        loop = SoundEngine.PlaySound(CustomSounds.ElectricLoop, Projectile.position);
+
+                    if (Projectile.DistanceSQ(staff.Center + RedeHelper.PolarVector(140, staff.velocity.ToRotation())) >= 300 * 300)
+                    {
+                        Projectile.Move(staff.Center + RedeHelper.PolarVector(80, staff.velocity.ToRotation()), speed, 6);
+                        speed *= 1.04f;
+                    }
+                    speed *= .98f;
+                    speed = MathHelper.Clamp(speed, 4, 34);
+                    break;
             }
             SoundEngine.TryGetActiveSound(loop, out sound);
             if (sound != null)
@@ -293,7 +269,7 @@ namespace Redemption.Items.Weapons.HM.Magic
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 360);
+            target.AddBuff(BuffType<ElectrifiedDebuff>(), 360);
             if (Projectile.ai[1] != 1)
                 return;
             float f = (Projectile.velocity.Length() / 28) + 1;
@@ -311,7 +287,7 @@ namespace Redemption.Items.Weapons.HM.Magic
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D orb = ModContent.Request<Texture2D>("Redemption/Textures/CultistOrb").Value;
+            Texture2D orb = Request<Texture2D>("Redemption/Textures/CultistOrb").Value;
             int height = texture.Height / 3;
             int y = height * Projectile.frame;
             Rectangle rect = new(0, y, texture.Width, height);
@@ -323,7 +299,7 @@ namespace Redemption.Items.Weapons.HM.Magic
             Color color = BaseUtility.MultiLerpColor(Main.LocalPlayer.miscCounter % 100 / 100f, Color.LightCyan, Color.Cyan, Color.LightCyan);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
             int heightO = orb.Height / 4;
             int yO = heightO * Projectile.frame;
@@ -335,7 +311,7 @@ namespace Redemption.Items.Weapons.HM.Magic
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle?(rect), Projectile.GetAlpha(color) * 0.9f, -Projectile.rotation, drawOrigin, Projectile.scale * scale2, effects, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
 
             if (godrayFade > 0)
             {

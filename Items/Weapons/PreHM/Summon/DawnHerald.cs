@@ -1,5 +1,5 @@
-using Microsoft.Xna.Framework;
 using Redemption.Base;
+using Redemption.BaseExtension;
 using Redemption.Projectiles.Minions;
 using Terraria;
 using Terraria.DataStructures;
@@ -27,16 +27,15 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             Item.sentry = true;
             Item.width = 38;
             Item.height = 38;
-            Item.useTime = 36;
-            Item.useAnimation = 36;
+            Item.useTime = 10;
+            Item.useAnimation = 10;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.noMelee = true;
             Item.value = Item.sellPrice(0, 0, 24, 0);
             Item.rare = ItemRarityID.Blue;
             Item.UseSound = SoundID.DD2_DefenseTowerSpawn;
             Item.autoReuse = false;
-            Item.shoot = ModContent.ProjectileType<DawnHerald_Rooster>();
-            Item.mana = 20;
+            Item.shoot = ProjectileType<DawnHerald_Rooster>();
         }
         public override bool AltFunctionUse(Player player) => true;
         public override bool CanUseItem(Player player)
@@ -54,17 +53,16 @@ namespace Redemption.Items.Weapons.PreHM.Summon
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if (player.altFunctionUse == 2)
+            foreach (Projectile proj in Main.ActiveProjectiles)
             {
-                for (int i = 0; i < Main.maxProjectiles; i++)
-                {
-                    Projectile proj = Main.projectile[i];
-                    if (!proj.active || proj.type != type || proj.owner != player.whoAmI)
-                        continue;
-                    proj.timeLeft = 2;
-                }
-                return false;
+                if (!proj.Redemption().auraSentry || proj.owner != player.whoAmI)
+                    continue;
+                proj.timeLeft = 2;
             }
+
+            if (player.altFunctionUse == 2)
+                return false;
+
             var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer, player.direction);
             projectile.originalDamage = Item.damage;
 

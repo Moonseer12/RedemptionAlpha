@@ -31,7 +31,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             Item.rare = ItemRarityID.White;
             Item.UseSound = SoundID.Item17;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<FlintAndSteelSpark>();
+            Item.shoot = ProjectileType<FlintAndSteelSpark>();
             Item.shootSpeed = 6;
         }
     }

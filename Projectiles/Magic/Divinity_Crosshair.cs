@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Redemption.Items.Weapons.HM.Magic;
 using Terraria;
 using Terraria.GameContent;
@@ -37,7 +36,7 @@ namespace Redemption.Projectiles.Magic
             Projectile.rotation += 0.05f;
             Player player = Main.player[Projectile.owner];
             Projectile sun = Main.projectile[(int)Projectile.ai[0]];
-            if (!player.active || player.dead || !sun.active || sun.type != ModContent.ProjectileType<Divinity_Sun>())
+            if (!player.active || player.dead || !sun.active || sun.type != ProjectileType<Divinity_Sun>())
                 Projectile.Kill();
 
             if (Projectile.owner == Main.myPlayer && player.channel)

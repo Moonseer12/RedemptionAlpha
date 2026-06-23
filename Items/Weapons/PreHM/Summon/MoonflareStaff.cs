@@ -1,15 +1,14 @@
+using Microsoft.Xna.Framework.Graphics;
+using Redemption.Buffs.Minions;
+using Redemption.Globals;
+using Redemption.Globals.Players;
+using Redemption.Items.Materials.PreHM;
+using Redemption.Projectiles.Minions;
+using System.Collections.Generic;
+using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria;
-using Microsoft.Xna.Framework;
-using Terraria.DataStructures;
-using Redemption.Buffs.Minions;
-using Redemption.Projectiles.Minions;
-using Redemption.Items.Materials.PreHM;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
-using Redemption.BaseExtension;
-using Redemption.Globals;
 
 namespace Redemption.Items.Weapons.PreHM.Summon
 {
@@ -24,7 +23,9 @@ namespace Redemption.Items.Weapons.PreHM.Summon
 
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true;
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
         public override void SetDefaults()
         {
@@ -32,8 +33,8 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             Item.DamageType = DamageClass.Summon;
             Item.width = 38;
             Item.height = 36;
-            Item.useTime = 36;
-            Item.useAnimation = 36;
+            Item.useTime = 10;
+            Item.useAnimation = 10;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.noMelee = true;
             Item.knockBack = 3;
@@ -41,11 +42,8 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             Item.rare = ItemRarityID.Blue;
             Item.UseSound = SoundID.Item44;
             Item.autoReuse = false;
-            Item.buffType = ModContent.BuffType<MoonflareGuardianBuff>();
-            Item.shoot = ModContent.ProjectileType<MoonflareGuardian>();
-            Item.mana = 10;
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
+            Item.buffType = BuffType<MoonflareGuardianBuff>();
+            Item.shoot = ProjectileType<MoonflareGuardian>();
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
@@ -75,7 +73,7 @@ namespace Redemption.Items.Weapons.PreHM.Summon
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<MoonflareFragment>(), 10)
+                .AddIngredient(ItemType<MoonflareFragment>(), 10)
                 .AddTile(TileID.Anvils)
                 .AddCondition(RedeConditions.InMoonlight)
                 .Register();

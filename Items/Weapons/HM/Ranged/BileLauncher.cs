@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Items.Materials.HM;
 using Redemption.Projectiles.Ranged;
 using Terraria;
@@ -8,11 +7,12 @@ using Terraria.ModLoader;
 namespace Redemption.Items.Weapons.HM.Ranged
 {
     public class BileLauncher : ModItem
-	{
-		public override void SetStaticDefaults()
-		{
+    {
+        public override void SetStaticDefaults()
+        {
             /* Tooltip.SetDefault("Charges up and releases a stream of radioactive gloop\n" +
                 "Uses Toxic Grenades as ammo"); */
+            ItemID.Sets.IsRangedSpecialistWeapon[Type] = true;
             Item.ResearchUnlockCount = 1;
         }
 
@@ -22,8 +22,8 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Item.DamageType = DamageClass.Ranged;
             Item.width = 66;
             Item.height = 36;
-            Item.useTime = 12;
-            Item.useAnimation = 12;
+            Item.useTime = 60;
+            Item.useAnimation = 60;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.noUseGraphic = true;
@@ -32,7 +32,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Item.rare = ItemRarityID.Pink;
             Item.UseSound = SoundID.NPCDeath13;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<BileLauncher_Gloop>();
+            Item.shoot = ProjectileType<BileLauncher_Gloop>();
             Item.shootSpeed = 5;
             Item.useAmmo = ItemID.Grenade;
         }
@@ -45,7 +45,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            type = ModContent.ProjectileType<BileLauncher_Proj>();
+            type = ProjectileType<BileLauncher_Proj>();
         }
         public override void AddRecipes()
         {

@@ -1,13 +1,14 @@
-﻿using System;
-using Terraria;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Terraria.ID;
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.Projectiles.Magic;
-using Redemption.Globals;
-using Terraria.Audio;
 using Redemption.BaseExtension;
+using Redemption.Globals;
+using Redemption.Projectiles.Magic;
+using System;
+using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.PreHM.Magic
 {
@@ -32,47 +33,32 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Projectile.ignoreWater = true;
             Projectile.Redemption().TechnicallyMelee = true;
         }
+        private int maxTime;
+        private float speedBonus;
+        public override void OnSpawn(IEntitySource source)
+        {
+            Player player = Main.player[Projectile.owner];
+            maxTime = (int)(player.HeldItem.useTime / player.GetAttackSpeed(DamageClass.Magic));
+            speedBonus = 26f / maxTime;
+        }
         public bool glow;
         public float glowTimer;
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            float num = MathHelper.ToRadians(0f);
-            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter, true);
+            Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter);
+            float num = 0;
             if (Projectile.spriteDirection == -1)
                 num = MathHelper.ToRadians(90f);
 
             if (!player.channel)
-                Projectile.Kill();
+                DelayKill();
 
-            if (Main.myPlayer == Projectile.owner)
-            {
-                float scaleFactor6 = 1f;
-                if (player.inventory[player.selectedItem].shoot == Projectile.type)
-                {
-                    scaleFactor6 = player.inventory[player.selectedItem].shootSpeed * Projectile.scale;
-                }
-                Vector2 vector13 = Main.MouseWorld - vector;
-                vector13.Normalize();
-                if (vector13.HasNaNs())
-                {
-                    vector13 = Vector2.UnitX * player.direction;
-                }
-                vector13 *= scaleFactor6;
-                if (vector13.X != Projectile.velocity.X || vector13.Y != Projectile.velocity.Y)
-                    Projectile.netUpdate = true;
-
-                Projectile.velocity = vector13;
-                if (player.noItems || player.CCed || player.dead || !player.active)
-                {
-                    Projectile.Kill();
-                }
-                Projectile.netUpdate = true;
-            }
+            ProjHelper.HoldOutProjBasics(Projectile, player, playerCenter);
 
             if (glow)
             {
-                glowTimer++;
+                glowTimer += speedBonus;
                 if (glowTimer > 60)
                 {
                     glow = false;
@@ -80,7 +66,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
                 }
             }
 
-            Projectile.position = player.RotatedRelativePoint(player.MountedCenter + RedeHelper.PolarVector(30, Projectile.velocity.ToRotation()), true) - Projectile.Size / 2f;
+            Projectile.Center = playerCenter + RedeHelper.PolarVector(30, Projectile.velocity.ToRotation());
             Projectile.rotation = Projectile.velocity.ToRotation() + num + MathHelper.PiOver4;
             Projectile.spriteDirection = Projectile.direction;
             Projectile.timeLeft = 2;
@@ -90,23 +76,38 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             player.itemAnimation = 2;
             player.itemRotation = (float)Math.Atan2(Projectile.velocity.Y * Projectile.direction, Projectile.velocity.X * Projectile.direction);
 
-            if (Projectile.localAI[0]++ == 0 && Projectile.owner == Main.myPlayer)
+            if (Projectile.localAI[0]++ == 0)
             {
                 Projectile.alpha = 0;
                 SoundEngine.PlaySound(SoundID.Item30, player.position);
                 glow = true;
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.Center + Vector2.Normalize(Projectile.velocity) * 35f, Projectile.velocity, ModContent.ProjectileType<IceBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0, Projectile.whoAmI);
+                if (Projectile.owner == Main.myPlayer)
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.Center + Vector2.Normalize(Projectile.velocity) * 35f, Projectile.velocity, ProjectileType<IceBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0, Projectile.whoAmI);
             }
         }
+        public void DelayKill()
+        {
+            Projectile.localAI[1]++;
+            if (Projectile.localAI[1] > maxTime)
+                Projectile.Kill();
+        }
         private float Opacity { get => glowTimer; set => glowTimer = value; }
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
+            Vector2 drawOrigin = new(texture.Width / 2, Projectile.height / 2);
+            SpriteEffects spriteEffects = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, drawOrigin, Projectile.scale, spriteEffects, 0);
+            return false;
+        }
         public override void PostDraw(Color lightColor)
         {
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
-            Texture2D texture = ModContent.Request<Texture2D>("Redemption/Textures/Star").Value;
+            Texture2D texture = Request<Texture2D>("Redemption/Textures/Star").Value;
             Vector2 origin = new(texture.Width / 2f, texture.Height / 2f);
-            Vector2 position = Projectile.Center - Main.screenPosition + RedeHelper.PolarVector(15, Projectile.velocity.ToRotation()) + Vector2.UnitY * Projectile.gfxOffY;
+            Vector2 position = Projectile.Center - Main.screenPosition + RedeHelper.PolarVector(15, Projectile.velocity.ToRotation());
             Color colour = Color.Lerp(Color.LightBlue, Color.LightCyan, 1f / Opacity * 10f) * (1f / Opacity * 10f);
             SpriteEffects spriteEffects = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             if (glow)
@@ -115,7 +116,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
                 Main.EntitySpriteDraw(texture, position, null, colour * 0.4f, Projectile.rotation, origin, 1, spriteEffects, 0);
             }
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault(true);
         }
     }
 }

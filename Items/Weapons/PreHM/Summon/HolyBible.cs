@@ -23,13 +23,12 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             Item.DamageType = DamageClass.Summon;
             Item.width = 30;
             Item.height = 36;
-            Item.useTime = 15;
-            Item.useAnimation = 15;
+            Item.useTime = 10;
+            Item.useAnimation = 10;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.knockBack = 1f;
             Item.value = Item.sellPrice(0, 0, 54, 0);
             Item.UseSound = SoundID.Item19;
-            Item.mana = 15;
             Item.autoReuse = false;
             Item.useTurn = true;
             Item.noUseGraphic = true;

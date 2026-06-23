@@ -1,13 +1,10 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent;
-using Terraria;
-using Terraria.ID;
 using Redemption.Globals;
-using Terraria.ModLoader;
-using Terraria.Audio;
-using ParticleLibrary;
 using Redemption.Particles;
+using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
+using Terraria.ID;
 
 namespace Redemption.Items.Weapons.PreHM.Melee
 {
@@ -35,8 +32,15 @@ namespace Redemption.Items.Weapons.PreHM.Melee
         }
         private int dir = 1;
         private int heatFrame = 1;
+        private int maxTime;
+        private int frequency;
+
         public override void AI()
         {
+            Player player = Main.player[Projectile.owner];
+            maxTime = SetUseTime(player.HeldItem.useTime);
+            frequency = 20 - (maxTime / 2);
+
             if (Projectile.frameCounter++ % 3 == 0)
             {
                 if (++Projectile.frame > 2)
@@ -44,7 +48,6 @@ namespace Redemption.Items.Weapons.PreHM.Melee
                 if (++heatFrame > 2)
                     heatFrame = 0;
             }
-            Player player = Main.player[Projectile.owner];
             if (player.noItems || player.CCed || player.dead || !player.active)
                 Projectile.Kill();
 
@@ -68,7 +71,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
                     dir *= -1;
                     Projectile.localAI[0] = 1;
                 }
-                if (Projectile.localAI[1] % 50 == 0)
+                if (Projectile.localAI[1] % (maxTime / 3 * 5) == 0)
                 {
                     SoundEngine.PlaySound(SoundID.DD2_BetsyWindAttack with { Pitch = -0.1f }, player.Center);
                 }
@@ -81,21 +84,24 @@ namespace Redemption.Items.Weapons.PreHM.Melee
 
                 player.SetCompositeArmFront(true, arm, MathHelper.PiOver2);
 
-                if (Main.rand.NextBool(20))
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.Center, new Vector2(Main.rand.Next(-8, 9), -Main.rand.Next(1, 5)), Main.rand.Next(400, 403), Projectile.damage / 3, 1, player.whoAmI);
-
+                if (Main.rand.NextBool(frequency))
+                {
+                    int d = Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.Center, new Vector2(Main.rand.Next(-8, 9), -Main.rand.Next(1, 5)), Main.rand.Next(400, 403), Projectile.damage / 3, 1, player.whoAmI);
+                    Main.projectile[d].usesLocalNPCImmunity = true;
+                    Main.projectile[d].localNPCHitCooldown = 10;
+                }
                 if (Projectile.localAI[1]++ >= 20 && !player.channel)
                     Projectile.Kill();
             }
 
-            Projectile.Center = player.MountedCenter;
+            Projectile.Center = player.RotatedRelativePoint(player.MountedCenter);
 
             if (Main.rand.NextBool(8))
                 RedeParticleManager.CreateEmberParticle(RedeHelper.RandAreaInEntity(Projectile), RedeHelper.Spread(2), 1, Main.rand.Next(90, 121));
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            RedeProjectile.Decapitation(target, ref damageDone, ref hit.Crit);
+            ProjHelper.Decapitation(target, ref damageDone, ref hit.Crit);
             target.AddBuff(BuffID.OnFire, 260);
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
@@ -107,7 +113,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glow = ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "2").Value;
+            Texture2D glow = Request<Texture2D>(Texture + "2").Value;
             int height = texture.Height / 3;
             int y = height * Projectile.frame;
             int y2 = height * heatFrame;
@@ -115,21 +121,15 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             Rectangle rect2 = new(0, y2, texture.Width, height);
             Vector2 drawOrigin = new(texture.Width / 2, height / 2);
 
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY, new Rectangle?(rect), Projectile.GetAlpha(lightColor), Projectile.rotation, drawOrigin, Projectile.scale, 0, 0);
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle?(rect), Projectile.GetAlpha(lightColor), Projectile.rotation, drawOrigin, Projectile.scale, 0, 0);
 
             for (int k = 0; k < Projectile.oldPos.Length; k++)
             {
-                Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + drawOrigin + Vector2.UnitY * Projectile.gfxOffY;
+                Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + drawOrigin;
                 Color color = RedeColor.FadeColour1 * ((Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
-                Main.EntitySpriteDraw(glow, drawPos, new Rectangle?(rect2), Projectile.GetAlpha(color) * 2f, Projectile.rotation, drawOrigin, Projectile.scale, 0, 0);
+                Main.EntitySpriteDraw(glow, drawPos, new Rectangle?(rect2), Projectile.GetAlpha(color with { A = 0 }) * 2f, Projectile.rotation, drawOrigin, Projectile.scale, 0, 0);
             }
             RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, glow, ref drawTimer, Projectile.Center - Main.screenPosition, new Rectangle?(rect2), RedeColor.COLOR_GLOWPULSE * Projectile.Opacity * 0.4f, Projectile.rotation, drawOrigin, Projectile.scale, 0);
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
             return false;
         }
     }

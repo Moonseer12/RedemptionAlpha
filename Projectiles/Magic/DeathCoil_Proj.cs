@@ -1,10 +1,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Dusts;
-using Redemption.Effects;
 using Redemption.Effects.Trails;
 using Redemption.Globals;
 using Redemption.Globals.NPCs;
-using Redemption.Globals.Projectiles;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -43,8 +41,8 @@ namespace Redemption.Projectiles.Magic
         private List<Vector2> cache2;
         private DanTrail trail;
         private DanTrail trail2;
-        private float thickness = 16;
-
+        private float thickness = 12;
+        private float opacity;
         public override void AI()
         {
             if (++Projectile.frameCounter >= 4)
@@ -58,7 +56,7 @@ namespace Redemption.Projectiles.Magic
             if (Projectile.ai[1]++ > 15)
             {
                 Projectile.ai[0] = 1;
-                Projectile.Move(p.Center, speed, 10 / (1 + (.1f * Projectile.localAI[0])));
+                Projectile.Move(p.Center, speed, 10 / (1 + (.15f * Projectile.localAI[0])));
                 if (Projectile.Hitbox.Intersects(p.Hitbox))
                     Projectile.Kill();
             }
@@ -105,11 +103,11 @@ namespace Redemption.Projectiles.Magic
                     AdjustMagnitude(ref Projectile.velocity, speed);
                 }
             }
-
+            opacity = MathHelper.Clamp(Projectile.velocity.Length() * 0.1f, 0, 1);
             if (Main.netMode != NetmodeID.Server)
             {
                 TrailHelper.ManageBasicCaches(ref cache, ref cache2, NUMPOINTS, Projectile.Center + Projectile.velocity);
-                TrailHelper.ManageBasicTrail(RedeGraphics.Instance.Primitives, cache, cache2, ref trail, ref trail2, NUMPOINTS, Projectile.Center + Projectile.velocity, baseColor, endColor, edgeColor, thickness);
+                TrailHelper.ManageBasicTrail(RedeGraphics.Instance.Primitives, cache, cache2, ref trail, ref trail2, NUMPOINTS, Projectile.Center + Projectile.velocity, baseColor * opacity, endColor * opacity, edgeColor * opacity, thickness);
             }
         }
         private static void AdjustMagnitude(ref Vector2 vector, float speed)
@@ -153,7 +151,7 @@ namespace Redemption.Projectiles.Magic
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            modifiers.FinalDamage *= 1 + (.1f * Projectile.localAI[0]);
+            modifiers.FinalDamage *= 1 + (.15f * Projectile.localAI[0]);
             if (Projectile.ai[0] == 1)
             {
                 modifiers.Knockback *= 0;

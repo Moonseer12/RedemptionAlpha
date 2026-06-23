@@ -57,7 +57,7 @@ namespace Redemption.Projectiles.Magic
                 if (Projectile.spriteDirection == -1)
                     num = MathHelper.ToRadians(90f);
 
-                RedeProjectile.HoldOutProjBasics(Projectile, player, vector);
+                ProjHelper.HoldOutProjBasics(Projectile, player, vector);
                 Vector2 Offset = Vector2.Normalize(staff.velocity) * 10f;
 
                 if (!Collision.CanHit(player.Center, 0, 0, Projectile.Center + Offset, 0, 0))

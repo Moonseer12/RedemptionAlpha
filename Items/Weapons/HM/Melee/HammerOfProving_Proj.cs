@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.BaseExtension;
 using Redemption.Buffs.Debuffs;
@@ -72,7 +71,7 @@ namespace Redemption.Items.Weapons.HM.Melee
 
             Projectile.ai[0] = MathHelper.Clamp(Projectile.ai[0], -2, 2);
 
-            if (Main.myPlayer == Projectile.owner && Projectile.ai[2] == 0)
+            if (Projectile.ai[2] == 0)
             {
                 if (Projectile.ai[0] > 1 && Projectile.ai[1] == 0)
                 {
@@ -153,8 +152,7 @@ namespace Redemption.Items.Weapons.HM.Melee
 
                                 if (Main.netMode != NetmodeID.Server && Projectile.owner == Main.myPlayer)
                                 {
-                                    if (Projectile.owner == Main.myPlayer)
-                                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), origin + new Vector2(0, -20), new Vector2(0, -30), ModContent.ProjectileType<HolyHammer>(), (int)(Projectile.damage * 0.75f), 2, Player.whoAmI);
+                                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), origin + new Vector2(0, -20), new Vector2(0, -30), ProjectileType<HolyHammer>(), (int)(Projectile.damage * 0.75f), 2, Player.whoAmI);
                                 }
                             }
                         }
@@ -207,10 +205,10 @@ namespace Redemption.Items.Weapons.HM.Melee
 
             Vector2 directionTo = target.DirectionTo(Player.Center);
             for (int i = 0; i < 10; i++)
-                Dust.NewDustPerfect(target.Center + directionTo * 15 + new Vector2(0, 20) + Player.velocity, ModContent.DustType<DustSpark2>(), directionTo.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f) + 3.14f) * Main.rand.NextFloat(4f, 5f) + (Player.velocity / 10), 0, Color.White * .8f, 1f);
+                Dust.NewDustPerfect(target.Center + directionTo * 15 + new Vector2(0, 20) + Player.velocity, DustType<DustSpark2>(), directionTo.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f) + 3.14f) * Main.rand.NextFloat(4f, 5f) + (Player.velocity / 10), 0, Color.White * .8f, 1f);
 
             if (Player.velocity.Y >= 20 && target.knockBackResist > 0)
-                target.AddBuff(ModContent.BuffType<StunnedDebuff>(), 180);
+                target.AddBuff(BuffType<StunnedDebuff>(), (int)(260 * target.knockBackResist));
 
             if (Main.myPlayer == Projectile.owner)
             {

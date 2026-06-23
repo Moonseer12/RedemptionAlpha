@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Base;
 using Redemption.BaseExtension;
@@ -55,7 +54,7 @@ namespace Redemption.Projectiles.Magic
                 Main.LocalPlayer.RedemptionScreen().ScreenShakeOrigin = Projectile.Center;
                 Main.LocalPlayer.RedemptionScreen().ScreenShakeIntensity += 6;
                 RedeDraw.SpawnExplosion(Projectile.Center, new Color(76, 240, 107), DustID.Smoke, 0, 10, 1, 2);
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<XeniumBoom_Proj>(), Projectile.damage * 2, Projectile.knockBack, Main.myPlayer);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ProjectileType<XeniumBoom_Proj>(), Projectile.damage * 2, Projectile.knockBack, Main.myPlayer);
             }
             for (int i = 0; i < 20; i++)
             {
@@ -121,7 +120,7 @@ namespace Redemption.Projectiles.Magic
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile p = Main.projectile[i];
-                if (!p.active || p.type != ModContent.ProjectileType<XeniumBubble_Proj>())
+                if (!p.active || p.type != ProjectileType<XeniumBubble_Proj>())
                     continue;
 
                 if (Projectile.getRect().Intersects(p.getRect()))
@@ -133,9 +132,9 @@ namespace Redemption.Projectiles.Magic
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Main.rand.NextBool(3))
-                target.AddBuff(ModContent.BuffType<GreenRashesDebuff>(), 300);
+                target.AddBuff(BuffType<GreenRashesDebuff>(), 300);
             else if (Main.rand.NextBool(6))
-                target.AddBuff(ModContent.BuffType<GlowingPustulesDebuff>(), 150);
+                target.AddBuff(BuffType<GlowingPustulesDebuff>(), 150);
         }
         public override bool PreDraw(ref Color lightColor)
         {

@@ -1,14 +1,13 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using System;
-using System.Linq;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Redemption.Globals;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
-using System.Collections.Generic;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.PostML.Ranged
 {
@@ -24,9 +23,10 @@ namespace Redemption.Items.Weapons.PostML.Ranged
 
         public override void SetDefaults()
         {
+            Projectile.DamageType = DamageClass.Ranged;
             Projectile.width = 10;
             Projectile.height = 10;
-            Projectile.aiStyle = -1;
+            Projectile.alpha = 255;
             Projectile.friendly = true;
             Projectile.hostile = false;
             Projectile.penetrate = 1;
@@ -52,19 +52,23 @@ namespace Redemption.Items.Weapons.PostML.Ranged
             Projectile projAim = Main.projectile[(int)Projectile.ai[0]];
             if (!projAim.active)
             {
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BlastBattery_MissileBlast>(), Projectile.damage, 0, Main.myPlayer);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ProjectileType<BlastBattery_MissileBlast>(), Projectile.damage, 0, Main.myPlayer);
                 Projectile.Kill();
             }
             Projectile.rotation = Projectile.velocity.ToRotation() + 1.57f;
+
             if (Projectile.localAI[0] == 0f)
             {
                 AdjustMagnitude(ref Projectile.velocity);
                 Projectile.localAI[0] = 1f;
             }
-            else
-                Projectile.localAI[0]++;
+            if (Projectile.localAI[0] > 0f)
+            {
+                Dust smoke = Dust.NewDustPerfect(Projectile.velocity + Main.rand.NextVector2FromRectangle(Projectile.Hitbox), DustID.Smoke, Projectile.velocity * 0.1f, Scale: 0.75f);
+                Projectile.alpha = 0;
+            }
 
-            if (Projectile.localAI[0] > 20)
+            if (Projectile.localAI[0]++ > 20)
             {
                 Vector2 move = Vector2.Zero;
                 float distance = 5000f;
@@ -99,12 +103,12 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                     if (Projectile.ai[1] == 1)
                     {
                         proj.localAI[0]++;
-                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BlastBattery_MissileBlast>(), Projectile.damage, 0, Main.myPlayer);
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ProjectileType<BlastBattery_MissileBlast>(), Projectile.damage, 0, Main.myPlayer);
                         Projectile.Kill();
                     }
                     else
                     {
-                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BlastBattery_MissileBlast>(), Projectile.damage, 0, Main.myPlayer);
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ProjectileType<BlastBattery_MissileBlast>(), Projectile.damage, 0, Main.myPlayer);
                         Projectile.Kill();
                         proj.Kill();
                     }
@@ -121,7 +125,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BlastBattery_MissileBlast>(), Projectile.damage, 0, Main.myPlayer);
+            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ProjectileType<BlastBattery_MissileBlast>(), Projectile.damage, 0, Main.myPlayer);
             Projectile.Kill();
         }
         Projectile clearCheck;
@@ -139,13 +143,14 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                 }
             }
 
-            SoundEngine.PlaySound(CustomSounds.MissileExplosion with { Volume = 0.7f }, Projectile.position);
+            if (!Main.dedServ)
+                SoundEngine.PlaySound(CustomSounds.MissileExplosion with { Volume = 0.7f }, Projectile.position);
             RedeDraw.SpawnExplosion(Projectile.Center, Color.IndianRed, DustID.LifeDrain);
         }
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glow = ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "_Glow").Value;
+            Texture2D glow = Request<Texture2D>(Texture + "_Glow").Value;
             int height = texture.Height / 3;
             int y = height * Projectile.frame;
             Vector2 position = Projectile.Center - Main.screenPosition;
@@ -157,7 +162,6 @@ namespace Redemption.Items.Weapons.PostML.Ranged
 
             return false;
         }
-
     }
     public class BlastBattery_MissileBlast : ModProjectile
     {
@@ -171,6 +175,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
 
         public override void SetDefaults()
         {
+            Projectile.DamageType = DamageClass.Ranged;
             Projectile.width = 144;
             Projectile.height = 144;
             Projectile.friendly = true;
@@ -206,12 +211,12 @@ namespace Redemption.Items.Weapons.PostML.Ranged
             Rectangle rect = new(0, y, texture.Width, height);
             Vector2 origin = new(texture.Width / 2f, height / 2f);
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
             Main.EntitySpriteDraw(texture, position, new Rectangle?(rect), Projectile.GetAlpha(Color.White), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
             return false;
         }
     }

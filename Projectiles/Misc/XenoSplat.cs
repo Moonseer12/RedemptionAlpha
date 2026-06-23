@@ -64,4 +64,13 @@ namespace Redemption.Projectiles.Misc
             }
         }
     }
+    public class XenoSplat_Small : XenoSplat
+    {
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Projectile.width = 84;
+            Projectile.height = 84;
+        }
+    }
 }

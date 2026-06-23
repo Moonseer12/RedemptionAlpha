@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Globals;
 using Terraria;
 using Terraria.Audio;
@@ -39,7 +38,7 @@ namespace Redemption.Projectiles.Magic
         }
         public override void OnKill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Shatter with { PitchVariance = .2f, Volume = .4f }, Projectile.position);
+            SoundEngine.PlaySound(SoundID.Shatter, Projectile.position);
             for (int i = 0; i < 10; i++)
             {
                 int dustIndex = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.t_Slime);
@@ -51,7 +50,7 @@ namespace Redemption.Projectiles.Magic
             {
                 int rand = Main.rand.Next(3, 5);
                 for (int i = 0; i < rand; i++)
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.Spread(7), ModContent.ProjectileType<Bacteria_Proj>(), Projectile.damage, 0, Projectile.owner, Main.rand.Next(0, 3));
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.Spread(7), ProjectileType<Bacteria_Proj>(), Projectile.damage, 0, Projectile.owner, Main.rand.Next(0, 3));
             }
         }
     }

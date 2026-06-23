@@ -1,13 +1,12 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Base;
+using Redemption.BaseExtension;
 using Redemption.Globals;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Redemption.BaseExtension;
 
 namespace Redemption.Items.Weapons.PreHM.Ranged
 {
@@ -17,6 +16,7 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Hallowed Hand Grenade of Anglon");
+            ElementID.ProjArcane[Type] = true;
             ElementID.ProjHoly[Type] = true;
             ElementID.ProjExplosive[Type] = true;
         }
@@ -49,31 +49,19 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
                 RedeDraw.SpawnExplosion(Projectile.Center, new Color(255, 216, 0), DustID.GoldFlame, 0, 30, 3);
                 Rectangle boom = new((int)Projectile.Center.X - 150, (int)Projectile.Center.Y - 150, 300, 300);
                 Rectangle boom2 = new((int)Projectile.Center.X - 80, (int)Projectile.Center.Y - 80, 160, 160);
-                if (player.Hitbox.Intersects(boom2))
+                if (player.active && !player.dead && player.Hitbox.Intersects(boom2))
                 {
                     int hitDirection = player.RightOfDir(Projectile);
-                    BaseAI.DamagePlayer(player, Projectile.damage / 4, 3, hitDirection, Projectile);
+                    BaseAI.DamagePlayer(player, Projectile.damage / 4, 4.5f, hitDirection, Projectile);
                 }
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    NPC target = Main.npc[i];
-                    if (!target.active || !target.CanBeChasedBy())
-                        continue;
-
-                    if (target.immune[Projectile.whoAmI] > 0 || !target.Hitbox.Intersects(boom))
-                        continue;
-
-                    target.immune[Projectile.whoAmI] = 20;
-                    int hitDirection = target.RightOfDir(Projectile);
-                    BaseAI.DamageNPC(target, Projectile.damage, Projectile.knockBack, hitDirection, Projectile, crit: Projectile.HeldItemCrit());
-                }
+                RedeHelper.NPCRadiusDamage(boom, Projectile, Projectile.damage, Projectile.knockBack, Projectile.CritChance);
             }
             if (Projectile.localAI[0] == 182)
                 Projectile.friendly = false;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.immune[Projectile.whoAmI] = 20;
+            target.immune[Projectile.owner] = 20;
 
             if (Projectile.localAI[0] < 180)
                 Projectile.localAI[0] = 180;

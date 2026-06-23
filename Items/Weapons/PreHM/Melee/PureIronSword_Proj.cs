@@ -53,6 +53,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
         public float progress;
         public float SwingSpeed;
         public float glow;
+        public bool parried;
         private Player Owner => Main.player[Projectile.owner];
         public int maxTime;
         public int origDamage;
@@ -72,6 +73,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             Owner.itemAnimation = 2;
 
             Vector2 armCenter = Owner.RotatedRelativePoint(Owner.MountedCenter) + new Vector2(Owner.direction * -4, -4);
+            bool parryActive = false;
             switch (Projectile.ai[0])
             {
                 case 0:
@@ -87,6 +89,11 @@ namespace Redemption.Items.Weapons.PreHM.Melee
                     {
                         Projectile.spriteDirection = Owner.direction;
                         startRotation = Owner.direction == 1 ? Projectile.velocity.ToRotation() : -Projectile.velocity.ToRotation() + MathHelper.Pi;
+                    }
+                    if (Projectile.friendly)
+                    {
+                        parryActive = true;
+                        ProjHelper.SwordClashFriendly(Projectile, Owner, ref parried);
                     }
                     if (progress < 1)
                     {
@@ -147,6 +154,11 @@ namespace Redemption.Items.Weapons.PreHM.Melee
                     {
                         Projectile.spriteDirection = Owner.direction;
                         startRotation = Owner.direction == 1 ? Projectile.velocity.ToRotation() : -Projectile.velocity.ToRotation() + MathHelper.Pi;
+                    }
+                    if (Projectile.friendly)
+                    {
+                        parryActive = true;
+                        ProjHelper.SwordClashFriendly(Projectile, Owner, ref parried);
                     }
                     if (progress < 1)
                     {
@@ -232,6 +244,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
                     thickness = 36;
                     break;
             }
+            Owner.Redemption().CreateParryWindow(Projectile.Hitbox, ref parryActive);
             Projectile.Center = armCenter + positionVector;
             if (Projectile.spriteDirection == 1)
                 Projectile.rotation = (Projectile.Center - armCenter).ToRotation() + MathHelper.PiOver4;
@@ -280,7 +293,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            RedeProjectile.Decapitation(target, ref damageDone, ref hit.Crit);
+            ProjHelper.Decapitation(target, ref damageDone, ref hit.Crit);
             if (glow < 0.8f)
                 glow += 0.2f;
             if (Owner.RedemptionPlayerBuff().pureIronBonus)

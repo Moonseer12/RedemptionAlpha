@@ -1,14 +1,13 @@
-﻿using System;
-using Terraria;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Terraria.ID;
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.Globals;
-using Terraria.GameContent;
-using Terraria.Audio;
 using Redemption.BaseExtension;
+using Redemption.Globals;
 using Redemption.Projectiles.Ranged;
+using System;
+using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.HM.Ranged
 {
@@ -35,29 +34,9 @@ namespace Redemption.Items.Weapons.HM.Ranged
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter, true);
-            if (Main.myPlayer == Projectile.owner)
-            {
-                float scaleFactor6 = 1f;
-                if (player.inventory[player.selectedItem].shoot == Projectile.type)
-                    scaleFactor6 = player.inventory[player.selectedItem].shootSpeed * Projectile.scale;
-
-                Vector2 vector13 = Main.MouseWorld - vector;
-                vector13.Normalize();
-                if (vector13.HasNaNs())
-                    vector13 = Vector2.UnitX * player.direction;
-
-                vector13 *= scaleFactor6;
-                if (vector13.X != Projectile.velocity.X || vector13.Y != Projectile.velocity.Y)
-                    Projectile.netUpdate = true;
-
-                Projectile.velocity = vector13;
-                if (player.noItems || player.CCed || player.dead || !player.active)
-                    Projectile.Kill();
-
-                Projectile.netUpdate = true;
-            }
-            Projectile.Center = player.MountedCenter;
+            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter);
+            ProjHelper.HoldOutProjBasics(Projectile, player, vector);
+            Projectile.Center = vector;
             Projectile.spriteDirection = Projectile.direction;
             Projectile.timeLeft = 2;
             player.ChangeDir(Projectile.direction);
@@ -74,7 +53,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
             offset -= 2;
             if (Main.myPlayer == Projectile.owner)
             {
-                if (Projectile.localAI[1] >= 60)
+                if (Projectile.localAI[1] >= player.HeldItem.useTime / player.GetAttackSpeed(DamageClass.Ranged))
                 {
                     if (Projectile.localAI[0]++ % 3 == 0)
                     {
@@ -92,7 +71,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
                         player.RedemptionScreen().ScreenShakeIntensity += 1;
                         SoundEngine.PlaySound(SoundID.NPCHit20, Projectile.position);
                         for (int i = 0; i < 2; i++)
-                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), gunPos, RedeHelper.PolarVector(shootSpeed + (Projectile.localAI[0] / 2), (Main.MouseWorld - gunPos).ToRotation() + Main.rand.NextFloat(-0.13f, 0.13f)), ModContent.ProjectileType<BileLauncher_Gloop>(), Projectile.damage / 3, Projectile.knockBack / 2, player.whoAmI);
+                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), gunPos, RedeHelper.PolarVector(shootSpeed + (Projectile.localAI[0] / 2), (Main.MouseWorld - gunPos).ToRotation() + Main.rand.NextFloat(-0.13f, 0.13f)), ProjectileType<BileLauncher_Gloop>(), Projectile.damage / 3, Projectile.knockBack / 2, player.whoAmI);
                     }
                     if (Projectile.localAI[0] >= 40)
                         Projectile.Kill();
@@ -101,7 +80,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
                 {
                     Projectile.localAI[1]++;
                     shake += 0.05f;
-                    if (Projectile.localAI[1] >= 59)
+                    if (Projectile.localAI[1] >= player.HeldItem.useTime - 1 && !Main.dedServ)
                         SoundEngine.PlaySound(CustomSounds.ShootChange, Projectile.position);
                     Projectile.position += new Vector2(Main.rand.NextFloat(-shake, shake), Main.rand.NextFloat(-shake, shake));
                 }
@@ -118,7 +97,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Vector2 v = RedeHelper.PolarVector(-16 + offset, Projectile.velocity.ToRotation());
             SpriteEffects spriteEffects = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-            Main.EntitySpriteDraw(texture, Projectile.Center - v - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY,
+            Main.EntitySpriteDraw(texture, Projectile.Center - v - Main.screenPosition,
                 null, Projectile.GetAlpha(lightColor), Projectile.rotation, drawOrigin, Projectile.scale, spriteEffects, 0);
             return false;
         }

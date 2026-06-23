@@ -1,6 +1,6 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.BaseExtension;
+using Redemption.Buffs.NPCBuffs;
 using Redemption.Globals;
 using Redemption.Items.Materials.PostML;
 using Redemption.Projectiles.Minions;
@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -18,11 +19,6 @@ namespace Redemption.Items.Weapons.PostML.Summon
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Chains of the Cosmos");
-            /* Tooltip.SetDefault("20 summon tag damage\n" +
-                "10% summon tag critical strike chance\n" +
-                "Your summons will focus struck enemies\n" +
-                "Strike enemies to summon friendly cosmic eyes"); */
             Item.ResearchUnlockCount = 1;
         }
 
@@ -30,9 +26,9 @@ namespace Redemption.Items.Weapons.PostML.Summon
         {
             Item.width = 36;
             Item.height = 30;
-            Item.DefaultToWhip(ModContent.ProjectileType<CosmosChains_Proj>(), 260, 6, 6, 28);
+            Item.DefaultToWhip(ProjectileType<CosmosChains_Proj>(), 220, 6, 6, 28);
             Item.shootSpeed = 6;
-            Item.rare = ModContent.RarityType<CosmicRarity>();
+            Item.rare = RarityType<CosmicRarity>();
             Item.channel = true;
             Item.value = Item.buyPrice(1, 0, 0, 0);
         }
@@ -65,12 +61,12 @@ namespace Redemption.Items.Weapons.PostML.Summon
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
-            if (player.whoAmI == Main.myPlayer && player.ownedProjectileCounts[ModContent.ProjectileType<ChainsCosmicEye>()] < 4)
+            if (player.whoAmI == Main.myPlayer && player.ownedProjectileCounts[ProjectileType<ChainsCosmicEye>()] < 4)
             {
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center + RedeHelper.PolarVector(Main.rand.Next(150, 351), RedeHelper.RandomRotation()), Vector2.Zero, ModContent.ProjectileType<ChainsCosmicEye>(), (int)(Projectile.damage * 0.5f), Projectile.knockBack, player.whoAmI, target.whoAmI);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center + RedeHelper.PolarVector(Main.rand.Next(150, 351), RedeHelper.RandomRotation()), Vector2.Zero, ProjectileType<ChainsCosmicEye>(), (int)(Projectile.damage * 0.5f), Projectile.knockBack, player.whoAmI, target.whoAmI);
             }
-            target.AddBuff(BuffID.RainbowWhipNPCDebuff, 180);
             player.MinionAttackTargetNPC = target.whoAmI;
+            target.AddBuff(BuffType<CosmosChainsDebuff>(), 180);
         }
         private int soundTimer;
         public override void PostAI()
@@ -123,6 +119,28 @@ namespace Redemption.Items.Weapons.PostML.Summon
                 {
                     frame.Y = 118;
                     frame.Height = 20;
+
+                    #region Dusts
+                    // For a more impactful look, this scales the tip of the whip up when fully extended, and down when curled up.
+                    Projectile.GetWhipSettings(Projectile, out float timeToFlyOut, out int _, out float _);
+                    float t = soundTimer / timeToFlyOut;
+                    scale = MathHelper.Lerp(0.4f, 1.3f, Utils.GetLerpValue(0.1f, 0.7f, t, true) * Utils.GetLerpValue(0.9f, 0.7f, t, true));
+
+                    float dustChance = Utils.GetLerpValue(0.1f, 0.7f, t, clamped: true) * Utils.GetLerpValue(0.9f, 0.7f, t, clamped: true);
+
+                    // Spawn dust
+                    if (dustChance > 0.5f && Main.rand.NextFloat() < dustChance * 0.7f)
+                    {
+                        Vector2 outwardsVector = list[^2].DirectionTo(list[^1]).SafeNormalize(Vector2.Zero);
+                        Dust dust = Dust.NewDustDirect(list[^1] - texture.Size() / 2, texture.Width, texture.Height, DustID.AncientLight, 0f, 0f, 100, default, Main.rand.NextFloat(1f, 1.5f));
+
+                        dust.noGravity = true;
+                        dust.velocity *= Main.rand.NextFloat() * 0.8f;
+                        dust.velocity += outwardsVector * 0.8f;
+                        dust.shader = GameShaders.Armor.GetSecondaryShader(77, Main.player[Projectile.owner]);
+
+                    }
+                    #endregion
                 }
                 else if (i > 10)
                 {

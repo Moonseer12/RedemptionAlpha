@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Globals;
 using Terraria.ModLoader;
 
@@ -21,6 +20,8 @@ namespace Redemption.Items.Weapons.HM.Melee
             Projectile.penetrate = 5;
             Projectile.timeLeft = 180;
             Projectile.light = 0.5f;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 60;
         }
         public override void AI()
         {

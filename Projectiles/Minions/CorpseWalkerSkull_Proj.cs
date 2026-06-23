@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Base;
 using Redemption.Globals;
@@ -22,6 +21,7 @@ namespace Redemption.Projectiles.Minions
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ElementID.ProjHoly[Type] = true;
+            ElementID.ProjArcane[Type] = true;
         }
 
         public override void SetDefaults()

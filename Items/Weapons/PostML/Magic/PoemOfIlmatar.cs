@@ -21,12 +21,11 @@ namespace Redemption.Items.Weapons.PostML.Magic
             ElementID.ItemEarth[Type] = true;
             ElementID.ItemArcane[Type] = true;
         }
-
         public override void SetDefaults()
         {
             Item.damage = 220;
             Item.DamageType = DamageClass.Magic;
-            Item.mana = 40;
+            Item.mana = 20;
             Item.width = 32;
             Item.height = 50;
             Item.useTime = 30;
@@ -43,18 +42,6 @@ namespace Redemption.Items.Weapons.PostML.Magic
             Item.UseSound = CustomSounds.WindLong;
 
             Item.Redemption().HideElementTooltip[ElementID.Earth] = true;
-        }
-        public override bool CanUseItem(Player player)
-        {
-            Tile tile = Framing.GetTileSafely(Player.tileTargetX, Player.tileTargetY);
-            if (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType] && !Main.tileCut[tile.TileType])
-                return false;
-
-            return true;
-        }
-        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
-        {
-            position = Main.MouseWorld;
         }
     }
 }

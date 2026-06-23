@@ -1,7 +1,6 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.BaseExtension;
 using Redemption.Buffs.Debuffs;
+using Redemption.Globals.Players;
 using Redemption.Items.Weapons.HM.Summon;
 using Terraria;
 using Terraria.Audio;
@@ -19,10 +18,11 @@ namespace Redemption.Items.Weapons.HM.Ranged
             /* Tooltip.SetDefault("Right-click to toss one in the air, catching it gives a stackable fire rate boost\n" +
                 "Missing the catch will cause you to only shoot one gun for 5 seconds\n" +
                 "Replaces normal bullets with nano bullets"); */
-            ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<AndroidHologram>();
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<AndroidHologram>();
             ItemID.Sets.SkipsInitialUseSound[Item.type] = true;
-            Item.ResearchUnlockCount = 1;
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
         public override void SetDefaults()
         {
@@ -30,8 +30,8 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Item.DamageType = DamageClass.Ranged;
             Item.width = 58;
             Item.height = 50;
-            Item.useTime = 7;
-            Item.useAnimation = 7;
+            Item.useTime = 10;
+            Item.useAnimation = 10;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.noUseGraphic = true;
@@ -42,32 +42,35 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Item.UseSound = SoundID.Item41;
             Item.autoReuse = true;
             Item.shoot = ProjectileID.PurificationPowder;
-            Item.shootSpeed = 90;
+            Item.shootSpeed = 10;
             Item.useAmmo = AmmoID.Bullet;
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
+        }
+        public override bool ReforgePrice(ref int reforgePrice, ref bool canApplyDiscount)
+        {
+            reforgePrice = Item.value / 2;
+            return true;
         }
         public override bool AltFunctionUse(Player player) => true;
         public override bool CanConsumeAmmo(Item ammo, Player player) => player.ItemUsesThisAnimation != 0 && player.altFunctionUse != 2;
         public override bool CanUseItem(Player player)
         {
-            if (player.altFunctionUse == 2 && (player.ownedProjectileCounts[ModContent.ProjectileType<HyperTechRevolvers_Proj2>()] > 0 || player.HasBuff<RevolverTossDebuff>()))
+            if (player.altFunctionUse == 2 && (player.ownedProjectileCounts[ProjectileType<HyperTechRevolvers_Proj2>()] > 0 || player.HasBuff<RevolverTossDebuff>()))
                 return false;
             return true;
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            type = ModContent.ProjectileType<HyperTechRevolvers_Proj>();
+            type = ProjectileType<HyperTechRevolvers_Proj>();
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if (player.altFunctionUse == 2 && player.ownedProjectileCounts[ModContent.ProjectileType<HyperTechRevolvers_Proj2>()] == 0)
+            if (player.altFunctionUse == 2 && player.ownedProjectileCounts[ProjectileType<HyperTechRevolvers_Proj2>()] == 0)
             {
                 SoundEngine.PlaySound(SoundID.Item7, player.Center);
-                Projectile.NewProjectile(source, position, new Vector2(Main.rand.NextFloat(-3, 3), -10), ModContent.ProjectileType<HyperTechRevolvers_Proj2>(), 0, 0, player.whoAmI, -player.direction);
+                Projectile.NewProjectile(source, position, new Vector2(Main.rand.NextFloat(-3, 3), -10), ProjectileType<HyperTechRevolvers_Proj2>(), 0, 0, player.whoAmI, -player.direction);
                 return false;
             }
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<HyperTechRevolvers_Proj2>()] == 0)
+            if (player.ownedProjectileCounts[ProjectileType<HyperTechRevolvers_Proj2>()] == 0)
                 Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI, 1);
             return true;
         }

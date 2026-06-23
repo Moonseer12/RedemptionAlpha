@@ -27,8 +27,8 @@ namespace Redemption.Items.Weapons.PreHM.Melee
 
             // Use Properties
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 28;
-            Item.useTime = 28;
+            Item.useAnimation = 30;
+            Item.useTime = 30;
             Item.UseSound = SoundID.DD2_BetsyWindAttack;
             Item.autoReuse = true;
             Item.channel = true;

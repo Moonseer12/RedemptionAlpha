@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Redemption.Base;
 using Redemption.BaseExtension;
 using Redemption.Buffs.Debuffs;
@@ -61,14 +60,14 @@ namespace Redemption.Projectiles.Magic
 
                         for (int i = 0; i < 3; i++)
                         {
-                            int dust = Dust.NewDust(npc.Center + npc.velocity - Vector2.One, 1, 1, ModContent.DustType<GlowDust>(), 0, 0, 0, default, 1.5f);
+                            int dust = Dust.NewDust(npc.Center + npc.velocity - Vector2.One, 1, 1, DustType<GlowDust>(), 0, 0, 0, default, 1.5f);
                             Main.dust[dust].noGravity = true;
                             Main.dust[dust].velocity *= 0;
                             Color dustColor = new(255, 244, 163) { A = 0 };
                             Main.dust[dust].color = dustColor;
                         }
-                        npc.AddBuff(ModContent.BuffType<StunnedDebuff>(), (int)(300 * npc.knockBackResist));
-                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Earthbind_Effect>(), 0, 0, Main.myPlayer, npc.whoAmI);
+                        npc.AddBuff(BuffType<StunnedDebuff>(), (int)(600 * npc.knockBackResist));
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), npc.Center, Vector2.Zero, ProjectileType<Earthbind_Effect>(), 0, 0, Main.myPlayer, npc.whoAmI);
                     }
                     Main.LocalPlayer.RedemptionScreen().ScreenShakeOrigin = Projectile.Center;
                     Main.LocalPlayer.RedemptionScreen().ScreenShakeIntensity += 4;
@@ -124,7 +123,7 @@ namespace Redemption.Projectiles.Magic
                 Projectile.timeLeft = 2;
             else
             {
-                int dust = Dust.NewDust(npc.Center + npc.velocity - Vector2.One, 1, 1, ModContent.DustType<GlowDust>(), 0, 0, 0, default, 1.5f);
+                int dust = Dust.NewDust(npc.Center + npc.velocity - Vector2.One, 1, 1, DustType<GlowDust>(), 0, 0, 0, default, 1.5f);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity *= 0;
                 Color dustColor = new(255, 244, 163) { A = 0 };

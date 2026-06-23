@@ -33,7 +33,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<PetrifiedWood>(), 10)
+                .AddIngredient(ItemType<PetrifiedWood>(), 10)
                 .AddTile(TileID.WorkBenches)
                 .Register();
         }

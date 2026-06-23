@@ -1,5 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using ParticleLibrary;
+﻿using ParticleLibrary.Core;
+using ParticleLibrary.Core.V3.Particles;
+using ParticleLibrary.Utilities;
 using Redemption.BaseExtension;
 using Redemption.Globals;
 using Redemption.Particles;
@@ -50,10 +51,12 @@ namespace Redemption.Projectiles.Melee
             Main.LocalPlayer.RedemptionScreen().ScreenShakeOrigin = Projectile.Center;
             Main.LocalPlayer.RedemptionScreen().ScreenShakeIntensity += 7;
 
-            for (int i = 0; i < Main.rand.Next(3, 5); i++)
+            if (Projectile.owner == Main.myPlayer)
             {
-                if (Projectile.owner == Main.myPlayer)
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.Spread(10), ModContent.ProjectileType<SpellsongMirage_Proj>(), Projectile.damage, Projectile.knockBack, player.whoAmI);
+                for (int i = 0; i < Main.rand.Next(3, 5); i++)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.Spread(10), ProjectileType<SpellsongMirage_Proj>(), Projectile.damage, Projectile.knockBack, player.whoAmI);
+                }
             }
         }
     }

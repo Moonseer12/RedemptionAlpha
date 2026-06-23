@@ -128,8 +128,8 @@ namespace Redemption.Projectiles.Minions
                 return false;
             }
 
-            if (owner.HasBuff(BuffType<NestWandBuff>()))
-                Projectile.timeLeft = 2;
+            if (!owner.HasBuff(BuffType<NestWandBuff>()))
+                Projectile.Kill();
 
             return true;
         }
@@ -139,8 +139,14 @@ namespace Redemption.Projectiles.Minions
         public override void SetStaticDefaults() => ProjectileID.Sets.MinionShot[Projectile.type] = true;
         public override void SetDefaults()
         {
-            base.SetDefaults();
             Projectile.DamageType = DamageClass.Summon;
+            Projectile.width = 16;
+            Projectile.height = 16;
+            Projectile.friendly = true;
+            Projectile.hostile = false;
+            Projectile.penetrate = 1;
+            Projectile.tileCollide = true;
+            Projectile.timeLeft = 300;
         }
     }
 }

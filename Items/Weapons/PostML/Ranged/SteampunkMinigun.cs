@@ -1,5 +1,3 @@
-using Microsoft.Xna.Framework;
-using Redemption.Items.Placeable.Tiles;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -26,8 +24,8 @@ namespace Redemption.Items.Weapons.PostML.Ranged
             Item.DamageType = DamageClass.Ranged;
             Item.width = 78;
             Item.height = 28;
-            Item.useTime = 2;
-            Item.useAnimation = 2;
+            Item.useTime = 30;
+            Item.useAnimation = 30;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.noUseGraphic = true;
@@ -41,10 +39,15 @@ namespace Redemption.Items.Weapons.PostML.Ranged
             Item.shootSpeed = 10;
             Item.useAmmo = AmmoID.Bullet;
         }
+        public override bool ReforgePrice(ref int reforgePrice, ref bool canApplyDiscount)
+        {
+            reforgePrice = Item.value / 3;
+            return true;
+        }
         public override bool CanConsumeAmmo(Item ammo, Player player) => player.ItemUsesThisAnimation != 0;
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            type = ModContent.ProjectileType<SteampunkMinigun_Proj>();
+            type = ProjectileType<SteampunkMinigun_Proj>();
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

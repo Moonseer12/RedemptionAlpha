@@ -33,8 +33,8 @@ namespace Redemption.Items.Weapons.PreHM.Melee
 
             // Use Properties
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 60;
-            Item.useTime = 60;
+            Item.useAnimation = 30;
+            Item.useTime = 30;
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = true;
 
@@ -54,7 +54,6 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             Item.Redemption().CanSwordClash = true;
         }
         public override bool MeleePrefix() => true;
-
         public override void PostUpdate()
         {
             if (!Main.rand.NextBool(30))

@@ -73,20 +73,20 @@ namespace Redemption.Projectiles.Magic
                         Projectile.localAI[1] = 0;
                 }
             }
-            if (Projectile.owner == Main.myPlayer)
+            if (Projectile.ai[0] == 0)
             {
-                if (Projectile.ai[0] == 0)
+                Projectile.timeLeft = 200;
+                Projectile.position = player.Center + MoveVector2;
+                MoveVector2 += pos;
+                if (shoot && Main.rand.NextBool(10) && Projectile.alpha <= 0)
                 {
-                    Projectile.timeLeft = 200;
-                    Projectile.position = player.Center + MoveVector2;
-                    MoveVector2 += pos;
-                    if (shoot && Main.rand.NextBool(10) && Projectile.alpha <= 0)
-                    {
-                        Projectile.tileCollide = true;
-                        SoundEngine.PlaySound(SoundID.Item70, Projectile.position);
+                    Projectile.tileCollide = true;
+                    SoundEngine.PlaySound(SoundID.Item70, Projectile.position);
+                    if (Projectile.owner == Main.myPlayer)
                         Projectile.velocity = Projectile.DirectionTo(Main.MouseWorld) * 20;
-                        Projectile.ai[0] = 1;
-                    }
+
+                    Projectile.ai[0] = 1;
+                    Projectile.netUpdate = true;
                 }
             }
             if (!player.channel)
@@ -104,10 +104,9 @@ namespace Redemption.Projectiles.Magic
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.SpreadUp(7), ProjectileType<RockslidePebble_Proj>(), Projectile.damage / 2, 1, Main.myPlayer);
                 }
             }
+            SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact, Projectile.position);
             if (Main.rand.NextBool(2))
                 SoundEngine.PlaySound(CustomSounds.RockImpact, Projectile.position);
-
-            SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact, Projectile.position);
             for (int i = 0; i < 10; i++)
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Stone,
                     -Projectile.velocity.X * 0.3f, -Projectile.velocity.Y * 0.3f, Scale: 2);

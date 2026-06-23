@@ -1,0 +1,128 @@
+=== 0.8 Beta .42 === (The Great Weapon Patch)
+- Nerfed Infected Eye damage from 800 to 600
+- Added Nature element to Antler Staff
+- Increased minimum nanobots Nanoswarmer shoots from 2 to 3
+- Reduced knockback of Ophos' Forgotten Greatsword from 5 to 4. Firestorm uses local NPC immunity instead of static. Buffed Firestorm damage from 150% to 200% base damage
+- Buffed Slayer's Rocket Fist damage from 170 to 220 and damage of full charge punch from 400% to 500%. Fist shows on player's hand while held
+- Nerfed damage of Tiny Cleaver from 120 to 90 and knockback from 6 to 3
+- Reduced shoot velocity of Double Rifle and Hyper-Tech Revolvers from 90 to 10
+- Reduced Hyper-Tech Blaster damage of spread shot bolts from 66% to 50%. Gave rebound shot infinite piercing
+- Added 1 knockback to Tesla Field Generator for prefixes
+- Buffed Death Metal crit chance from 4 to 20. Buffed damage increase from +10% per bounce to +15% per bounce
+- Buffed Dragon Slayer's Staff damage from 26 to 32 and mana cost from 15 to 10
+- Buffed Iron Realm Staff crit chance from 4 to 20
+- Reduced charge time for Holy Magnifying Glass
+- Halbirdhouse is now aimable
+- Increased size of Keeper's Claw by 25%
+- Nerfed Iron Realm Sword damage from 40 to 32 and knockback from 5 to 3
+- Buffed Eaglecrest Sling shoot speed from 5 to 10
+- Buffed Elder Wood Crossbow damage from 12 to 20
+- Added Bone Dagger to Throwing Knife ammo type
+- Bone Daggers increase Fan o' Shivs damage by 3 and velocity by 100%
+- Added Arcane element to Hallowed Hand Grenade of Anglon
+- Reduced cap of Iron Realm Bow mist from 500 to 100
+- Lightning Stone gains 20 shoot speed
+- Reduced Forest Nymph's Sickle piercing from infinite to 4
+- Reduced Keeper's Claw blood wave piercing from infinite to 6
+- Added Arcane element to Corpse-Walker Staff
+- Added Thunder element to D.A.N laser
+- Reduced damage Microshield Core shield can take from 500 to 200
+- Buffed Xenium Electrolaser damage from 175 to 200
+- Changed Xenium Lance damage increase of right-click to 150% base damage. Buffed damage of sparks from 20% to 33% base damage
+- Corrected use time and attack speed adjustments of many weapons (The following changes are mostly for consistency with attack speed adjustments and wouldn't change the actual speed of the weapons, this list is mostly to help with the wiki)
+> Pulse Blade: 45 to 15
+> Bloodstained Pike: 23 to 30
+> Crystal Glaive: 23 to 18
+> Cyber Chakram: 11 to 8
+> Ophos' Forgotten Greatsword: 28 to 30
+> Gravity Hammer: 40 to 52
+> Infectious Glaive: 23 to 30
+> Midnight: 40 to 25
+> Bile Launcher: 12 to 60
+> Corrupted D.A.N: 50 to 20
+> D.A.N: 50 to 20
+> Dragon Slayer's Staff: 26 to 30
+> Hyper-Tech Revolvers: 7 to 10 (Stackable firerate boosts are based on use time too)
+> Blade of the Mountain: 60 to 25
+> Sword of the Forgotten: 28 to 30
+> Keeper's Claw: 30 to 24
+> Noble's Halberd: 40 to 30
+> Zephos' Sword Slicer: 30 to 27
+> Zweihander: 60 to 30
+> Iron Realm Crossbow: 14 to 7
+> Mythril's Bane: 10 to 20
+> Steam-Cog Minigun: 2 to 30
+> Xenium Electrolaser: 32 to 20
+- More weapons are affected by weapon size modifiers
+- Tiny tiny touchups to Corrupted D.A.N and Double Rifle sprites
+- Added localisation for Sky Squire set lore, split it up across the set pieces
+1371. Rewrote sword clash code, now Spellsong, Wraith Slayer, Mythril's Bane, Ukonvasara sword, Dragon Cleaver, and Pure-Iron Sword can clash with Keeper's Reaper Slash, Calavia, Skeleton & Soulless Duelist, and Jolly Madman
+1383. Resprited some Taikasauva projectiles
+1403. Nerfed Piercing Nebula weapon's damage from 444 to 333 and distance scaling from 40% -> 10%
+1455. Chain of the Cosmos whip and Wire Taser have dust
+1458. Reduced velocity of thrown Chicken Eggs from 18 -> 15
+1509. Wire Taser's full length deals damage while stunning instead of just the tip
+1519. Removed Eaglecrest Javelin's piercing and buffed damage from 24 -> 26
+1609. Nerfed Cyber Chakram damage from 44 to 25 and shoot speed from 18 to 12, but gave them infinite pierce with damage fall-off, 5 armour penetration, and local immunity frames
+1628. Buffed D.A.N's spiral attack damage by 2x
+1635. Buffed P-2 Warhead Reciever's fire blast damage from base damage / 5 -> base damage / 3
+1655. Reworked Infectious Glaive back to true melee, does a combo ending in a spin, buffed damage from 78 to 120 and knockback from 6 to 10
+1766. Resprited Uranium Raygun
+1774. Increased lingering of Xenium Electrolaser's right-click laser and nerfed damage from x3 -> x2
+1930. Fixed offset glowmask issue on Shoot usestyle weapons
+1990. Doubled duration of Earthbind stun
+2007. Guns that don't shoot bullets (energy weapons, rockets, grenades) are tagged as Specialist Weapons
+2098. Added Clash bonus icon to know which weapons can sword clash
+2112. Stunned debuff duration is based on the NPC's knockback resistance in majority of cases
+2304. Changed Aura Sentries to only allow one active at a time (per player)
+2470. Nerfed Empyrean Blind: 104 to 90 damage, projectiles are now under "CultistIsResistantTo" tag, meaning certain bosses with resistence to homing projectiles will also be resistent to them
+2520. Increased knockback of Plutonium Railgun to 6
+2521. Added custom Tag Buff to Chains of the Cosmos, which allows minions to crit with 20% chance, removed its Tag Damage. Nerfed damage from 260 to 220
+2522. Portable Hologram Projector gains Thunder element, and changed the laser it fires. Buffed damage from 90 to 100
+2523. Whipping enemies will double speed of Antler Staff's Forrets for 4 seconds
+2524. Magma Staff minions will always inflicts On Fire! and also inflicts Oiled
+2526. Finally corrected the sprite of Lab Access Panel - 0, since it was using Master's sprite for who knows how long
+2529. Soaked debuff also inflicts Wet
+2530. Added local NPC immunity to Vasara Pendant, so it doesn't eat other weapon's hits
+2531. Reworked Self-Sufficient Lightning Rod: Right-click to place a conductor that zaps enemies in a radius, left-click to shoot bolts at conductor, increasing its range. Overcharging will cause explosion and reset radius
+2532. Improved Pulse Blade: Right-click gains auto-reuse. Spawning a mine when cap is reached will remove the oldest mine. Changed way mines move from being hit
+2533. Can weakly aim Sunshard Greatstaff when shooting the laser
+2534. Reduced mana cost of Poem of Illmatar from 40 to 20 but drains mana every 30 frames of use. Tornado now spawns at player instead of cursor position. Improved hitbox. Nerfed hit cooldown from 4 to 6
+2535. Improved Xenium Detonator: Right-click gains auto-reuse. Can weakly aim the laser. Can fire the laser 2x sooner after shooting bubbles
+2536. Crux Cards use Lost Souls from Void Bags properly
+2537. Keycard Doors can be opened if Keycard is in Void Bag
+2539. Removed mana cost of most summon weapons
+2540. Buffed use time of most summon weapons to 10
+2541. Reduced reforge prices of some weapons
+> Corrupted D.A.N: 0.33x cost
+> D.A.N: 0.5x cost
+> Double Rifle: 0.5x cost
+> Flak Cannon: 0.5x cost
+> Hyper-Tech Revolvers: 0.5x cost
+> Prototype Atom Rifle: 0.25x cost
+> Hyper-Tech Blaster: 0.33x cost
+> Mythril's Bane: 0.1x cost
+> Daerel's Dark-Steel Bow: 0.1x cost
+> Blast Battery: 0.33x cost
+> Plutonium Railgun: 0.2x cost
+> Salamanisku: 0.25x cost
+> Xenium Electrolaser: 0.5x cost
+2542. Buffed damage capacity of Pocket-Shield Generator from 200 to 250, Regenerates from breaking twice as fast if player has Energy
+2543. Added 1 knockback to Xenium Autoturret and Tesla Field Generator for prefixes
+2544. Wire Taser: Modified tip hitbox to be more accurate. Added extra sound effect to latching onto enemies
+2545. Nerfed damage of Diseased Meatball from 9 to 8. Inflicts Green Rashes
+2546. Reduced whip length of Root Tendril. Modified tip hitbox to be more accurate
+2547. Changed Lightning Stone: Can no longer detect enemies through tiles from afar. Removed Electrified debuff and added it to the zaps from whipping
+2548. Changed Ukon Runo: Nerfed damage from 240 to 180. Reduced rate of spawning rain from 5 to 20 frames. Rain gains local NPC immunity and pierces 6 times
+2540. Changed Midnight: Buffed crit from 4 to 24. Increased speed. Buffed damage of Nebula Spark from 50% to 100% base damage
+2550. Resprited Sky Squire vanity set
+2552. Fixed Omega Prototype treasure bags having 3 pixels gap between top and bottom (MIXELS!!)
+2553. Added Honeycomb Staff
+2554. Crystals from Crystallized Knowledge now home into enemies after breaking away
+2555. Added Holy Alliance Statue and Holy Alliance Crucible Statue
+2556. Resprited Omega Pickaxe and Iron Realm Bow
+2557. Added Omega Sentry Stand
+2559. Reduced cooldown of Hardlight set bonus from 60 to 30 seconds
+2561. Resprited Eye of the Eaglecrest Golem
+2562. Omega Obliterator's barrage missiles no longer deal contact damage while flying to their crosshair
+===============

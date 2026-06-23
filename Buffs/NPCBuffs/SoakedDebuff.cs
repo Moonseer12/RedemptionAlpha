@@ -1,6 +1,7 @@
-using Terraria;
-using Terraria.ModLoader;
 using Redemption.BaseExtension;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Buffs.NPCBuffs
 {
@@ -15,6 +16,7 @@ namespace Redemption.Buffs.NPCBuffs
         public override void Update(NPC npc, ref int buffIndex)
         {
             npc.RedemptionNPCBuff().soaked = true;
+            npc.AddBuff(BuffID.Wet, 2);
         }
     }
 }

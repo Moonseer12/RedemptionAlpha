@@ -1,5 +1,3 @@
-using Microsoft.Xna.Framework;
-using Redemption.Base;
 using Redemption.Globals;
 using Terraria;
 using Terraria.Audio;
@@ -63,30 +61,18 @@ namespace Redemption.Projectiles.Minions
                 {
                     for (int i = 0; i < 6; i++)
                     {
-                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.SpreadUp(8), ModContent.ProjectileType<AcornBomb_Shard>(), Projectile.damage / 3, 1, Main.myPlayer);
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.SpreadUp(8), ProjectileType<AcornBomb_Shard>(), Projectile.damage / 3, 1, Main.myPlayer);
                     }
                 }
                 Rectangle boom = new((int)Projectile.Center.X - 40, (int)Projectile.Center.Y - 40, 80, 80);
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    NPC target = Main.npc[i];
-                    if (!target.active || !target.CanBeChasedBy())
-                        continue;
-
-                    if (target.immune[Projectile.whoAmI] > 0 || !target.Hitbox.Intersects(boom))
-                        continue;
-
-                    target.immune[Projectile.whoAmI] = 20;
-                    int hitDirection = target.RightOfDir(Projectile);
-                    BaseAI.DamageNPC(target, Projectile.damage, Projectile.knockBack, hitDirection, Projectile, crit: Projectile.HeldItemCrit());
-                }
+                RedeHelper.NPCRadiusDamage(boom, Projectile, Projectile.damage, Projectile.knockBack);
             }
             if (Projectile.localAI[0] == 182)
                 Projectile.friendly = false;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.immune[Projectile.whoAmI] = 20;
+            target.immune[Projectile.owner] = 20;
             if (Projectile.localAI[0] < 180)
                 Projectile.localAI[0] = 180;
         }

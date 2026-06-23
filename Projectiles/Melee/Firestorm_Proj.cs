@@ -1,16 +1,14 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent;
-using Terraria;
-using Terraria.ID;
 using Redemption.Globals;
-using Terraria.ModLoader;
-using Terraria.Audio;
-using ParticleLibrary;
 using Redemption.Particles;
-using Redemption.Base;
 using System.Collections.Generic;
+using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Melee
 {
@@ -35,9 +33,15 @@ namespace Redemption.Projectiles.Melee
             Projectile.alpha = 255;
             Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Melee;
-            Projectile.usesIDStaticNPCImmunity = true;
-            Projectile.idStaticNPCHitCooldown = 6;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 6;
             Projectile.scale = 1.5f;
+        }
+        public override void OnSpawn(IEntitySource source)
+        {
+            Projectile.scale *= Projectile.ai[0];
+            Projectile.width = (int)(124 * Projectile.scale);
+            Projectile.height = (int)(210 * Projectile.scale);
         }
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
@@ -73,25 +77,9 @@ namespace Redemption.Projectiles.Melee
                 else
                     Projectile.alpha += 10;
 
-                if (Main.rand.NextBool(10))
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.Center, new Vector2(Main.rand.Next(-14, 15), -Main.rand.Next(1, 9)), Main.rand.Next(400, 403), Projectile.damage / 3, 1, player.whoAmI);
-
                 if (Projectile.alpha < 50 && !player.channel && Projectile.ai[1] == 0)
                 {
-                    for (int i = 0; i < Main.maxNPCs; i++)
-                    {
-                        NPC target = Main.npc[i];
-                        if (!target.active || !target.CanBeChasedBy())
-                            continue;
-
-                        if (target.immune[Projectile.whoAmI] > 0 || Projectile.DistanceSQ(target.Center) > 400 * 400)
-                            continue;
-
-                        target.immune[Projectile.whoAmI] = 20;
-                        int hitDirection = target.RightOfDir(Projectile);
-                        BaseAI.DamageNPC(target, (int)(Projectile.damage * 1.5f), 20, hitDirection, Projectile, crit: Projectile.HeldItemCrit());
-                        target.AddBuff(BuffID.OnFire3, 600);
-                    }
+                    RedeHelper.NPCRadiusDamage((int)(300 * Projectile.scale), Projectile, (int)(Projectile.damage * 2), 20);
                     SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, Projectile.position);
                     Projectile.ai[1] = 1;
                 }
@@ -105,12 +93,13 @@ namespace Redemption.Projectiles.Melee
                     Projectile.Kill();
             }
 
-            Projectile.Center = player.MountedCenter - new Vector2(0, 96);
+            Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter);
+            Projectile.Center = playerCenter + Vector2.UnitY * -100 * Projectile.scale;
 
             if (Projectile.alpha < 20 && Main.rand.NextBool(3))
                 RedeParticleManager.CreateEmberParticle(RedeHelper.RandAreaInEntity(Projectile), new Vector2(Main.rand.Next(-4, 5), 0), 2, Main.rand.Next(90, 121));
         }
-        public override bool? CanHitNPC(NPC target) => Projectile.alpha <= 100 ? null : false;
+        public override bool? CanHitNPC(NPC target) => Projectile.alpha <= 150 ? null : false;
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.OnFire3, 300);
@@ -136,21 +125,22 @@ namespace Redemption.Projectiles.Melee
                 int shader = GameShaders.Armor.GetShaderIdFromItemId(ItemID.LivingFlameDye);
 
                 Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-                GameShaders.Armor.ApplySecondary(shader, Main.player[Main.myPlayer], null);
+                Main.spriteBatch.BeginAdditive(true);
+                GameShaders.Armor.ApplySecondary(shader, Main.LocalPlayer, null);
             }
             else
             {
                 Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+                Main.spriteBatch.BeginAdditive();
             }
-            RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, texture, ref drawTimer, Projectile.Center + new Vector2(0, 96) - Main.screenPosition, new Rectangle?(rect), RedeColor.COLOR_GLOWPULSE * Projectile.Opacity * 0.3f, Projectile.rotation, drawOrigin, scale, 0);
-            RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, texture, ref drawTimer, Projectile.Center + new Vector2(0, 96) - Main.screenPosition, new Rectangle?(rect2), RedeColor.COLOR_GLOWPULSE * Projectile.Opacity * 0.3f, Projectile.rotation, drawOrigin, scale, 0);
-            RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, texture, ref drawTimer, Projectile.Center + new Vector2(0, 96) - Main.screenPosition, new Rectangle?(rect3), RedeColor.COLOR_GLOWPULSE * Projectile.Opacity * 0.3f, Projectile.rotation, drawOrigin, scale, 0);
-            RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, texture, ref drawTimer, Projectile.Center + new Vector2(0, 96) - Main.screenPosition, new Rectangle?(rect4), RedeColor.COLOR_GLOWPULSE * Projectile.Opacity * 0.3f, Projectile.rotation, drawOrigin, scale, 0);
+            Vector2 pos = Projectile.Center + Vector2.UnitY * 100 * Projectile.scale;
+            RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, texture, ref drawTimer, pos - Main.screenPosition, new Rectangle?(rect), RedeColor.COLOR_GLOWPULSE * Projectile.Opacity * 0.3f, Projectile.rotation, drawOrigin, scale, 0);
+            RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, texture, ref drawTimer, pos - Main.screenPosition, new Rectangle?(rect2), RedeColor.COLOR_GLOWPULSE * Projectile.Opacity * 0.3f, Projectile.rotation, drawOrigin, scale, 0);
+            RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, texture, ref drawTimer, pos - Main.screenPosition, new Rectangle?(rect3), RedeColor.COLOR_GLOWPULSE * Projectile.Opacity * 0.3f, Projectile.rotation, drawOrigin, scale, 0);
+            RedeDraw.DrawTreasureBagEffect(Main.spriteBatch, texture, ref drawTimer, pos - Main.screenPosition, new Rectangle?(rect4), RedeColor.COLOR_GLOWPULSE * Projectile.Opacity * 0.3f, Projectile.rotation, drawOrigin, scale, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
             return false;
         }
     }

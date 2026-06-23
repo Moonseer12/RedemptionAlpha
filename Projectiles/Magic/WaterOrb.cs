@@ -1,8 +1,9 @@
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.Effects;
+using Redemption.BaseExtension;
 using Redemption.Effects.Trails;
 using Redemption.Globals;
-using Redemption.Globals.Projectiles;
+using Redemption.Particles;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
@@ -31,12 +32,11 @@ namespace Redemption.Projectiles.Magic
             Projectile.tileCollide = false;
             Projectile.timeLeft = 240;
             Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 20;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             FakeKill();
-            Projectile.localNPCImmunity[target.whoAmI] = 20;
-            target.immune[Projectile.owner] = 0;
         }
 
         private readonly int NUMPOINTS = 50;
@@ -70,8 +70,11 @@ namespace Redemption.Projectiles.Magic
                 Projectile.velocity = Vector2.Zero;
 
             if (Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height))
+            {
                 Projectile.timeLeft -= 8;
-
+                if (Projectile.timeLeft <= 2)
+                    FakeKill();
+            }
             if (Main.netMode != NetmodeID.Server)
             {
                 TrailHelper.ManageBasicCaches(ref cache, ref cache2, NUMPOINTS, Projectile.Center + Projectile.velocity);
@@ -85,13 +88,17 @@ namespace Redemption.Projectiles.Magic
         {
             if (fakeTimer++ == 0)
             {
-                SoundEngine.PlaySound(SoundID.Item21 with { Volume = 0.5f }, Projectile.position);
+                SoundEngine.PlaySound(SoundID.Item21 with { Volume = 0.5f, MaxInstances = 5 }, Projectile.position);
                 for (int i = 0; i < 20; i++)
                 {
-                    int dust = Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, DustID.GemSapphire, 0, 0, Scale: 3);
+                    int dust = Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, DustID.GemSapphire, 0, 0, Scale: 2);
                     Main.dust[dust].velocity *= 2f;
                     Main.dust[dust].noGravity = true;
                 }
+                RedeParticleManager.CreateAdditiveGlowParticle(Projectile.Center - Projectile.velocity * 0.5f, Vector2.Zero, Vector2.One * 0.8f, baseColor, 40);
+                RedeParticleManager.CreateAdditiveGlowParticle(Projectile.Center - Projectile.velocity * 0.5f, Vector2.Zero, Vector2.One * 0.8f, baseColor, 40);
+                RedeParticleManager.CreateAdditiveGlowParticle(Projectile.Center - Projectile.velocity * 0.5f, Vector2.Zero, Vector2.One * 0.8f, baseColor, 40);
+                RedeParticleManager.CreateAdditiveGlowParticle(Projectile.Center - Projectile.velocity * 0.5f, Vector2.Zero, Vector2.One * 0.8f, baseColor, 40);
             }
             Projectile.alpha = 255;
             Projectile.friendly = false;
@@ -130,18 +137,84 @@ namespace Redemption.Projectiles.Magic
             return false;
         }
         public override Color? GetAlpha(Color lightColor) => new Color(255, 255, 255, 0);
-
         public override void OnKill(int timeLeft)
         {
             if (fakeTimer > 0)
                 return;
-            SoundEngine.PlaySound(SoundID.Item21 with { Volume = 0.5f }, Projectile.position);
+            SoundEngine.PlaySound(SoundID.Item21 with { Volume = 0.5f, MaxInstances = 5 }, Projectile.position);
             for (int i = 0; i < 20; i++)
             {
-                int dust = Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, DustID.GemSapphire, 0, 0, Scale: 3);
+                int dust = Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, DustID.GemSapphire, 0, 0, Scale: 2);
                 Main.dust[dust].velocity *= 2f;
                 Main.dust[dust].noGravity = true;
             }
+            RedeParticleManager.CreateAdditiveGlowParticle(Projectile.Center - Projectile.velocity * 0.5f, Vector2.Zero, Vector2.One * 0.8f, baseColor, 40);
+            RedeParticleManager.CreateAdditiveGlowParticle(Projectile.Center - Projectile.velocity * 0.5f, Vector2.Zero, Vector2.One * 0.8f, baseColor, 40);
+            RedeParticleManager.CreateAdditiveGlowParticle(Projectile.Center - Projectile.velocity * 0.5f, Vector2.Zero, Vector2.One * 0.8f, baseColor, 40);
+            RedeParticleManager.CreateAdditiveGlowParticle(Projectile.Center - Projectile.velocity * 0.5f, Vector2.Zero, Vector2.One * 0.8f, baseColor, 40);
         }
     }
+    public class WaterOrbS : WaterOrb
+    {
+        public override string Texture => "Redemption/Projectiles/Magic/WaterOrb";
+        public override void SetStaticDefaults()
+        {
+            // DisplayName.SetDefault("Water Orb");
+            ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
+            ElementID.ProjWater[Type] = true;
+            ElementID.ProjArcane[Type] = true;
+        }
+
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+        }
+
+        public override bool PreAI()
+        {
+            if (Projectile.velocity.Length() < 8)
+                Projectile.velocity *= 1.1f;
+
+            if (Projectile.localAI[1] == 0)
+            {
+                AdjustMagnitude(ref Projectile.velocity);
+            }
+            Projectile.localAI[1]++;
+            Vector2 move = Vector2.Zero;
+            float distance = 600;
+            bool targetted = false;
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC target = Main.npc[i];
+                if (!target.CanBeChasedBy() || !Collision.CanHit(Projectile.Center, 0, 0, target.Center, 0, 0) || target.Redemption().invisible)
+                    continue;
+
+                Vector2 newMove = target.Center - Projectile.Center;
+                float distanceTo = (float)Math.Sqrt(newMove.X * newMove.X + newMove.Y * newMove.Y);
+                if (distanceTo < distance)
+                {
+                    move = newMove;
+                    distance = distanceTo;
+                    targetted = true;
+                }
+            }
+            if (targetted)
+            {
+                AdjustMagnitude(ref move);
+                Projectile.velocity = (10 * Projectile.velocity + move) / 11f;
+                AdjustMagnitude(ref Projectile.velocity);
+            }
+            return true;
+        }
+
+        private static void AdjustMagnitude(ref Vector2 vector)
+        {
+            float magnitude = (float)Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
+            if (magnitude > 8f)
+            {
+                vector *= 8f / magnitude;
+            }
+        }
+    }
+
 }

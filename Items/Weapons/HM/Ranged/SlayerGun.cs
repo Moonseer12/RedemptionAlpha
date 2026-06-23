@@ -18,7 +18,10 @@ namespace Redemption.Items.Weapons.HM.Ranged
         public override void SetStaticDefaults()
         {
             ElementID.ItemThunder[Type] = true;
+
+            RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
         public override void SetDefaults()
         {
@@ -38,10 +41,12 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Item.shoot = ProjectileID.PurificationPowder;
             Item.shootSpeed = 8;
             Item.useAmmo = AmmoID.Bullet;
-            if (!Main.dedServ)
-                Item.RedemptionGlow().glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
         }
-
+        public override bool ReforgePrice(ref int reforgePrice, ref bool canApplyDiscount)
+        {
+            reforgePrice = Item.value / 3;
+            return true;
+        }
         public int AttackMode;
         public override bool AltFunctionUse(Player player) => true;
         public override bool CanUseItem(Player player)
@@ -72,7 +77,6 @@ namespace Redemption.Items.Weapons.HM.Ranged
         {
             return player.altFunctionUse != 2;
         }
-
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.altFunctionUse == 2)
@@ -105,60 +109,62 @@ namespace Redemption.Items.Weapons.HM.Ranged
                     case 0:
                         player.GetModPlayer<EnergyPlayer>().statEnergy -= 2;
                         int proj = Projectile.NewProjectile(source, position, velocity, ProjectileType<KS3_EnergyBolt>(), damage, knockback, player.whoAmI);
+                        Main.projectile[proj].DamageType = DamageClass.Ranged;
                         Main.projectile[proj].hostile = false;
                         Main.projectile[proj].friendly = true;
-                        Main.projectile[proj].DamageType = DamageClass.Ranged;
+                        Main.projectile[proj].Redemption().friendlyHostile = false;
                         Main.projectile[proj].tileCollide = true;
                         Main.projectile[proj].netUpdate = true;
                         Main.projectile[proj].extraUpdates = 3;
-                        Main.projectile[proj].velocity /= 3;
+                        Main.projectile[proj].velocity *= 0.25f;
                         break;
                     case 1:
-                        player.itemAnimationMax = Item.useTime * 3;
-                        player.itemTime = Item.useTime * 3;
-                        player.itemAnimation = Item.useTime * 3;
-                        damage = (int)(damage * 1.5f);
-
                         float numberProjectiles = 5;
                         float rotation = MathHelper.ToRadians(15);
                         for (int i = 0; i < numberProjectiles; i++)
                         {
                             Vector2 perturbedSpeed = velocity.RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (numberProjectiles - 1)));
-                            int proj3 = Projectile.NewProjectile(source, position, perturbedSpeed, ProjectileID.MartianTurretBolt, (int)(damage / 1.5f), knockback, player.whoAmI);
+                            int proj3 = Projectile.NewProjectile(source, position, perturbedSpeed, ProjectileID.MartianTurretBolt, damage / 2, knockback, player.whoAmI);
                             Main.projectile[proj3].Redemption().EnergyBased = true;
+                            Main.projectile[proj3].DamageType = DamageClass.Ranged;
                             Main.projectile[proj3].hostile = false;
                             Main.projectile[proj3].friendly = true;
-                            Main.projectile[proj3].DamageType = DamageClass.Ranged;
                             Main.projectile[proj3].tileCollide = true;
                             Main.projectile[proj3].netUpdate = true;
                         }
                         player.GetModPlayer<EnergyPlayer>().statEnergy -= 6;
                         int proj2 = Projectile.NewProjectile(source, position, velocity, ProjectileType<KS3_EnergyBolt>(), damage, knockback, player.whoAmI);
+                        Main.projectile[proj2].DamageType = DamageClass.Ranged;
                         Main.projectile[proj2].hostile = false;
                         Main.projectile[proj2].friendly = true;
-                        Main.projectile[proj2].DamageType = DamageClass.Ranged;
+                        Main.projectile[proj2].Redemption().friendlyHostile = false;
                         Main.projectile[proj2].tileCollide = true;
                         Main.projectile[proj2].netUpdate = true;
                         Main.projectile[proj2].extraUpdates = 3;
-                        Main.projectile[proj2].velocity /= 3;
+                        Main.projectile[proj2].velocity *= 0.25f;
                         break;
                     case 2:
-                        damage = (int)(damage * 1.4f);
-                        player.itemAnimationMax = Item.useTime * 2;
-                        player.itemTime = Item.useTime * 2;
-                        player.itemAnimation = Item.useTime * 2;
                         player.GetModPlayer<EnergyPlayer>().statEnergy -= 2;
-                        int proj4 = Projectile.NewProjectile(source, position, velocity, ProjectileType<ReboundShot>(), damage, knockback, player.whoAmI);
+                        int proj4 = Projectile.NewProjectile(source, position, velocity, ProjectileType<ReboundShot>(), damage * 3 / 2, knockback, player.whoAmI);
+                        Main.projectile[proj4].DamageType = DamageClass.Ranged;
                         Main.projectile[proj4].hostile = false;
                         Main.projectile[proj4].friendly = true;
-                        Main.projectile[proj4].DamageType = DamageClass.Ranged;
-                        Main.projectile[proj4].penetrate = 10;
+                        Main.projectile[proj4].Redemption().friendlyHostile = false;
+                        Main.projectile[proj4].penetrate = -1;
                         Main.projectile[proj4].netUpdate = true;
                         break;
 
                 }
             }
             return false;
+        }
+        public override float UseSpeedMultiplier(Player player)
+        {
+            if (AttackMode == 1)
+                return 0.33f;
+            if (AttackMode == 2)
+                return 0.5f;
+            return 1;
         }
         public override void AddRecipes()
         {

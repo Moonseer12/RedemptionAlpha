@@ -1,10 +1,11 @@
-﻿using Microsoft.Xna.Framework;
-using ParticleLibrary;
+using ParticleLibrary.Core;
 using ParticleLibrary.Utilities;
 using Redemption.Globals;
 using Redemption.Particles;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent.Drawing;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Magic
@@ -34,9 +35,10 @@ namespace Redemption.Projectiles.Magic
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
         public override bool? CanDamage() => Projectile.localAI[0] >= 5 && Projectile.localAI[0] < 50;
         private Vector2 pos;
-        public override void OnSpawn(IEntitySource source)
+        Projectile closeProj;
+        public override void AI()
         {
-            if (Projectile.ai[1] == 0 && Projectile.owner == Main.myPlayer)
+            if (Projectile.ai[2] == 0 && Projectile.ai[1] == 0 && Projectile.owner == Main.myPlayer)
             {
                 for (int i = 0; i < Main.rand.Next(2, 7); i++)
                 {
@@ -49,11 +51,9 @@ namespace Redemption.Projectiles.Magic
                     else
                         Projectile.NewProjectile(Projectile.GetSource_FromAI(), pos, Projectile.velocity, Type, Projectile.damage, Projectile.knockBack, Main.myPlayer, 0, i + 1);
                 }
+                Projectile.ai[2] = 1;
             }
-        }
-        Projectile closeProj;
-        public override void AI()
-        {
+
             if (++Projectile.frameCounter >= 5)
             {
                 Projectile.frameCounter = 0;
@@ -67,25 +67,32 @@ namespace Redemption.Projectiles.Magic
                 {
                     if (ClosestProj(ref closeProj, 2000, Projectile.Center, true, -1, Type))
                     {
-                        int steps = (int)Projectile.Distance(closeProj.Center) / 3;
+                        int steps = (int)Projectile.Distance(closeProj.Center) / 2;
                         for (int i = 0; i < steps; i++)
+                        {
                             RedeParticleManager.CreateQuadParticle(Vector2.Lerp(Projectile.Center, closeProj.Center, (float)i / steps), Vector2.Zero, new Vector2(.1f), Color.White.WithAlpha(0), Color.White.WithAlpha(0), 30);
+                        }
                     }
                 }
                 else
                 {
-                    int steps = (int)Projectile.Distance(pos) / 3;
+                    int steps = (int)Projectile.Distance(pos) / 2;
                     for (int i = 0; i < steps; i++)
+                    {
                         RedeParticleManager.CreateQuadParticle(Vector2.Lerp(Projectile.Center, pos, (float)i / steps), Vector2.Zero, new Vector2(.1f), Color.White.WithAlpha(0), Color.White.WithAlpha(0), 30);
+                    }
                 }
                 Projectile.ai[0] = 1;
             }
-            if (Projectile.localAI[0] >= 60)
+            if (Projectile.localAI[0] >= 40)
             {
-                Projectile.alpha += 5;
+                Projectile.alpha += 15;
                 if (Projectile.alpha >= 255)
                     Projectile.Kill();
             }
+
+            if (Projectile.timeLeft % 6 == 0 && Projectile.timeLeft > 30)
+                Dust.NewDustPerfect(Projectile.Center, DustID.TintableDustLighted, RedeHelper.PolarVector(Main.rand.NextFloat(-0.75f, 0.75f), Main.rand.NextFloat(0, 3.14f)), 100, Color.White, 1.2f);
         }
         private bool ClosestProj(ref Projectile target, float maxDistance, Vector2 position,
     bool ignoreTiles = false, int overrideTarget = -1, int type = -1)
@@ -121,6 +128,14 @@ namespace Redemption.Projectiles.Magic
                 end, 10, ref point))
                 return true;
             return false;
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            Vector2 positionInWorld = Main.rand.NextVector2FromRectangle(target.Hitbox);
+            ParticleOrchestraSettings particleOrchestraSettings = default;
+            particleOrchestraSettings.PositionInWorld = positionInWorld;
+            ParticleOrchestraSettings settings = particleOrchestraSettings;
+            ParticleOrchestrator.RequestParticleSpawn(false, ParticleOrchestraType.SilverBulletSparkle, settings, Projectile.owner);
         }
     }
 }

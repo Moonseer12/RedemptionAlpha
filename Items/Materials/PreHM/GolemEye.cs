@@ -1,12 +1,11 @@
-using Terraria.ID;
-using Terraria;
-using Terraria.Localization;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Base;
 using Redemption.Tiles.Furniture.Misc;
 using System.Collections.Generic;
+using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Materials.PreHM
 {
@@ -21,9 +20,9 @@ namespace Redemption.Items.Materials.PreHM
 
         public override void SetDefaults()
         {
-            Item.DefaultToPlaceableTile(ModContent.TileType<GolemEyeTile>());
-            Item.width = 14;
-            Item.height = 14;
+            Item.DefaultToPlaceableTile(TileType<GolemEyeTile>());
+            Item.width = 16;
+            Item.height = 16;
             Item.maxStack = 1;
             Item.value = Item.sellPrice(0, 5, 0, 0);
             Item.rare = ItemRarityID.Orange;
@@ -57,7 +56,7 @@ namespace Redemption.Items.Materials.PreHM
             if (NPC.downedMoonlord)
             {
                 glowRot += 0.03f;
-                Texture2D glow = ModContent.Request<Texture2D>("Redemption/Textures/WhiteFlare").Value;
+                Texture2D glow = Request<Texture2D>("Redemption/Textures/WhiteFlare").Value;
                 BaseUtility.MultiLerp(Main.LocalPlayer.miscCounter % 100 / 100f, scale, scale * 0.8f, scale);
                 Color color = BaseUtility.MultiLerpColor(Main.LocalPlayer.miscCounter % 100 / 100f, new Color(241, 215, 108), new Color(255, 255, 255), new Color(241, 215, 108));
                 Vector2 origin2 = new(glow.Width / 2, glow.Height / 2);
@@ -75,18 +74,18 @@ namespace Redemption.Items.Materials.PreHM
         }
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
-            Texture2D glow = ModContent.Request<Texture2D>("Redemption/Textures/WhiteFlare").Value;
+            Texture2D glow = Request<Texture2D>("Redemption/Textures/WhiteFlare").Value;
             Color color = BaseUtility.MultiLerpColor(Main.LocalPlayer.miscCounter % 100 / 100f, new Color(241, 215, 108), new Color(255, 255, 255), new Color(241, 215, 108));
             Vector2 origin = new(glow.Width / 2, glow.Height / 2);
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.BeginAdditive();
 
             spriteBatch.Draw(glow, Item.Center - Main.screenPosition, new Rectangle(0, 0, glow.Width, glow.Height), color, glowRot, origin, scale, SpriteEffects.None, 0f);
             spriteBatch.Draw(glow, Item.Center - Main.screenPosition, new Rectangle(0, 0, glow.Width, glow.Height), color, -glowRot, origin, scale, SpriteEffects.None, 0f);
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.BeginDefault();
             return true;
         }
     }

@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Items.Materials.PreHM;
 using Redemption.Items.Weapons.PreHM.Melee;
 using Redemption.Projectiles.Magic;
@@ -15,7 +14,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
         {
             /* Tooltip.SetDefault("Casts a contagious shard that sticks into enemies" +
                 "\nRight-click to break all shards stuck to enemies, causing an outward burst of projectiles"); */
-            ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<XenoXyston>();
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<XenoXyston>();
             Item.staff[Item.type] = true;
             Item.ResearchUnlockCount = 1;
         }
@@ -36,7 +35,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.value = Item.buyPrice(0, 1);
             Item.rare = ItemRarityID.Green;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<ContagionShard_Proj>();
+            Item.shoot = ProjectileType<ContagionShard_Proj>();
             Item.shootSpeed = 17f;
         }
         public override bool AltFunctionUse(Player player) => player.ownedProjectileCounts[Item.shoot] > 0;
@@ -62,7 +61,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
                         }
                     }
 
-                    proj.localAI[1] = 1;
+                    proj.ai[2] = 1;
                     proj.netUpdate = true;
                 }
                 return false;
@@ -72,7 +71,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<XenomiteShard>(), 16)
+                .AddIngredient(ItemType<XenomiteShard>(), 16)
                 .AddTile(TileID.Anvils)
                 .Register();
         }

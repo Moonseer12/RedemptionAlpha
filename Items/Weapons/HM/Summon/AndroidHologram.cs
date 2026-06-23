@@ -27,11 +27,10 @@ namespace Redemption.Items.Weapons.HM.Summon
         {
             Item.damage = 75;
             Item.DamageType = DamageClass.Summon;
-            Item.mana = 15;
             Item.width = 46;
             Item.height = 32;
-            Item.useTime = 20;
-            Item.useAnimation = 20;
+            Item.useTime = 10;
+            Item.useAnimation = 10;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.noMelee = true;
             Item.rare = ItemRarityID.LightPurple;

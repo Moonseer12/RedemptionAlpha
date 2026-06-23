@@ -296,7 +296,7 @@ namespace Redemption.Items.Weapons.HM.Melee
             for (int i = 0; i < 16; i++)
                 Dust.NewDustPerfect(target.Center + directionTo * 5 + new Vector2(0, 35) + Owner.velocity, DustType<DustSpark2>(), directionTo.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f) + 3.14f) * Main.rand.NextFloat(3f, 5f) + (Owner.velocity / 2), 0, Color.Red * .8f, 1.6f);
 
-            RedeProjectile.Decapitation(target, ref damageDone, ref hit.Crit);
+            ProjHelper.Decapitation(target, ref damageDone, ref hit.Crit);
 
             Projectile.localNPCImmunity[target.whoAmI] = (int)(maxTime * Projectile.MaxUpdates);
             target.immune[Projectile.owner] = 0;

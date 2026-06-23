@@ -1,6 +1,4 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Redemption.Base;
 using Redemption.Globals;
 using Terraria;
 using Terraria.Audio;
@@ -65,23 +63,11 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
                 }
             }
             int radius = 40;
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                NPC target = Main.npc[i];
-                if (!target.active || !target.CanBeChasedBy())
-                    continue;
-
-                if (target.immune[Projectile.whoAmI] > 0 || Projectile.DistanceSQ(target.Center) > radius * radius)
-                    continue;
-
-                target.immune[Projectile.whoAmI] = 20;
-                int hitDirection = target.RightOfDir(Projectile);
-                BaseAI.DamageNPC(target, Projectile.damage, Projectile.knockBack, hitDirection, Projectile, crit: Projectile.HeldItemCrit());
-            }
+            RedeHelper.NPCRadiusDamage(radius, Projectile, Projectile.damage, Projectile.knockBack);
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.immune[Projectile.whoAmI] = 20;
+            target.immune[Projectile.owner] = 20;
         }
 
         public override bool PreDraw(ref Color lightColor)

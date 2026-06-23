@@ -4,11 +4,11 @@ using Redemption.Effects.Trails;
 using Redemption.Effects.Trails.Tips;
 using Redemption.Globals;
 using Redemption.Items.Weapons.PreHM.Melee;
-using Redemption.Items.Weapons.PreHM.Ritualist;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.Enums;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -94,7 +94,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
                 Projectile.Kill();
 
             Vector2 armCenter = Owner.RotatedRelativePoint(Owner.MountedCenter) + new Vector2(Owner.direction * -4, -4);
-            RedeProjectile.HoldOutProj_SlowTurn(Projectile, Owner, armCenter, 0.4f);
+            ProjHelper.HoldOutProj_SlowTurn(Projectile, Owner, armCenter, 0.4f);
             Projectile.Center = armCenter;
             Projectile.spriteDirection = Projectile.direction;
             Projectile.rotation = Projectile.velocity.ToRotation();
@@ -105,10 +105,10 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Owner.itemAnimation = 2;
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - 1.57f);
 
-            if (Timer == maxTime * 4)
+            if (Timer == maxTime * 3)
                 SoundEngine.PlaySound(SoundID.Item20, Projectile.position);
 
-            if (Timer >= maxTime * 4 && Timer % maxTime == 0)
+            if (Timer >= maxTime * 3 && Timer % maxTime == 0)
             {
                 int mana = Owner.inventory[Owner.selectedItem].mana;
                 if (BasePlayer.ReduceMana(Owner, mana / 2))
@@ -121,7 +121,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
                     Owner.channel = false;
                 }
             }
-            if (Timer >= maxTime * 4)
+            if (Timer >= maxTime * 3)
             {
                 Projectile.friendly = true;
                 Projectile.alpha -= 10;
@@ -132,24 +132,36 @@ namespace Redemption.Items.Weapons.PreHM.Magic
                 Projectile.alpha -= 10;
                 Projectile.alpha = (int)MathHelper.Clamp(Projectile.alpha, 200, 255);
             }
-            if (Projectile.timeLeft < 10 || !Owner.channel || !Owner.active || Owner.dead)
+            if (Projectile.timeLeft < 20 || !Owner.channel || !Owner.active || Owner.dead)
             {
-                if (Projectile.timeLeft > 10)
+                Projectile.friendly = false;
+                if (Projectile.timeLeft > 20)
                 {
-                    Projectile.timeLeft = 10;
+                    Projectile.timeLeft = 20;
                 }
-                Projectile.alpha += 20;
+                Projectile.alpha += 25;
             }
-            lightOpacity = 0.85f;
             Timer++;
+        }
+        public override void CutTiles()
+        {
+            if (Projectile.friendly)
+            {
+                DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+                Utils.TileActionAttempt cut = new(DelegateMethods.CutTiles);
+                float rotation = Projectile.velocity.ToRotation();
+                Vector2 offset = new Vector2(Owner.direction * -32, -16);
+                Vector2 position = Projectile.Center + offset.RotatedBy(Owner.direction == 1 ? rotation : rotation + MathHelper.Pi);
+                Utils.PlotTileLine(position, position + rotation.ToRotationVector2() * 375f, 64, cut);
+            }
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float coneLength = 375;
             float maxAngle = MathHelper.ToRadians(15);
             float rotation = Projectile.velocity.ToRotation();
-            Vector2 offset = new Vector2(Owner.direction * 2, -16);
-            Vector2 position = Projectile.Center + offset.RotatedBy(Owner.direction == 1 ? Projectile.velocity.ToRotation() : Projectile.velocity.ToRotation() + MathHelper.Pi);
+            Vector2 offset = new Vector2(Owner.direction * -32, -16);
+            Vector2 position = Projectile.Center + offset.RotatedBy(Owner.direction == 1 ? rotation : rotation + MathHelper.Pi);
             if (targetHitbox.IntersectsConeSlowMoreAccurate(position, coneLength, rotation, maxAngle))
                 return true;
             return false;
@@ -162,14 +174,12 @@ namespace Redemption.Items.Weapons.PreHM.Magic
         public float damageReduction;
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            Player player = Main.player[Projectile.owner];
             float tipBonus;
-            tipBonus = MathHelper.Lerp(1.4f, .5f, player.Distance(target.Center) / 400f);
+            tipBonus = MathHelper.Lerp(1.4f, .5f, Owner.Distance(target.Center) / 400f);
             tipBonus = MathHelper.Clamp(tipBonus, 0.5f, 1);
 
             modifiers.SourceDamage *= tipBonus;
         }
-        public float lightOpacity;
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
@@ -266,7 +276,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
                 Color c = Main.dayTime ? new(249, 240, 161) : Color.CornflowerBlue;
                 c.A = 0;
                 float opacity = Projectile.Opacity * (1 - factor.X);
-                return c * opacity * .7f;
+                return c * opacity * .35f;
             });
         }
         public void ManageTrail()

@@ -222,7 +222,7 @@ namespace Redemption.Items.Tools.PreHM
             Dust.NewDustPerfect(target.Center + directionTo * 5 + new Vector2(0, 70) + Owner.velocity, DustType<DustSpark2>(), directionTo.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f) + 3.14f) * Main.rand.NextFloat(4f, 5f) + (Owner.velocity / 2), 0, Color.White * .8f, 2.5f);
 
             bool skele = NPCLists.SkeletonHumanoid.Contains(target.type);
-            RedeProjectile.Decapitation(target, ref damageDone, ref hit.Crit, skele ? 20 : 80);
+            ProjHelper.Decapitation(target, ref damageDone, ref hit.Crit, skele ? 20 : 80);
 
             Projectile.localNPCImmunity[target.whoAmI] = 20;
             target.immune[Projectile.owner] = 0;
