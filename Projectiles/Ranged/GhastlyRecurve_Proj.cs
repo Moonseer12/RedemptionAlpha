@@ -76,8 +76,8 @@ namespace Redemption.Projectiles.Ranged
         }
         public void DrawTether(Projectile Target, Vector2 screenPos, Color color1, Color color2, float Size, float Strength)
         {
-            Effect effect = Request<Effect>("Redemption/Effects/Beam", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            effect.Parameters["uTexture"].SetValue(Request<Texture2D>("Redemption/Textures/Trails/Trail_1", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value);
+            Effect effect = Request<Effect>("Redemption/Effects/Beam").Value;
+            effect.Parameters["uTexture"].SetValue(Request<Texture2D>("Redemption/Textures/Trails/Trail_1").Value);
             effect.Parameters["progress"].SetValue(Main.GlobalTimeWrappedHourly / 3);
             effect.Parameters["uColor"].SetValue(color1.ToVector4());
             effect.Parameters["uSecondaryColor"].SetValue(color2.ToVector4());

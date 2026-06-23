@@ -1,7 +1,6 @@
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Buffs.NPCBuffs;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -107,7 +106,7 @@ namespace Redemption.Projectiles.Ranged
             TargetWhoAmI = target.whoAmI;
             Projectile.velocity = (target.Center - Projectile.Center) * 0.75f;
             Projectile.netUpdate = true;
-            target.AddBuff(ModContent.BuffType<SilverwoodArrowDebuff>(), 900);
+            target.AddBuff(BuffType<SilverwoodArrowDebuff>(), 900);
 
             int maxStickingJavelins = 5;
             Point[] stickingJavelins = new Point[maxStickingJavelins];

@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
@@ -30,7 +29,7 @@ namespace Redemption.Projectiles.Magic.Noita
             Projectile.velocity.Y += 0.15f;
             Projectile.rotation += Projectile.velocity.X / 20 * Projectile.direction;
             if (Projectile.localAI[0]++ % 6 == 0)
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<DiscAfterimage>(), 0, 0, Projectile.owner, Projectile.rotation);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ProjectileType<DiscAfterimage>(), 0, 0, Projectile.owner, Projectile.rotation);
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

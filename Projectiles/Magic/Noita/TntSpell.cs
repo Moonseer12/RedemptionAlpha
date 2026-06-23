@@ -1,11 +1,10 @@
+using Redemption.Dusts;
+using Redemption.Globals;
 using System;
-using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Redemption.Dusts;
-using Terraria.Audio;
-using Redemption.Globals;
 
 namespace Redemption.Projectiles.Magic.Noita
 {
@@ -106,7 +105,7 @@ namespace Redemption.Projectiles.Magic.Noita
         {
             SoundEngine.PlaySound(SoundID.Item14 with { Pitch = .1f }, Projectile.position);
             if (Projectile.owner == Main.myPlayer)
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NoitaBombBlast>(), Projectile.damage, Projectile.knockBack, Main.myPlayer);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ProjectileType<NoitaBombBlast>(), Projectile.damage, Projectile.knockBack, Main.myPlayer);
             for (int i = 0; i < 10; i++)
             {
                 int dustIndex = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, Scale: 2f);
@@ -114,10 +113,10 @@ namespace Redemption.Projectiles.Magic.Noita
             }
             for (int i = 0; i < 20; i++)
             {
-                int dustIndex = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<NoitaBombDust>(), Scale: 3f);
+                int dustIndex = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustType<NoitaBombDust>(), Scale: 3f);
                 Main.dust[dustIndex].noGravity = true;
                 Main.dust[dustIndex].velocity *= 5f;
-                dustIndex = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<NoitaBombDust>(), Scale: 2f);
+                dustIndex = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustType<NoitaBombDust>(), Scale: 2f);
                 Main.dust[dustIndex].velocity *= 3f;
             }
             for (int g = 0; g < 2; g++)

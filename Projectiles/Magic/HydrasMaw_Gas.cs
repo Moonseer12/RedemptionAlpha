@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Buffs.Debuffs;
 using Redemption.Globals;
@@ -30,7 +29,7 @@ namespace Redemption.Projectiles.Magic
             Projectile.timeLeft = 120;
             Projectile.rotation = RedeHelper.RandomRotation();
         }
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(ModContent.BuffType<HydraAcidDebuff>(), 600);
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(BuffType<HydraAcidDebuff>(), 600);
         public override bool? CanHitNPC(NPC target)
         {
             return !target.friendly && Projectile.penetrate > 1 ? null : false;

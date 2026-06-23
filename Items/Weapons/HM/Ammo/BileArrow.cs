@@ -1,14 +1,14 @@
 using Redemption.Items.Materials.HM;
-using Terraria.ID;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.HM.Ammo
 {
     public class BileArrow : ModItem
-	{
-		public override void SetStaticDefaults()
-		{
+    {
+        public override void SetStaticDefaults()
+        {
             // DisplayName.SetDefault("Bile Arrow");
             // Tooltip.SetDefault("Decreases target's defense and drains life");
             ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.ShimmerArrow;
@@ -16,8 +16,8 @@ namespace Redemption.Items.Weapons.HM.Ammo
         }
 
         public override void SetDefaults()
-		{
-			Item.damage = 16;
+        {
+            Item.damage = 16;
             Item.DamageType = DamageClass.Ranged;
             Item.width = 14;
             Item.height = 38;
@@ -26,17 +26,17 @@ namespace Redemption.Items.Weapons.HM.Ammo
             Item.knockBack = 3f;
             Item.value = 17;
             Item.rare = ItemRarityID.Orange;
-			Item.shoot = ModContent.ProjectileType<BileArrow_Proj>();
+            Item.shoot = ProjectileType<BileArrow_Proj>();
             Item.shootSpeed = 4.25f;
             Item.ammo = AmmoID.Arrow;
-		}
-		public override void AddRecipes()
-		{
+        }
+        public override void AddRecipes()
+        {
             CreateRecipe(150)
                 .AddIngredient(ItemID.WoodenArrow, 150)
-                .AddIngredient(ModContent.ItemType<ToxicBile>())
+                .AddIngredient(ItemType<ToxicBile>())
                 .AddTile(TileID.WorkBenches)
                 .Register();
-		}
-	}
+        }
+    }
 }

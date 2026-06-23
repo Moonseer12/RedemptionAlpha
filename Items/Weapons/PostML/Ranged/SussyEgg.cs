@@ -6,16 +6,16 @@ using Terraria.ModLoader;
 namespace Redemption.Items.Weapons.PostML.Ranged
 {
     public class SussyEgg : ModItem
-	{
-		public override void SetStaticDefaults()
-		{
+    {
+        public override void SetStaticDefaults()
+        {
             // DisplayName.SetDefault("Suspicious Egg");
             // Tooltip.SetDefault("I wouldn't break it if I were you");
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(3, 7));
             Item.ResearchUnlockCount = 1;
         }
         public override void SetDefaults()
-		{
+        {
             Item.width = 16;
             Item.height = 20;
             Item.damage = 3;
@@ -31,7 +31,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
             Item.noMelee = true;
             Item.DamageType = DamageClass.Ranged;
             Item.shootSpeed = 18f;
-            Item.shoot = ModContent.ProjectileType<SussyEgg_Proj>();
+            Item.shoot = ProjectileType<SussyEgg_Proj>();
         }
     }
 }

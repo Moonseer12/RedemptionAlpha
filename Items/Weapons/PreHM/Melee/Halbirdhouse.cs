@@ -39,11 +39,11 @@ namespace Redemption.Items.Weapons.PreHM.Melee
 
             // Projectile Properties
             Item.shootSpeed = 3.7f;
-            Item.shoot = ModContent.ProjectileType<Halbirdhouse_Proj>();
+            Item.shoot = ProjectileType<Halbirdhouse_Proj>();
         }
         public override bool CanUseItem(Player player)
         {
-            return player.ownedProjectileCounts[ModContent.ProjectileType<Halbirdhouse_Proj>()] < 1;
+            return player.ownedProjectileCounts[ProjectileType<Halbirdhouse_Proj>()] < 1;
         }
     }
 }

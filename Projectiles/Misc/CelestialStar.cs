@@ -1,10 +1,10 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Base;
 using Redemption.BaseExtension;
 using Redemption.Dusts;
 using Redemption.Globals;
 using Redemption.Items.Accessories.PostML;
+using Redemption.Items.Weapons.PreHM.Ritualist;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -73,7 +73,7 @@ namespace Redemption.Projectiles.Misc
                     {
                         RedeHelper.NPCRadiusDamage(60, Projectile, player.statDefense * 2, 0);
                         SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot with { Volume = .4f, Pitch = 0.1f }, Projectile.position);
-                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<WickerManEmberExplosion_Visual>(), 0, 0, player.whoAmI, -2);
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ProjectileType<WickerManEmberExplosion_Visual>(), 0, 0, player.whoAmI, -2);
                         Projectile.Kill();
                     }
                     break;

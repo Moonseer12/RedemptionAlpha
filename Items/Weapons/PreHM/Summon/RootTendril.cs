@@ -62,6 +62,7 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             Rectangle hitbox1 = target.Hitbox;
             Rectangle hitbox2 = new((int)Projectile.WhipPointsForCollision[^1].X - 16, (int)Projectile.WhipPointsForCollision[^1].Y - 16, 32, 32);
 
+            if (hitbox1.Intersects(hitbox2))
             {
                 int steps = (int)player.Distance(target.Center) / 8;
                 for (int i = 0; i < steps; i++)

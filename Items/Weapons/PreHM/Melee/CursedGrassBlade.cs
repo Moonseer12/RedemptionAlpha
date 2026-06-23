@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Globals;
 using Redemption.Items.Weapons.PreHM.Ranged;
 using Redemption.Projectiles.Ranged;
@@ -13,7 +12,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
         public override void SetStaticDefaults()
         {
             // Tooltip.SetDefault("Slain enemies burst into seeds that sprout brambles of thorns");
-            ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<CursedThornBow>();
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<CursedThornBow>();
             Item.ResearchUnlockCount = 1;
             ElementID.ItemNature[Type] = true;
             ElementID.ItemPoison[Type] = true;

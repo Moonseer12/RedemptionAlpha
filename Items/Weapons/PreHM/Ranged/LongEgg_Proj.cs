@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.NPCs.Critters;
 using Terraria;
 using Terraria.Audio;
@@ -46,7 +45,7 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
             SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
             if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(4))
             {
-                int index = NPC.NewNPC(Projectile.GetSource_FromThis(), (int)Projectile.Center.X, (int)Projectile.position.Y, ModContent.NPCType<Chicken>());
+                int index = NPC.NewNPC(Projectile.GetSource_FromThis(), (int)Projectile.Center.X, (int)Projectile.position.Y, NPCType<Chicken>());
 
                 if (Main.netMode == NetmodeID.Server && index < Main.maxNPCs)
                     NetMessage.SendData(MessageID.SyncNPC, number: index);

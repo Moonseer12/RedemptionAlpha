@@ -1,6 +1,6 @@
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria;
 
 namespace Redemption.Items.Weapons.PreHM.Ranged
 {
@@ -31,7 +31,7 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
             Item.noMelee = true;
             Item.DamageType = DamageClass.Ranged;
             Item.shootSpeed = 14f;
-            Item.shoot = ModContent.ProjectileType<GoldChickenEgg_Proj>();
+            Item.shoot = ProjectileType<GoldChickenEgg_Proj>();
         }
         public override void PostUpdate()
         {

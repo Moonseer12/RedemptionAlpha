@@ -1,8 +1,7 @@
-using Terraria;
-using Terraria.ModLoader;
 using Redemption.Buffs.NPCBuffs;
 using Redemption.Globals;
-using Redemption.Particles;
+using Terraria;
+using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Melee
 {
@@ -38,7 +37,7 @@ namespace Redemption.Projectiles.Melee
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 300);
+            target.AddBuff(BuffType<ElectrifiedDebuff>(), 300);
         }
     }
 }

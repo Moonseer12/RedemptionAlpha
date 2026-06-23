@@ -1,5 +1,6 @@
 using Redemption.BaseExtension;
 using Redemption.Globals;
+using Redemption.Items.Weapons.PreHM.Melee;
 using Redemption.Projectiles.Magic;
 using Terraria;
 using Terraria.ID;

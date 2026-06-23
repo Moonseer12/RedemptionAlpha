@@ -1,6 +1,6 @@
-using Terraria.ModLoader;
-using Terraria.Graphics.Effects;
 using Terraria;
+using Terraria.Graphics.Effects;
+using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Misc
 {

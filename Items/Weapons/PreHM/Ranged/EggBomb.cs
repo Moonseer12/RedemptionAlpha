@@ -30,7 +30,7 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
             Item.noMelee = true;
             Item.DamageType = DamageClass.Ranged;
             Item.shootSpeed = 7f;
-            Item.shoot = ModContent.ProjectileType<EggBomb_Proj>();
+            Item.shoot = ProjectileType<EggBomb_Proj>();
             Item.ammo = Item.type;
         }
     }

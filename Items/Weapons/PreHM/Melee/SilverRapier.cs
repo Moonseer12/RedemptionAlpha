@@ -1,6 +1,6 @@
-using Terraria.ModLoader;
-using Terraria.ID;
 using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.PreHM.Melee
 {
@@ -40,7 +40,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
 
             // Projectile Properties
             Item.shootSpeed = 3.7f;
-            Item.shoot = ModContent.ProjectileType<SilverRapier_Proj>();
+            Item.shoot = ProjectileType<SilverRapier_Proj>();
         }
         public override void PostUpdate()
         {
@@ -53,7 +53,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
         }
         public override bool CanUseItem(Player player)
         {
-            return player.ownedProjectileCounts[ModContent.ProjectileType<SilverRapier_Proj>()] < 1;
+            return player.ownedProjectileCounts[ProjectileType<SilverRapier_Proj>()] < 1;
         }
     }
 }

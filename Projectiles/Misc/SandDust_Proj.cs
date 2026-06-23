@@ -1,7 +1,7 @@
-using Terraria;
-using Terraria.ModLoader;
-using Terraria.ID;
 using Redemption.Buffs.NPCBuffs;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Misc
 {
@@ -42,12 +42,12 @@ namespace Redemption.Projectiles.Misc
                 if (!Projectile.Hitbox.Intersects(target.Hitbox))
                     continue;
 
-                target.AddBuff(ModContent.BuffType<SandDustDebuff>(), 120);
+                target.AddBuff(BuffType<SandDustDebuff>(), 120);
             }
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            target.AddBuff(ModContent.BuffType<SandDustDebuff>(), 60);
+            target.AddBuff(BuffType<SandDustDebuff>(), 60);
         }
     }
 }

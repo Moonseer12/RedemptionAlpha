@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Redemption.Buffs.Debuffs;
+using System;
 using Terraria;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Terraria.ID;
 using Terraria.Audio;
-using Redemption.Buffs.Debuffs;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Misc
 {
@@ -32,7 +31,7 @@ namespace Redemption.Projectiles.Misc
         }
         public override void AI()
         {
-            for(int i = 0; i < 30; ++i)
+            for (int i = 0; i < 30; ++i)
             {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, Projectile.velocity.X, Projectile.velocity.Y, 0, default, 3);
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, Projectile.velocity.X, Projectile.velocity.Y, 0, default, 3);
@@ -54,9 +53,9 @@ namespace Redemption.Projectiles.Misc
             if (!target.behindBackWall)
             {
                 target.AddBuff(BuffID.OnFire, 600);
-                target.AddBuff(ModContent.BuffType<SkinBurnDebuff>(), 900);
-                target.AddBuff(ModContent.BuffType<RadiationDebuff>(), 300);
-                
+                target.AddBuff(BuffType<SkinBurnDebuff>(), 900);
+                target.AddBuff(BuffType<RadiationDebuff>(), 300);
+
                 Vector2 groundZeroPos = new(Projectile.ai[0], Projectile.ai[1]);
                 Vector2 throwVelocity = target.Center - groundZeroPos;
                 throwVelocity.Normalize();

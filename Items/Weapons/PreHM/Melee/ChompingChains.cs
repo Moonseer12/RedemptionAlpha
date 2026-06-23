@@ -1,10 +1,9 @@
+using Redemption.Items.Materials.PreHM;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Localization;
-using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using Redemption.Items.Materials.PreHM;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.PreHM.Melee
 {
@@ -19,7 +18,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
         }
 
         public override void SetDefaults()
-		{
+        {
             Item.damage = 28;
             Item.DamageType = DamageClass.Melee;
             Item.width = 54;
@@ -36,14 +35,14 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             Item.noMelee = true;
             Item.channel = true;
             Item.rare = ItemRarityID.Green;
-            Item.shoot = ModContent.ProjectileType<ChompingChains_Proj>();
+            Item.shoot = ProjectileType<ChompingChains_Proj>();
             Item.shootSpeed = 10;
         }
         public override void AddRecipes()
         {
             CreateRecipe()
                 .AddIngredient(ItemID.ChainKnife)
-                .AddIngredient(ModContent.ItemType<GraveSteelAlloy>(), 6)
+                .AddIngredient(ItemType<GraveSteelAlloy>(), 6)
                 .AddIngredient(ItemID.Bone, 12)
                 .AddTile(TileID.Anvils)
                 .Register();

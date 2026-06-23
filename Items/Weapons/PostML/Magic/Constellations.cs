@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Globals;
 using Redemption.Items.Materials.PostML;
 using Redemption.Projectiles.Magic;
@@ -31,9 +30,9 @@ namespace Redemption.Items.Weapons.PostML.Magic
             Item.autoReuse = true;
             Item.knockBack = 5;
             Item.value = Item.buyPrice(1, 0, 0, 0);
-            Item.rare = ModContent.RarityType<CosmicRarity>();
+            Item.rare = RarityType<CosmicRarity>();
             Item.shootSpeed = 0;
-            Item.shoot = ModContent.ProjectileType<Constellations_Star>();
+            Item.shoot = ProjectileType<Constellations_Star>();
             Item.UseSound = CustomSounds.Teleport1 with { Pitch = -0.1f };
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)

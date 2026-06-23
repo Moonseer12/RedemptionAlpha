@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Dusts;
 using Redemption.Globals;
 using System;
@@ -83,7 +82,7 @@ namespace Redemption.Projectiles.Magic.Noita
                 Vector2 dustVelocity = dustPosition - nextDustPosition + Projectile.velocity;
                 if (Main.rand.NextBool(6))
                 {
-                    Dust dust = Dust.NewDustPerfect(dustPosition, ModContent.DustType<BlackHoleDust>(), dustVelocity, Scale: 0.2f);
+                    Dust dust = Dust.NewDustPerfect(dustPosition, DustType<BlackHoleDust>(), dustVelocity, Scale: 0.2f);
                     dust.scale = distance / 30;
                     dust.scale = MathHelper.Clamp(dust.scale, 0.2f, 1);
                     dust.noGravity = true;
@@ -94,7 +93,7 @@ namespace Redemption.Projectiles.Magic.Noita
             }
             if (Main.rand.NextBool(4))
             {
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<BlackHoleDust>());
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustType<BlackHoleDust>());
                 Main.dust[dust].noGravity = true;
             }
         }

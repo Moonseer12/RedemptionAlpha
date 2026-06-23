@@ -1,9 +1,7 @@
-using Terraria;
-using Terraria.ModLoader;
 using Redemption.Buffs.NPCBuffs;
 using Redemption.Globals;
-using Redemption.Particles;
-using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Melee
 {
@@ -35,7 +33,7 @@ namespace Redemption.Projectiles.Melee
             Projectile.localNPCImmunity[target.whoAmI] = 7;
             target.immune[Projectile.owner] = 0;
 
-            target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 240);
+            target.AddBuff(BuffType<ElectrifiedDebuff>(), 240);
         }
         public override void AI()
         {

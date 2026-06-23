@@ -1,10 +1,9 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Redemption.Buffs.Debuffs;
+using Redemption.Globals;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
-using Redemption.Buffs.Debuffs;
-using Redemption.Globals;
 
 namespace Redemption.Projectiles.Misc
 {
@@ -67,14 +66,14 @@ namespace Redemption.Projectiles.Misc
                     if (!Projectile.Hitbox.Intersects(target.Hitbox))
                         continue;
 
-                    target.AddBuff(ModContent.BuffType<GreenRashesDebuff>(), 420);
+                    target.AddBuff(BuffType<GreenRashesDebuff>(), 420);
                 }
             }
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Main.rand.NextBool(5))
-                target.AddBuff(ModContent.BuffType<GlowingPustulesDebuff>(), 300);
+                target.AddBuff(BuffType<GlowingPustulesDebuff>(), 300);
         }
         public override bool PreDraw(ref Color lightColor)
         {

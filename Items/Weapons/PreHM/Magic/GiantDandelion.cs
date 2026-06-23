@@ -1,9 +1,8 @@
+using Redemption.Projectiles.Magic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Redemption.Projectiles.Magic;
-using Terraria.DataStructures;
 
 namespace Redemption.Items.Weapons.PreHM.Magic
 {
@@ -31,7 +30,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.autoReuse = true;
             Item.useTurn = true;
             Item.noMelee = true;
-            Item.shoot = ModContent.ProjectileType<GiantDandelionSeed>();
+            Item.shoot = ProjectileType<GiantDandelionSeed>();
             Item.shootSpeed = 10f;
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)

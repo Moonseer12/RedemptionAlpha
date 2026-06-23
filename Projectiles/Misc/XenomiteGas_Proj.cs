@@ -1,10 +1,9 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Redemption.Buffs.Debuffs;
+using Redemption.Globals;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
-using Redemption.Buffs.Debuffs;
-using Redemption.Globals;
 
 namespace Redemption.Projectiles.Misc
 {
@@ -62,7 +61,7 @@ namespace Redemption.Projectiles.Misc
                     if (!Projectile.Hitbox.Intersects(target.Hitbox))
                         continue;
 
-                    target.AddBuff(ModContent.BuffType<BileDebuff>(), 420);
+                    target.AddBuff(BuffType<BileDebuff>(), 420);
                 }
             }
         }

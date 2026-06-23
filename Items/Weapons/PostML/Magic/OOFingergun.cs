@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Items.Materials.HM;
 using Redemption.Items.Materials.PostML;
 using Terraria;
@@ -8,9 +7,9 @@ using Terraria.ModLoader;
 namespace Redemption.Items.Weapons.PostML.Magic
 {
     public class OOFingergun : ModItem
-	{
-		public override void SetStaticDefaults()
-		{
+    {
+        public override void SetStaticDefaults()
+        {
             // DisplayName.SetDefault("Omega Finger Gun");
             // Tooltip.SetDefault("Gradually increases fire rate");
             ItemID.Sets.SkipsInitialUseSound[Item.type] = true;
@@ -35,21 +34,21 @@ namespace Redemption.Items.Weapons.PostML.Magic
             Item.rare = ItemRarityID.Red;
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<OOFingergun_Laser>();
+            Item.shoot = ProjectileType<OOFingergun_Laser>();
             Item.shootSpeed = 13;
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            type = ModContent.ProjectileType<OOFingergun_Proj>();
+            type = ProjectileType<OOFingergun_Proj>();
         }
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<RoboBrain>())
-                .AddIngredient(ModContent.ItemType<OmegaPowerCell>(), 2)
-                .AddIngredient(ModContent.ItemType<CorruptedXenomite>(), 8)
-                .AddIngredient(ModContent.ItemType<CarbonMyofibre>(), 6)
-                .AddIngredient(ModContent.ItemType<Plating>(), 4)
+                .AddIngredient(ItemType<RoboBrain>())
+                .AddIngredient(ItemType<OmegaPowerCell>(), 2)
+                .AddIngredient(ItemType<CorruptedXenomite>(), 8)
+                .AddIngredient(ItemType<CarbonMyofibre>(), 6)
+                .AddIngredient(ItemType<Plating>(), 4)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }

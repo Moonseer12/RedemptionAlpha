@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Globals;
 using Terraria;
 using Terraria.Audio;
@@ -38,7 +37,7 @@ namespace Redemption.Projectiles.Ranged
             MakeDust();
             int rand = Main.rand.Next(2, 4);
             for (int i = 0; i < rand; i++)
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.velocity.RotatedByRandom(.4f), ModContent.ProjectileType<ElderWoodBolt_Shard>(), Projectile.damage / 2, 0, player.whoAmI);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.velocity.RotatedByRandom(.4f), ProjectileType<ElderWoodBolt_Shard>(), Projectile.damage / 2, 0, player.whoAmI);
         }
         public void MakeDust()
         {
@@ -84,7 +83,7 @@ namespace Redemption.Projectiles.Ranged
             }
 
             for (int i = 0; i < Main.rand.Next(2, 4); i++)
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Main.rand.NextVector2Unit() * 14, ModContent.ProjectileType<ElderWoodBolt_Shard>(), Projectile.damage / 2, 0, player.whoAmI);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Main.rand.NextVector2Unit() * 14, ProjectileType<ElderWoodBolt_Shard>(), Projectile.damage / 2, 0, player.whoAmI);
 
             Collision.HitTiles(Projectile.position, oldVelocity, Projectile.width, Projectile.height);
             SoundEngine.PlaySound(SoundID.Dig, Projectile.position);

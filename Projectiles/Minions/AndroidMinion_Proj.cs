@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Base;
 using Redemption.Buffs.Minions;
 using Redemption.Globals;
@@ -65,9 +64,10 @@ namespace Redemption.Projectiles.Minions
             {
                 if (Projectile.localAI[0]++ % 50 == 0 && projOwner.whoAmI == Main.myPlayer)
                 {
-                    SoundEngine.PlaySound(CustomSounds.MissileFire1 with { Volume = 0.3f, Pitch = 0.2f }, Projectile.position);
+                    if (!Main.dedServ)
+                        SoundEngine.PlaySound(CustomSounds.MissileFire1 with { Volume = 0.3f, Pitch = 0.2f }, Projectile.position);
 
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.PolarVector(14, (target.Center - Projectile.Center).ToRotation()), ModContent.ProjectileType<AndroidMinion_Fist>(), Projectile.damage, Projectile.knockBack, projOwner.whoAmI);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.PolarVector(14, (target.Center - Projectile.Center).ToRotation()), ProjectileType<AndroidMinion_Fist>(), Projectile.damage, Projectile.knockBack, projOwner.whoAmI);
                     Projectile.velocity.X -= 2 * Projectile.spriteDirection;
                 }
             }
@@ -94,10 +94,10 @@ namespace Redemption.Projectiles.Minions
         {
             if (owner.dead || !owner.active)
             {
-                owner.ClearBuff(ModContent.BuffType<AndroidMinionBuff>());
+                owner.ClearBuff(BuffType<AndroidMinionBuff>());
                 return false;
             }
-            if (owner.HasBuff(ModContent.BuffType<AndroidMinionBuff>()))
+            if (owner.HasBuff(BuffType<AndroidMinionBuff>()))
                 Projectile.timeLeft = 2;
             return true;
         }

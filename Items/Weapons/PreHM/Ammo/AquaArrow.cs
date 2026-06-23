@@ -24,7 +24,7 @@ namespace Redemption.Items.Weapons.PreHM.Ammo
             Item.knockBack = 2.5f;
             Item.value = 2;
             Item.rare = ItemRarityID.Blue;
-            Item.shoot = ModContent.ProjectileType<AquaArrow_Proj>();
+            Item.shoot = ProjectileType<AquaArrow_Proj>();
             Item.shootSpeed = 6f;
             Item.ammo = AmmoID.Arrow;
         }

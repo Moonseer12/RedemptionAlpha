@@ -35,7 +35,7 @@ namespace Redemption.Projectiles.Magic
                 float x = Projectile.velocity.X / 3f * i;
                 float y = Projectile.velocity.Y / 3f * i;
                 int size = 10;
-                int dust = Dust.NewDust(Projectile.position, Projectile.width - (size * 2), Projectile.height - size * 2, ModContent.DustType<HydraAcidDust>(), 0f, 0f, 100);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width - (size * 2), Projectile.height - size * 2, DustType<HydraAcidDust>(), 0f, 0f, 100);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity *= 0.1f;
                 Main.dust[dust].velocity += Projectile.velocity * 0.5f;
@@ -47,12 +47,12 @@ namespace Redemption.Projectiles.Magic
             if (Main.rand.NextBool(8))
             {
                 int size = 10;
-                int num157 = Dust.NewDust(Projectile.position, Projectile.width - size * 2, Projectile.height - size * 2, ModContent.DustType<HydraAcidDust>(), 0f, 0f, 100, default, 0.5f);
+                int num157 = Dust.NewDust(Projectile.position, Projectile.width - size * 2, Projectile.height - size * 2, DustType<HydraAcidDust>(), 0f, 0f, 100, default, 0.5f);
                 Main.dust[num157].velocity *= 0.25f;
                 Main.dust[num157].velocity += Projectile.velocity * 0.5f;
                 return;
             }
         }
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(ModContent.BuffType<HydraAcidDebuff>(), 600);
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(BuffType<HydraAcidDebuff>(), 600);
     }
 }

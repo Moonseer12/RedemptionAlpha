@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Projectiles.Magic;
 using Terraria;
 using Terraria.ID;
@@ -12,7 +11,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
         {
             /* Tooltip.SetDefault("Holding left-click will channel a bind at cursor point, stunning any enemies caught in it\n" +
                 "The bind is less effective on targets with high knockback resistance"); */
-            ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<Mistfall>();
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<Mistfall>();
             Item.ResearchUnlockCount = 1;
         }
 
@@ -30,7 +29,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.value = Item.sellPrice(0, 0, 72, 0);
             Item.rare = ItemRarityID.Blue;
             Item.shootSpeed = 0;
-            Item.shoot = ModContent.ProjectileType<Earthbind_Proj>();
+            Item.shoot = ProjectileType<Earthbind_Proj>();
             Item.UseSound = SoundID.Item69;
         }
         public override bool CanUseItem(Player player)

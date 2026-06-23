@@ -1,8 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Redemption.Globals;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
-using Redemption.Globals;
+using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Minions
 {

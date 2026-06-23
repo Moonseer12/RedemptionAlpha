@@ -33,7 +33,7 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<ElderWood>(), 10)
+                .AddIngredient(ItemType<ElderWood>(), 10)
                 .AddTile(TileID.WorkBenches)
                 .Register();
         }

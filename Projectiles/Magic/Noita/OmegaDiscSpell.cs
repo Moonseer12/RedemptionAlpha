@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Globals;
 using Terraria;
 using Terraria.Audio;
@@ -58,7 +57,7 @@ namespace Redemption.Projectiles.Magic.Noita
             }
             Projectile.rotation += .4f * Projectile.direction;
             if (Projectile.localAI[0]++ % 6 == 0)
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<DiscAfterimage>(), 0, 0, Projectile.owner, Projectile.rotation);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ProjectileType<DiscAfterimage>(), 0, 0, Projectile.owner, Projectile.rotation);
         }
         public override void OnKill(int timeLeft)
         {
@@ -77,7 +76,7 @@ namespace Redemption.Projectiles.Magic.Noita
                     -Projectile.velocity.Y * 0.5f);
                 Main.dust[dust].noGravity = true;
             }
-            SoundEngine.PlaySound(SoundID.Item23 with { Pitch = -.7f}, Projectile.position);
+            SoundEngine.PlaySound(SoundID.Item23 with { Pitch = -.7f }, Projectile.position);
         }
     }
 }

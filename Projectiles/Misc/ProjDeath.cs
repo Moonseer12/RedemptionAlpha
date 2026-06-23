@@ -1,6 +1,6 @@
+using Redemption.BaseExtension;
 using Terraria;
 using Terraria.ModLoader;
-using Redemption.BaseExtension;
 
 namespace Redemption.Projectiles.Misc
 {
@@ -26,10 +26,9 @@ namespace Redemption.Projectiles.Misc
         }
         public override void AI()
         {
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile target in Main.ActiveProjectiles)
             {
-                Projectile target = Main.projectile[i];
-                if (Projectile == target || !target.active || target.damage <= 0 || target.hostile || target.Redemption().TechnicallyMelee)
+                if (Projectile == target || target.damage <= 0 || target.hostile || target.minion || target.sentry)
                     continue;
 
                 target.Kill();

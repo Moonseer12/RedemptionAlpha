@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Globals;
 using Redemption.Projectiles.Misc;
 using Terraria;
@@ -45,7 +44,7 @@ namespace Redemption.Projectiles.Ranged
         public override void OnKill(int timeLeft)
         {
             if (Projectile.owner == Main.myPlayer)
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<ToxicGas_Proj>(), Projectile.damage, 0, Projectile.owner, 1);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ProjectileType<ToxicGas_Proj>(), Projectile.damage, 0, Projectile.owner, 1);
 
             for (int i = 0; i < 10; i++)
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.ToxicBubble);

@@ -56,7 +56,7 @@
 - More weapons are affected by weapon size modifiers
 - Tiny tiny touchups to Corrupted D.A.N and Double Rifle sprites
 - Added localisation for Sky Squire set lore, split it up across the set pieces
-1371. Rewrote sword clash code, now Spellsong, Wraith Slayer, Mythril's Bane, Ukonvasara sword, Dragon Cleaver, and Pure-Iron Sword can clash with Keeper's Reaper Slash, Calavia, Skeleton & Soulless Duelist, and Jolly Madman
+1371. Rewrote sword clash code, now Spellsong, Wraith Slayer, Mythril's Bane, Ukonvasara sword, Dragon Cleaver, and Pure-Iron Sword can clash with Keeper's Reaper Slash, Calavia, Skeleton Duelist, and Jolly Madman
 1383. Resprited some Taikasauva projectiles
 1403. Nerfed Piercing Nebula weapon's damage from 444 to 333 and distance scaling from 40% -> 10%
 1455. Chain of the Cosmos whip and Wire Taser have dust

@@ -6,16 +6,16 @@ using Terraria.ModLoader;
 namespace Redemption.Items.Weapons.PostML.Ranged
 {
     public class Electronade : ModItem
-	{
-		public override void SetStaticDefaults()
-		{
+    {
+        public override void SetStaticDefaults()
+        {
             // Tooltip.SetDefault("Throw an energy-filled grenade");
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(4, 11));
             Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()
-		{
+        {
             Item.width = 16;
             Item.height = 20;
             Item.damage = 190;
@@ -32,7 +32,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
             Item.DamageType = DamageClass.Ranged;
             Item.autoReuse = true;
             Item.shootSpeed = 12f;
-            Item.shoot = ModContent.ProjectileType<Electronade_Proj>();
+            Item.shoot = ProjectileType<Electronade_Proj>();
         }
-	}
+    }
 }

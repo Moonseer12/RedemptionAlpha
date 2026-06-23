@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Dusts;
 using Redemption.Globals;
 using Terraria;
@@ -30,7 +29,7 @@ namespace Redemption.Projectiles.Magic.Noita
         {
             for (int i = 0; i < 2; i++)
             {
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GreenSpellDust>());
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustType<GreenSpellDust>());
                 Main.dust[dust].velocity *= 0f;
                 Main.dust[dust].noGravity = true;
             }

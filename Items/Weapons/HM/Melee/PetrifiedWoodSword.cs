@@ -15,7 +15,7 @@ namespace Redemption.Items.Weapons.HM.Melee
         }
 
         public override void SetDefaults()
-		{
+        {
             Item.damage = 32;
             Item.DamageType = DamageClass.Melee;
             Item.width = 34;
@@ -33,7 +33,7 @@ namespace Redemption.Items.Weapons.HM.Melee
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient(ModContent.ItemType<PetrifiedWood>(), 7)
+                .AddIngredient(ItemType<PetrifiedWood>(), 7)
                 .AddTile(TileID.WorkBenches)
                 .Register();
         }

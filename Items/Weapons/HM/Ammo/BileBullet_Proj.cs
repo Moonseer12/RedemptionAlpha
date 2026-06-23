@@ -1,25 +1,24 @@
-using Terraria.Audio;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Redemption.Buffs.Debuffs;
 using Redemption.Globals;
+using Terraria;
+using Terraria.Audio;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.HM.Ammo
 {
     public class BileBullet_Proj : ModProjectile
-	{
-		public override void SetStaticDefaults()
-		{
-			// DisplayName.SetDefault("Bile Bullet");
+    {
+        public override void SetStaticDefaults()
+        {
+            // DisplayName.SetDefault("Bile Bullet");
             ElementID.ProjPoison[Type] = true;
         }
-		public override void SetDefaults()
-		{
-			Projectile.width = 4;
+        public override void SetDefaults()
+        {
+            Projectile.width = 4;
             Projectile.height = 4;
-            Projectile.aiStyle = 1;
+            Projectile.aiStyle = ProjAIStyleID.Arrow;
             Projectile.friendly = true;
             Projectile.hostile = false;
             Projectile.DamageType = DamageClass.Ranged;
@@ -27,7 +26,7 @@ namespace Redemption.Items.Weapons.HM.Ammo
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
             Projectile.extraUpdates = 1;
-			AIType = ProjectileID.Bullet;
+            AIType = ProjectileID.Bullet;
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
@@ -39,6 +38,6 @@ namespace Redemption.Items.Weapons.HM.Ammo
         {
             return Color.White * Projectile.Opacity;
         }
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(ModContent.BuffType<BileDebuff>(), 600);
-	}
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(BuffType<BileDebuff>(), 600);
+    }
 }

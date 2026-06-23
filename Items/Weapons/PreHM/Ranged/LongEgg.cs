@@ -1,6 +1,6 @@
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria;
 
 namespace Redemption.Items.Weapons.PreHM.Ranged
 {
@@ -32,7 +32,7 @@ namespace Redemption.Items.Weapons.PreHM.Ranged
             Item.noMelee = true;
             Item.DamageType = DamageClass.Ranged;
             Item.shootSpeed = 18f;
-            Item.shoot = ModContent.ProjectileType<LongEgg_Proj>();
+            Item.shoot = ProjectileType<LongEgg_Proj>();
         }
     }
 }

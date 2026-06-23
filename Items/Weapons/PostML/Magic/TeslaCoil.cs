@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Items.Weapons.PostML.Melee;
 using System.Collections.Generic;
 using Terraria;
@@ -13,7 +12,10 @@ namespace Redemption.Items.Weapons.PostML.Magic
     {
         public override void SetStaticDefaults()
         {
-            ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<Hacksaw>();
+            /* Tooltip.SetDefault("Arcs lightning from coil, targeting multiple enemies at the same time\n" +
+                "Right-click to change firing modes between multi-target and single target"); */
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<Hacksaw>();
+            Item.ResearchUnlockCount = 1;
         }
         public override void SetDefaults()
         {
@@ -33,7 +35,7 @@ namespace Redemption.Items.Weapons.PostML.Magic
             Item.noUseGraphic = true;
             Item.value = Item.sellPrice(0, 7, 50, 0);
             Item.UseSound = CustomSounds.Spark1;
-            Item.shoot = ModContent.ProjectileType<TeslaCoil_Proj>();
+            Item.shoot = ProjectileType<TeslaCoil_Proj>();
         }
         public bool AttackMode;
         public override bool AltFunctionUse(Player player) => true;

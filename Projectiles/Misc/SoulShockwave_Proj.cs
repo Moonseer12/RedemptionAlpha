@@ -1,11 +1,10 @@
-using Terraria;
-using Terraria.ModLoader;
-using Redemption.Buffs;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using Terraria.GameContent;
 using Redemption.BaseExtension;
+using Redemption.Buffs;
+using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Misc
 {
@@ -33,7 +32,7 @@ namespace Redemption.Projectiles.Misc
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Projectile.Center = player.Center;
+            Projectile.Center = player.MountedCenter;
             Projectile.localAI[0]++;
             if (Projectile.localAI[0] == 30)
             {
@@ -54,7 +53,7 @@ namespace Redemption.Projectiles.Misc
                         dust.noGravity = true;
                     }
                     player.RedemptionPlayerBuff().trappedSoulBoost += 0.015f;
-                    player.AddBuff(ModContent.BuffType<SoulBaubleBuff>(), 300);
+                    player.AddBuff(BuffType<SoulBaubleBuff>(), 300);
                 }
             }
             if (Projectile.localAI[0] < 60)
@@ -78,10 +77,10 @@ namespace Redemption.Projectiles.Misc
             Rectangle rect = new(0, 0, texture.Width, texture.Height);
             Vector2 origin = new(texture.Width / 2f, texture.Height / 2f);
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
             Main.EntitySpriteDraw(texture, position, new Rectangle?(rect), Projectile.GetAlpha(Color.Cyan) * 0.7f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
             return false;
         }
     }

@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Dusts;
 using Redemption.Globals;
 using Terraria;
@@ -37,7 +36,7 @@ namespace Redemption.Projectiles.Magic
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile proj = Main.projectile[i];
-                if (!proj.active || !proj.friendly || proj.type != ModContent.ProjectileType<HydrasMaw_Proj>())
+                if (!proj.active || !proj.friendly || proj.type != ProjectileType<HydrasMaw_Proj>())
                     continue;
 
                 if (!Projectile.Hitbox.Intersects(proj.Hitbox))
@@ -52,7 +51,7 @@ namespace Redemption.Projectiles.Magic
             SoundEngine.PlaySound(SoundID.Item107, Projectile.position);
             for (int i = 0; i < 25; i++)
             {
-                int dustIndex = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<HydraAcidDust>(), 0f, 0f, 100, default, 2f);
+                int dustIndex = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustType<HydraAcidDust>(), 0f, 0f, 100, default, 2f);
                 Main.dust[dustIndex].velocity *= 3f;
             }
             for (int i = 0; i < 15; i++)
@@ -65,15 +64,15 @@ namespace Redemption.Projectiles.Magic
                 if (Projectile.localAI[0] is 1)
                 {
                     for (int i = 0; i < 6; i++)
-                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(Main.rand.Next(-4, 7), Main.rand.Next(-6, -3)), ModContent.ProjectileType<HydrasMaw_Proj>(), Projectile.damage, Projectile.knockBack, Main.myPlayer);
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(Main.rand.Next(-4, 7), Main.rand.Next(-6, -3)), ProjectileType<HydrasMaw_Proj>(), Projectile.damage, Projectile.knockBack, Main.myPlayer);
 
                     for (int i = 0; i < 18; i++)
-                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, RedeHelper.PolarVector(Main.rand.Next(8, 12), MathHelper.ToRadians(20) * i), ModContent.ProjectileType<HydrasMaw_Gas>(), Projectile.damage, 0, Projectile.owner);
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, RedeHelper.PolarVector(Main.rand.Next(8, 12), MathHelper.ToRadians(20) * i), ProjectileType<HydrasMaw_Gas>(), Projectile.damage, 0, Projectile.owner);
                 }
                 for (int i = 0; i < 12; i++)
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, RedeHelper.PolarVector(Main.rand.Next(6, 8), MathHelper.ToRadians(30) * i), ModContent.ProjectileType<HydrasMaw_Gas>(), Projectile.damage, 0, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, RedeHelper.PolarVector(Main.rand.Next(6, 8), MathHelper.ToRadians(30) * i), ProjectileType<HydrasMaw_Gas>(), Projectile.damage, 0, Projectile.owner);
                 for (int i = 0; i < 6; i++)
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, RedeHelper.PolarVector(Main.rand.Next(3, 4), MathHelper.ToRadians(60) * i), ModContent.ProjectileType<HydrasMaw_Gas>(), Projectile.damage, 0, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, RedeHelper.PolarVector(Main.rand.Next(3, 4), MathHelper.ToRadians(60) * i), ProjectileType<HydrasMaw_Gas>(), Projectile.damage, 0, Projectile.owner);
             }
         }
         public override bool OnTileCollide(Vector2 oldVelocity)

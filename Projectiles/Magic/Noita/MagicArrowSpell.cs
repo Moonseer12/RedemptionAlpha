@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Redemption.Dusts;
 using Redemption.Globals;
 using Terraria;
@@ -29,7 +28,7 @@ namespace Redemption.Projectiles.Magic.Noita
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + 1.57f;
-            int dust = Dust.NewDust(Projectile.Center - Vector2.One, 1, 1, ModContent.DustType<GreenSpellDust>());
+            int dust = Dust.NewDust(Projectile.Center - Vector2.One, 1, 1, DustType<GreenSpellDust>());
             Main.dust[dust].noGravity = true;
             Main.dust[dust].velocity *= 0f;
             Projectile.velocity.Y += 0.01f;

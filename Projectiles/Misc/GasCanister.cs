@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Buffs.NPCBuffs;
 using Redemption.Globals;
@@ -42,17 +41,17 @@ namespace Redemption.Projectiles.Misc
                 Projectile.frame = 1;
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Gore.NewGore(Projectile.GetSource_FromThis(), Projectile.position + new Vector2(13, 2), RedeHelper.SpreadUp(5),
-                        ModContent.Find<ModGore>("Redemption/GasCanister1").Type);
-                    Gore.NewGore(Projectile.GetSource_FromThis(), Projectile.position + new Vector2(-13, 2), RedeHelper.SpreadUp(5),
-                        ModContent.Find<ModGore>("Redemption/GasCanister2").Type);
+                    Gore.NewGore(Projectile.GetSource_FromAI(), Projectile.position + new Vector2(13, 2), RedeHelper.SpreadUp(5),
+                        Find<ModGore>("Redemption/GasCanister1").Type);
+                    Gore.NewGore(Projectile.GetSource_FromAI(), Projectile.position + new Vector2(-13, 2), RedeHelper.SpreadUp(5),
+                        Find<ModGore>("Redemption/GasCanister2").Type);
                 }
 
                 if (!Main.dedServ)
                     SoundEngine.PlaySound(CustomSounds.Gas1, Projectile.position);
 
                 if (Projectile.owner == Main.myPlayer)
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), spawn, Vector2.Zero, ModContent.ProjectileType<GasCanister_Gas>(), 0, 0, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), spawn, Vector2.Zero, ProjectileType<GasCanister_Gas>(), 0, 0, Projectile.owner);
             }
 
             if (Projectile.localAI[0] >= 300)
@@ -133,7 +132,7 @@ namespace Redemption.Projectiles.Misc
                     if (!Projectile.Hitbox.Intersects(target.Hitbox))
                         continue;
 
-                    target.AddBuff(ModContent.BuffType<ViralityDebuff>(), 420);
+                    target.AddBuff(BuffType<ViralityDebuff>(), 420);
                 }
             }
         }

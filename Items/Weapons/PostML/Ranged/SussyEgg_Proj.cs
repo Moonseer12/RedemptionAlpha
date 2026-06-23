@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -49,7 +48,8 @@ namespace Redemption.Items.Weapons.PostML.Ranged
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             Collision.HitTiles(Projectile.position, oldVelocity, Projectile.width, Projectile.height);
-            SoundEngine.PlaySound(CustomSounds.BAZINGA, Projectile.position);
+            if (!Main.dedServ)
+                SoundEngine.PlaySound(CustomSounds.BAZINGA, Projectile.position);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 int index = NPC.NewNPC(Projectile.GetSource_FromThis(), (int)Projectile.Center.X, (int)Projectile.position.Y, NPCID.MoonLordCore);

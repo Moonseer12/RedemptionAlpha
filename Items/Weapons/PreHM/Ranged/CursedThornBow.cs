@@ -1,6 +1,5 @@
 using Redemption.BaseExtension;
 using Redemption.Globals;
-using Redemption.Items.Weapons.PreHM.Ritualist;
 using Redemption.Items.Weapons.PreHM.Summon;
 using Redemption.Projectiles.Ranged;
 using Terraria;
