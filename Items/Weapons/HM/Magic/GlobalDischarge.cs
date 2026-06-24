@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Globals.Players;
 using Redemption.Items.Weapons.HM.Melee;
-using Redemption.Items.Weapons.HM.Ritualist;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

@@ -225,7 +225,7 @@ namespace Redemption.Items.Weapons.PostML.Melee
         }
         public override void OnKill(int timeLeft)
         {
-            RedeDraw.SpawnXenoSplat(Projectile.Center, false);
+            RedeDraw.SpawnXenoSplat(Projectile.Center);
             SoundEngine.PlaySound(SoundID.NPCDeath1, Projectile.position);
             for (int i = 0; i < 30; i++)
             {

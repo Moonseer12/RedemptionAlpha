@@ -18,10 +18,10 @@
 - Buffed Eaglecrest Sling shoot speed from 5 to 10
 - Buffed Elder Wood Crossbow damage from 12 to 20
 - Added Bone Dagger to Throwing Knife ammo type
-- Bone Daggers increase Fan o' Shivs damage by 3 and velocity by 100%
+- Bone Throwing Knives increase Fan o' Shivs damage by 3 and velocity by 100%
 - Added Arcane element to Hallowed Hand Grenade of Anglon
 - Reduced cap of Iron Realm Bow mist from 500 to 100
-- Lightning Stone gains 20 shoot speed
+- Lightning Stone gets tossed out when used
 - Reduced Forest Nymph's Sickle piercing from infinite to 4
 - Reduced Keeper's Claw blood wave piercing from infinite to 6
 - Added Arcane element to Corpse-Walker Staff
@@ -29,6 +29,8 @@
 - Reduced damage Microshield Core shield can take from 500 to 200
 - Buffed Xenium Electrolaser damage from 175 to 200
 - Changed Xenium Lance damage increase of right-click to 150% base damage. Buffed damage of sparks from 20% to 33% base damage
+- Bloodstained Pike is now aimable
+- Reduced fall speed of using Gravity Hammer
 - Corrected use time and attack speed adjustments of many weapons (The following changes are mostly for consistency with attack speed adjustments and wouldn't change the actual speed of the weapons, this list is mostly to help with the wiki)
 > Pulse Blade: 45 to 15
 > Bloodstained Pike: 23 to 30

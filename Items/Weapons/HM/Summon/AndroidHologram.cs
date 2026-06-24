@@ -15,7 +15,7 @@ namespace Redemption.Items.Weapons.HM.Summon
         {
             // Tooltip.SetDefault("Summons a little Android to fight for you");
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 20));
-            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<WireTaser>();
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<WireTaser.WireTaser>();
 
             ElementID.ItemExplosive[Type] = true;
 

@@ -26,6 +26,7 @@ using SubworldLibrary;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -244,6 +245,7 @@ namespace Redemption.NPCs.Bosses.Keeper
         private bool SoulCharging;
         private bool Reap;
         private Vector2 origin;
+        private bool parried;
 
         public int ID { get => (int)NPC.ai[3]; set => NPC.ai[3] = value; }
 
@@ -276,6 +278,8 @@ namespace Redemption.NPCs.Bosses.Keeper
 
             if (AIState != ActionState.Death && AIState != ActionState.Unveiled && AIState != ActionState.Attacks)
                 NPC.LookAtEntity(player);
+
+            bool parryActive = false;
             switch (AIState)
             {
                 case ActionState.Begin:
@@ -436,40 +440,17 @@ namespace Redemption.NPCs.Bosses.Keeper
                                 }
                                 if (NPC.alpha <= 0 && AITimer < 200)
                                 {
+                                    parried = false;
                                     AITimer = 200;
                                     NPC.frameCounter = 0;
                                     NPC.frame.Y = 0;
                                 }
                                 if (AITimer >= 200 && NPC.frame.Y >= 4 * 71 && NPC.frame.Y <= 6 * 71)
                                 {
-                                    for (int i = 0; i < Main.maxNPCs; i++)
-                                    {
-                                        NPC target = Main.npc[i];
-                                        if (!target.active || target.whoAmI == NPC.whoAmI || (!target.friendly &&
-                                            !NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[target.type]))
-                                            continue;
-
-                                        if (target.immune[NPC.whoAmI] > 0 || !target.Hitbox.Intersects(SlashHitbox))
-                                            continue;
-
-                                        target.immune[NPC.whoAmI] = 30;
-                                        int hitDirection = target.RightOfDir(NPC);
-                                        BaseAI.DamageNPC(target, NPC.damage, 3, hitDirection, NPC);
-                                        target.AddBuff(BuffID.Bleeding, 600);
-                                    }
-                                    for (int p = 0; p < Main.maxPlayers; p++)
-                                    {
-                                        Player target = Main.player[p];
-                                        if (!target.active || target.dead)
-                                            continue;
-
-                                        if (!target.Hitbox.Intersects(SlashHitbox))
-                                            continue;
-
-                                        int hitDirection = target.RightOfDir(NPC);
-                                        BaseAI.DamagePlayer(target, NPC.damage, 3, hitDirection, NPC);
-                                        target.AddBuff(BuffID.Bleeding, 600);
-                                    }
+                                    if (NPC.frame.Y is 4 * 71)
+                                        parryActive = true;
+                                    ProjHelper.SwordClashHostile(SlashHitbox, NPC, ref parried);
+                                    NPC.RedemptionHitbox().DamageInHitbox(NPC, SlashHitbox, NPC.damage, 4.5f, parried);
                                 }
                                 if (AITimer >= 235)
                                 {
@@ -889,6 +870,7 @@ namespace Redemption.NPCs.Bosses.Keeper
                     }
                     break;
             }
+            NPC.Redemption().CreateParryWindow(SlashHitbox, ref parryActive);
         }
 
         public void MoveClamp()

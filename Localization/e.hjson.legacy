@@ -5510,7 +5510,7 @@ Mods: {
 				Tooltip: ""
 			}
 
-			SilverwoodBow: {
+			DaerelsSilverwoodBow: {
 				DisplayName: Silverwood Bow
 				Tooltip: ""
 			}

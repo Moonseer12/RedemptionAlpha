@@ -37,6 +37,7 @@ namespace Redemption.Particles
 
         private static ParticleBuffer<GlowParticleBehavior> _glowParticleAdditiveBuffer;
         private static ParticleBuffer<WhiteGlowParticleBehavior> _whiteGlowParticleBuffer;
+        private static ParticleBuffer<SharpParticleBehavior> _sharpParticleBuffer;
 
 
         public static Color[] emberColors = [new(240, 149, 46, 0), new(187, 63, 25, 0), new(131, 23, 37, 0)];
@@ -212,6 +213,10 @@ namespace Redemption.Particles
             _whiteGlowParticleBuffer = new(16384);
             ParticleManagerV3.RegisterUpdatable(_whiteGlowParticleBuffer);
             ParticleManagerV3.RegisterRenderable(Layer.BeforeDust, _whiteGlowParticleBuffer);
+
+            _sharpParticleBuffer = new(8192);
+            ParticleManagerV3.RegisterUpdatable(_sharpParticleBuffer);
+            ParticleManagerV3.RegisterRenderable(Layer.BeforeDust, _sharpParticleBuffer);
         }
         public override void Unload()
         {
@@ -242,13 +247,13 @@ namespace Redemption.Particles
             _blackholeParticleBuffer = null;
             _shadowParticleCollections = null;
             _slashParticleBuffer = null;
-            _slashParticle2Buffer = null;
             _laserParticleCollections = null;
             _pulseParticleBuffer = null;
             _rainbowParticleBuffer = null;
             _speedParticleBuffer = null;
             _glowParticleAdditiveBuffer = null;
             _whiteGlowParticleBuffer = null;
+            _sharpParticleBuffer = null;
         }
 
         #region QuadParticles
@@ -637,22 +642,20 @@ namespace Redemption.Particles
         }
 
         public static void CreateLaserParticle(Vector2 position, Vector2 velocity, float scale, Color color,
-            float squish = 5, int duration = 8, Layer layer = Layer.BeforeDust)
+            int duration = 8, int peak = 0, Layer layer = Layer.BeforeDust)
         {
             if (Main.netMode == NetmodeID.Server)
                 return;
 
             var Position = position.ToNumerics();
             var Velocity = velocity.ToNumerics();
-            var Scale = new SystemVector2(scale);
+            var Scale = new SystemVector2(72) * scale;
 
             if (_laserParticleCollections.TryGetValue(layer, out ParticleCollection collection))
             {
                 collection.Create(
-                    new ParticleInfo(Position, SystemVector2.Zero, Velocity.ToRotation() + MathHelper.PiOver2, Scale,
-                        color, duration, 0, squish),
-                    new ParticleInfo(Position, SystemVector2.Zero, Velocity.ToRotation() + MathHelper.PiOver2, Scale,
-                        color, duration, 0, squish));
+                    new ParticleInfo(Position, Velocity, Velocity.ToRotation() + MathHelper.PiOver2, Scale,
+                        color, duration, peak));
             }
         }
 
@@ -765,6 +768,20 @@ namespace Redemption.Particles
                 new SystemVector2(scale) * 0.02f, color, duration, deAcc, earlyKillTimer, extension));
             _speedParticleBuffer.Create(new ParticleInfo(Position, Velocity * 0.5f, Velocity.ToRotation(),
                 new SystemVector2(scale) * 0.025f, color, duration, deAcc, earlyKillTimer, extension));
+        }
+
+        public static void CreateSharpParticle(Vector2 position, Vector2 velocity, float scale, Color color,
+            int duration = 14, float dec = 0.91f, float extension = 20, float gravity = 0)
+        {
+            if (Main.netMode == NetmodeID.Server)
+                return;
+
+            var Position = position.ToNumerics();
+            var Velocity = velocity.ToNumerics();
+            var Scale = new SystemVector2(16, 16) * scale;
+
+            _sharpParticleBuffer.Create(new ParticleInfo(Position, Velocity, Velocity.ToRotation(), Scale * 0.16f,
+                color, duration, dec, extension, gravity));
         }
 
         public static void CreateDaggerSlashParticle(Vector2 position, Vector2 velocity, float scale, Color color,

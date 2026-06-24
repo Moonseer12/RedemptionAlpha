@@ -47,7 +47,8 @@ namespace Redemption.Projectiles.Minions
 
             Lighting.AddLight(Projectile.Center, Projectile.Opacity * 0.2f, Projectile.Opacity * 0, Projectile.Opacity * 0);
 
-            Projectile.Center = owner.RotatedRelativePoint(owner.MountedCenter) + RedeHelper.PolarVector(200, 6.28f / owner.numMinions * Projectile.minionPos - 1.57f * total);
+            AI_GetMyGroupIndexAndFillBlackList(null, out int index, out int total);
+            Projectile.Center = owner.RotatedRelativePoint(owner.MountedCenter) + RedeHelper.PolarVector(200, 6.28f / total * index - 1.57f * total);
             Projectile.localAI[1]++;
 
             if (Projectile.localAI[0] == 0)
@@ -81,6 +82,23 @@ namespace Redemption.Projectiles.Minions
                         Dust d = Dust.NewDustPerfect(Main.rand.NextVector2FromRectangle(rect), DustID.RedTorch, Vector2.UnitY * -2);
                         d.noGravity = true;
                     }
+                }
+            }
+        }
+        private void AI_GetMyGroupIndexAndFillBlackList(List<int> blackListedTargets, out int index, out int totalIndexesInGroup)
+        {
+            index = 0;
+            totalIndexesInGroup = 0;
+            for (int i = 0; i < 1000; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                if (projectile.active && projectile.owner == Projectile.owner && projectile.type == Projectile.type && (projectile.type != ProjectileID.BabyBird || projectile.frame == Main.projFrames[projectile.type] - 1))
+                {
+                    if (Projectile.whoAmI > i)
+                    {
+                        index++;
+                    }
+                    totalIndexesInGroup++;
                 }
             }
         }

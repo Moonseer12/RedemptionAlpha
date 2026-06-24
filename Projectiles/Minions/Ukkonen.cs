@@ -61,11 +61,10 @@ namespace Redemption.Projectiles.Minions
                     Projectile.frame = 0;
             }
             float sin = (float)(Math.Sin(Projectile.ai[1]++ / 20) * 20);
-            Projectile.AI_GetMyGroupIndexAndFillBlackList(null, out int index, out int _);
-            Vector2 DefaultPos = new(player.Center.X + sin, player.Center.Y - 40 - (index * 30));
+            Vector2 DefaultPos = new(player.Center.X + sin, player.Center.Y - 40 - (Projectile.minionPos * 30));
             if (RedeHelper.ClosestNPC(ref target, 900, Projectile.Center, true, player.MinionAttackTargetNPC))
             {
-                Vector2 AttackPos = new(target.Center.X + sin, target.position.Y - 60 - (index * 30));
+                Vector2 AttackPos = new(target.Center.X + sin, target.position.Y - 60 - (Projectile.minionPos * 30));
                 Projectile.Move(AttackPos, 30, 2);
                 if (Projectile.ai[1] % 20 == 0 && Projectile.owner == Main.myPlayer)
                 {

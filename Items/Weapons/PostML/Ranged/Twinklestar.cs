@@ -96,7 +96,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
             Player.itemAnimation = 2;
 
             Vector2 playerCenter = Player.RotatedRelativePoint(Player.MountedCenter, true);
-            RedeProjectile.HoldOutProj_SlowTurn(Projectile, Player, playerCenter, 0.4f);
+            ProjHelper.HoldOutProj_SlowTurn(Projectile, Player, playerCenter, 0.4f);
             Projectile.Center = playerCenter + Projectile.velocity * 10;
             Projectile.rotation = Projectile.velocity.ToRotation();
             Projectile.spriteDirection = Projectile.direction;

@@ -1,16 +1,16 @@
-using Terraria.ModLoader;
-using Terraria.ID;
-using Terraria;
-using Microsoft.Xna.Framework;
-using Terraria.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent;
-using Redemption.Globals;
-using System;
 using Redemption.Base;
 using Redemption.BaseExtension;
 using Redemption.Buffs.NPCBuffs;
+using Redemption.Globals;
+using Redemption.Projectiles;
 using Redemption.Projectiles.Magic;
+using System;
+using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.NPCs.Minibosses.Calavia
 {
@@ -38,14 +38,7 @@ namespace Redemption.NPCs.Minibosses.Calavia
             if (Projectile.frame is 5)
             {
                 NPC npc = Main.npc[(int)Projectile.ai[0]];
-                for (int i = 0; i < Main.maxProjectiles; i++)
-                {
-                    Projectile proj = Main.projectile[i];
-                    if (!proj.active)
-                        continue;
-
-                    RedeProjectile.SwordClashHostile(Projectile, proj, npc, ref parried);
-                }
+                ProjHelper.SwordClashHostile(Projectile, npc, ref parried);
             }
             return !parried && Projectile.frame is 5;
         }
@@ -56,11 +49,12 @@ namespace Redemption.NPCs.Minibosses.Calavia
         public override void AI()
         {
             NPC npc = Main.npc[(int)Projectile.ai[0]];
-            if (!npc.active || npc.ai[0] is 4 or 9 or 10 || npc.type != ModContent.NPCType<Calavia>())
+            if (!npc.active || npc.ai[0] is 4 or 9 or 10 || npc.type != NPCType<Calavia>())
             {
                 Projectile.Kill();
                 return;
             }
+
             Projectile.Redemption().swordHitbox = new((int)(Projectile.spriteDirection == -1 ? Projectile.Center.X - 100 : Projectile.Center.X), (int)(Projectile.Center.Y - 70), 100, 136);
 
             if (npc.ModNPC is Calavia calavia)
@@ -96,37 +90,28 @@ namespace Redemption.NPCs.Minibosses.Calavia
                         }
                         if (Projectile.frame >= 5 && Projectile.frame <= 6)
                         {
-                            for (int i = 0; i < Main.maxProjectiles; i++)
+                            foreach (Projectile target in Main.ActiveProjectiles)
                             {
-                                Projectile target = Main.projectile[i];
-                                if (!target.active)
-                                    continue;
-
-                                if (target.ai[0] is 0 && (target.type == ModContent.ProjectileType<Icefall_Proj>() || target.type == ModContent.ProjectileType<Calavia_Icefall>()) && Projectile.Redemption().swordHitbox.Intersects(target.Hitbox))
+                                if (target.ai[0] is 0 && (target.type == ProjectileType<Icefall_Proj>() || target.type == ProjectileType<Calavia_Icefall>()) && Projectile.Redemption().swordHitbox.Intersects(target.Hitbox))
                                 {
                                     DustHelper.DrawCircle(target.Center, DustID.IceTorch, 1, 2, 2, dustSize: 2, nogravity: true);
-                                    SoundEngine.PlaySound(CustomSounds.CrystalHit, Projectile.position);
+                                    if (!Main.dedServ)
+                                        SoundEngine.PlaySound(CustomSounds.CrystalHit, Projectile.position);
                                     target.velocity.Y = Main.rand.NextFloat(-2, 0);
-                                    target.velocity.X = npc.spriteDirection * 18f;
+                                    target.velocity.X = 18f * npc.spriteDirection;
                                     target.hostile = true;
                                     target.ai[0] = 1;
                                     continue;
                                 }
-                                if (target.whoAmI == Projectile.whoAmI || !target.friendly || target.damage > 100)
+                                if (!ProjReflect.HostileReflectCheck(Projectile, target, npc, 200))
                                     continue;
 
-                                if (target.velocity.Length() == 0 || !Projectile.Redemption().swordHitbox.Intersects(target.Hitbox) || (!target.HasElement(ElementID.Ice) && (target.alpha > 0 || target.DamageType == DamageClass.Magic)) || target.ProjBlockBlacklist(true))
+                                if (target.velocity.Length() == 0 || !Projectile.Redemption().swordHitbox.Intersects(target.Hitbox) || (!target.HasElement(ElementID.Ice) && (target.alpha > 0 || target.DamageType == DamageClass.Magic)) || ProjReflect.ProjBlockBlacklist(target, true))
                                     continue;
 
                                 SoundEngine.PlaySound(SoundID.Tink, Projectile.position);
-                                DustHelper.DrawCircle(target.Center, DustID.IceTorch, 1, 4, 4, nogravity: true);
-                                if (target.friendly)
-                                {
-                                    target.hostile = true;
-                                    target.friendly = false;
-                                }
-                                target.damage /= 4;
-                                target.velocity.X = -target.velocity.X * 0.9f;
+                                RedeDraw.SpawnExplosion(target.Center, new Color(214, 239, 243), shakeAmount: 0, scale: .5f, noDust: true, rot: RedeHelper.RandomRotation(), tex: "Redemption/Textures/SwordClash");
+                                ProjReflect.HostileReflectEffect(target, true, .9f);
                             }
                         }
                         if (Projectile.frame > 9)
@@ -134,6 +119,11 @@ namespace Redemption.NPCs.Minibosses.Calavia
                     }
                 }
             }
+            bool parryActive = false;
+            if (Projectile.frame is 5)
+                parryActive = true;
+
+            npc.Redemption().CreateParryWindow(Projectile.Redemption().swordHitbox, ref parryActive);
             Projectile.spriteDirection = npc.spriteDirection;
             Projectile.Center = npc.Center;
         }
@@ -177,7 +167,7 @@ namespace Redemption.NPCs.Minibosses.Calavia
             {
                 SoundEngine.PlaySound(SoundID.Item30, target.position);
                 DustHelper.DrawDustImage(target.Center, DustID.Frost, 0.5f, "Redemption/Effects/DustImages/Flake", 2, true, RedeHelper.RandomRotation());
-                target.AddBuff(ModContent.BuffType<IceFrozen>(), 1800 - ((int)MathHelper.Clamp(target.lifeMax, 60, 1780)));
+                target.AddBuff(BuffType<IceFrozen>(), 1800 - ((int)MathHelper.Clamp(target.lifeMax, 60, 1780)));
             }
         }
         public override bool PreDraw(ref Color lightColor)
@@ -195,7 +185,7 @@ namespace Redemption.NPCs.Minibosses.Calavia
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition - new Vector2(40 * npc.spriteDirection, 50 - offset) + Vector2.UnitY * Projectile.gfxOffY,
                 new Rectangle?(rect), Projectile.GetAlpha(lightColor), Projectile.rotation, drawOrigin, Projectile.scale, effects, 0);
 
-            Texture2D slash = ModContent.Request<Texture2D>("Redemption/Items/Weapons/PreHM/Melee/BladeOfTheMountain_SlashProj").Value;
+            Texture2D slash = Request<Texture2D>("Redemption/Items/Weapons/PreHM/Melee/BladeOfTheMountain_SlashProj").Value;
             int height2 = slash.Height / 6;
             int y2 = height2 * (Projectile.frame - 5);
             Rectangle rect2 = new(0, y2, slash.Width, height2);
@@ -242,11 +232,12 @@ namespace Redemption.NPCs.Minibosses.Calavia
         public override void AI()
         {
             NPC npc = Main.npc[(int)Projectile.ai[0]];
-            if (!npc.active || npc.ai[0] is 4 or 9 or 10 || npc.type != ModContent.NPCType<Calavia>())
+            if (!npc.active || npc.ai[0] is 4 or 9 or 10 || npc.type != NPCType<Calavia>())
             {
                 Projectile.Kill();
                 return;
             }
+
             if (npc.ModNPC is Calavia calavia)
             {
                 switch (Projectile.ai[1])
@@ -262,7 +253,7 @@ namespace Redemption.NPCs.Minibosses.Calavia
                     case 1:
                         calavia.customArmRot = (npc.Center - Projectile.Center).ToRotation() + MathHelper.PiOver2;
                         speed = (float)Math.Sin(Timer / 3) / 6;
-                        if (Timer < 20)
+                        if (Timer < 20 && npc.HasValidTarget)
                             startVector = RedeHelper.PolarVector(1, (Main.player[npc.target].Center - npc.Center).ToRotation() + speed);
                         vector = startVector * Length;
                         if (Timer++ >= 2)
@@ -296,9 +287,10 @@ namespace Redemption.NPCs.Minibosses.Calavia
                                 Main.LocalPlayer.RedemptionScreen().ScreenShakeIntensity += 5;
 
                                 SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact, Projectile.position);
-                                SoundEngine.PlaySound(CustomSounds.EarthBoom with { Pitch = .1f, Volume = .5f }, Projectile.position);
+                                if (!Main.dedServ)
+                                    SoundEngine.PlaySound(CustomSounds.EarthBoom with { Pitch = .1f, Volume = .5f }, Projectile.position);
                                 Collision.HitTiles(Projectile.Center - new Vector2(6, 6), vector / 3, 12, 12);
-                                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, vector / 2, ModContent.ProjectileType<Calavia_BladeStab>(), Projectile.damage, Projectile.knockBack, Main.myPlayer);
+                                Projectile.NewProjectile(Terraria.Entity.InheritSource(npc), Projectile.Center, vector / 2, ProjectileType<Calavia_BladeStab>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, ai2: npc.whoAmI);
                             }
                             npc.ai[2] = 2;
                             npc.netUpdate = true;
@@ -336,7 +328,7 @@ namespace Redemption.NPCs.Minibosses.Calavia
                             speed = MathHelper.ToRadians(6);
                             SoundEngine.PlaySound(SoundID.DD2_BetsyWindAttack, Projectile.position);
                             if (Projectile.owner == Main.myPlayer)
-                                Projectile.NewProjectile(Projectile.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Calavia_ArcticWind>(), 0, 0, Main.myPlayer, npc.whoAmI);
+                                Projectile.NewProjectile(Projectile.GetSource_FromAI(), npc.Center, Vector2.Zero, ProjectileType<Calavia_ArcticWind>(), 0, 0, Main.myPlayer, npc.whoAmI);
                             Projectile.scale = 1;
                             Timer = 0;
                             Projectile.ai[1] = 5;
@@ -359,27 +351,20 @@ namespace Redemption.NPCs.Minibosses.Calavia
                             speed *= 0.9f;
                         else
                         {
-                            for (int i = 0; i < Main.maxProjectiles; i++)
+                            foreach (Projectile target in Main.ActiveProjectiles)
                             {
-                                Projectile target = Main.projectile[i];
-                                if (!target.active || target.whoAmI == Projectile.whoAmI || !target.friendly || target.damage > 100)
+                                if (!ProjReflect.HostileReflectCheck(Projectile, target, npc, 200))
                                     continue;
 
                                 if (Projectile.DistanceSQ(target.Center) > 140 * 140)
                                     continue;
 
-                                if (target.velocity.Length() == 0 || (!target.HasElement(ElementID.Ice) && (target.alpha > 0 || target.DamageType == DamageClass.Magic)) || target.ProjBlockBlacklist(true))
+                                if (target.velocity.Length() == 0 || (!target.HasElement(ElementID.Ice) && (target.alpha > 0 || target.DamageType == DamageClass.Magic)) || ProjReflect.ProjBlockBlacklist(target, true))
                                     continue;
 
                                 SoundEngine.PlaySound(SoundID.Tink, Projectile.position);
-                                DustHelper.DrawCircle(target.Center, DustID.IceTorch, 1, 4, 4, nogravity: true);
-                                if (target.friendly)
-                                {
-                                    target.hostile = true;
-                                    target.friendly = false;
-                                }
-                                target.damage /= 4;
-                                target.velocity.X = -target.velocity.X * 0.9f;
+                                RedeDraw.SpawnExplosion(target.Center, new Color(214, 239, 243), shakeAmount: 0, scale: .5f, noDust: true, rot: RedeHelper.RandomRotation(), tex: "Redemption/Textures/SwordClash");
+                                ProjReflect.HostileReflectEffect(target, true, .9f);
                             }
                         }
                         if (Timer >= 120)
@@ -421,7 +406,7 @@ namespace Redemption.NPCs.Minibosses.Calavia
             Vector2 v = RedeHelper.PolarVector(10, (Projectile.Center - npc.Center).ToRotation());
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginAdditive();
 
             if (glow > 0)
             {
@@ -444,7 +429,7 @@ namespace Redemption.NPCs.Minibosses.Calavia
             }
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.BeginDefault();
 
             Main.EntitySpriteDraw(texture, Projectile.Center - v - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
             return false;

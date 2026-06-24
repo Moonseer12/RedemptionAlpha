@@ -75,7 +75,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
                                 if (!Main.dedServ)
                                     SoundEngine.PlaySound(CustomSounds.PlasmaShot, player.position);
 
-                                EnergyPlayer.ConsumeEnergy(player, 6);
+                                player.GetModPlayer<EnergyPlayer>().statEnergy -= 6;
 
                                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), gunPos1, Projectile.velocity.SafeNormalize(default) * Distance / 120f, ProjectileType<CorruptedDoubleRifle_Beam>(), (int)(Projectile.damage * bonus * 2), Projectile.knockBack, player.whoAmI, 1, Distance);
                                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), gunPos2, Projectile.velocity.SafeNormalize(default) * Distance / 120f, ProjectileType<CorruptedDoubleRifle_Beam>(), (int)(Projectile.damage * bonus * 2), Projectile.knockBack, player.whoAmI, 1, Distance);

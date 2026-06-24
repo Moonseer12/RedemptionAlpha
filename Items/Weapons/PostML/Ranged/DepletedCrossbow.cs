@@ -1,5 +1,6 @@
 using Redemption.Items.Accessories.PostML;
 using Redemption.Items.Materials.HM;
+using Redemption.Items.Weapons.PostML.Magic;
 using Redemption.Projectiles.Ranged;
 using System.Collections.Generic;
 using Terraria;
@@ -18,7 +19,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                 "Consumes uranium as ammo\n" +
                 "No ammo cost if the user has at least 10 uranium"); */
             ItemID.Sets.IsRangedSpecialistWeapon[Type] = true;
-            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<Criticade>();
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<TeslaCoil>();
             Item.ResearchUnlockCount = 1;
         }
 

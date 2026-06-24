@@ -2712,6 +2712,21 @@ Mods: {
 				DisplayName: Czas odnowienia Sztandaru Mobilizacji
 				Description: Nie możesz postawić kolejnej flagi
 			}
+
+			CorruptedSentryBaseBuff: {
+				// DisplayName: Omega Sentry Stand
+				// Description: A platform for sentries
+			}
+
+			HoneycombStaffBuff: {
+				// DisplayName: Honeycomb Hive
+				// Description: Tell your enemies to buzz off!
+			}
+
+			CosmosChainsDebuff: {
+				// DisplayName: Cosmos Chains Tag
+				// Description: ""
+			}
 		}
 
 		Biomes: {
@@ -4545,16 +4560,31 @@ Mods: {
 			SkySquiresGreaves: {
 				DisplayName: Nagolenniki Niebiańskiego Dziedzica
 				Tooltip: ""
+				/* Lore:
+					'''
+					'Greaves made of Kanite, worn by the Sky Squires of Ithon. The metal has a blue hue and a cold touch,
+					being used as a replacement for iron which is lacking in southern Ithon.'
+					''' */
 			}
 
 			SkySquiresHelm: {
 				DisplayName: Hełm Niebiańskiego Dziedzica
 				Tooltip: ""
+				/* Lore:
+					'''
+					'A sallet helm made of Kanite, worn by the Sky Squires of Ithon. The Sky Squires are a unit of the south,
+					protecting the kingdoms of Yln, Klycub, and Norapass.'
+					''' */
 			}
 
 			SkySquiresTabard: {
 				DisplayName: Tabard Giermka Nieba
 				Tooltip: ""
+				/* Lore:
+					'''
+					'A tabard made of Kanite and cloth in a checkered pattern, worn by the Sky Squires of Ithon. The armour
+					allows better flexibility than most, useful for marching to the rescue swiftly.'
+					''' */
 			}
 
 			SwordHeadband: {
@@ -9337,7 +9367,7 @@ Mods: {
 					'''
 			}
 
-			SilverwoodBow: {
+			DaerelsSilverwoodBow: {
 				DisplayName: Łuk ze Srebrnego Drewna Daerela
 				Tooltip:
 					'''
@@ -11118,6 +11148,36 @@ Mods: {
 				DisplayName: Starożytne Nasiona Długiej Trawy
 				Tooltip: ""
 			}
+
+			HolyAllianceStatue: {
+				// DisplayName: Holy Alliance Statue
+				// Tooltip: ""
+			}
+
+			HolyAllianceStatue2: {
+				// DisplayName: Holy Alliance Crucible Statue
+				// Tooltip: ""
+			}
+
+			CorruptedSentryBase: {
+				// DisplayName: Omega Sentry Stand
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a platform to place other sentries atop
+					50% increased damage to sentries placed on the platform
+					''' */
+			}
+
+			HoneycombStaff: {
+				// DisplayName: Honeycomb Staff
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a hive that produces friendly bees
+					Whip the hive to produce giant bees, but be careful to not make it angry!
+					''' */
+			}
 		}
 
 		Projectiles: {
@@ -11858,6 +11918,11 @@ Mods: {
 			Blisterface_GirusTalk.DisplayName: Złowieszczy Głos
 			Blisterface_Drip_Proj.DisplayName: Kropla Mułu
 			// ErhanMagnifyingGlass_HoldOut.DisplayName: "{$Mods.Redemption.Items.ErhanMagnifyingGlass.DisplayName}"
+			// LightningRod_Conductor.DisplayName: Conductor Rod
+			// LightningRod_Discharge.DisplayName: "{$Mods.Redemption.Items.LightningRod.DisplayName}"
+			// CorruptedSentryBase_Proj.DisplayName: Corrupted Sentry Base_ Proj
+			// HoneycombStaff_Proj.DisplayName: Honeycomb Hive
+			// XenoSplat_Small.DisplayName: Xeno Splat
 		}
 
 		NPCs: {

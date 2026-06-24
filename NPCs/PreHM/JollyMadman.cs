@@ -194,6 +194,7 @@ namespace Redemption.NPCs.PreHM
             TimerRand = Main.rand.Next(80, 280);
             NPC.netUpdate = true;
         }
+        private bool parried;
         public override void AI()
         {
             Player player = Main.player[NPC.target];
@@ -201,6 +202,8 @@ namespace Redemption.NPCs.PreHM
             NPC.TargetClosest();
             if (AIState != ActionState.Slash)
                 NPC.LookByVelocity();
+
+            bool parryActive = false;
             Rectangle SlashHitbox = new((int)(NPC.spriteDirection == -1 ? NPC.Center.X - 45 : NPC.Center.X + 7), (int)(NPC.Center.Y - 34), 38, 60);
             dodgeCooldown--;
             dodgeCooldown = (int)MathHelper.Max(0, dodgeCooldown);
@@ -310,38 +313,17 @@ namespace Redemption.NPCs.PreHM
                     if (NPC.velocity.Y == 0)
                         NPC.velocity.X *= 0.9f;
 
-                    if (NPC.frame.Y == 6 * 62 && globalNPC.attacker.Hitbox.Intersects(SlashHitbox))
+                    if (NPC.frame.Y == 6 * 62)
                     {
-                        int damage = NPC.RedemptionNPCBuff().disarmed ? NPC.damage / 3 : NPC.damage;
-                        if (globalNPC.attacker is NPC attackerNPC && attackerNPC.immune[NPC.whoAmI] <= 0)
-                        {
-                            attackerNPC.immune[NPC.whoAmI] = 10;
-                            int hitDirection = attackerNPC.RightOfDir(NPC);
-                            BaseAI.DamageNPC(attackerNPC, damage, 5, hitDirection, NPC);
-                            if (attackerNPC.life <= 0)
-                            {
-                                for (int i = 0; i < 30; i++)
-                                {
-                                    int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.LifeDrain);
-                                    Main.dust[dustIndex].velocity.Y = -3;
-                                    Main.dust[dustIndex].velocity.X = 0;
-                                    Main.dust[dustIndex].noGravity = true;
-                                }
-                                SoundEngine.PlaySound(SoundID.NPCHit48, NPC.position);
-                                NPC.life += 250;
-                                if (NPC.life >= NPC.lifeMax)
-                                    NPC.life = NPC.lifeMax;
-                                NPC.HealEffect(250);
-                            }
-                        }
-                        else if (globalNPC.attacker is Player attackerPlayer)
-                        {
-                            int hitDirection = attackerPlayer.RightOfDir(NPC);
-                            BaseAI.DamagePlayer(attackerPlayer, damage, 5, hitDirection, NPC);
-                        }
+                        if (NPC.frameCounter == 0)
+                            parried = false;
+                        parryActive = true;
+                        ProjHelper.SwordClashHostile(SlashHitbox, NPC, ref parried);
+                        NPC.RedemptionHitbox().DamageInHitbox(NPC, SlashHitbox, NPC.damage, 4.5f, parried, 10);
                     }
                     break;
             }
+            NPC.Redemption().CreateParryWindow(SlashHitbox, ref parryActive);
         }
         public override void PostAI()
         {

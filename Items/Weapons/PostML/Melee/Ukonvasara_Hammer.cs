@@ -15,7 +15,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ModLoader;
-using static Terraria.NPC.NPCNameFakeLanguageCategoryPassthrough;
 
 namespace Redemption.Items.Weapons.PostML.Melee
 {

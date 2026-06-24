@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Redemption.Globals.Players;
 using Redemption.Items.Materials.PreHM;
-using Redemption.Items.Weapons.PreHM.Ritualist;
+using Redemption.Items.Weapons.PreHM.Summon;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -13,7 +13,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
         public override void SetStaticDefaults()
         {
             // Tooltip.SetDefault("Hold left-click to increase acceleration of the spin");
-            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<XenomiteSecespita>();
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<CystlingSummon>();
             RedeGlowmask.AddGlowMask(Type, Texture + "_Glow");
         }
         public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskPlayer.DrawItemGlowMaskWorld(spriteBatch, Item, Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);

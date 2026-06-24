@@ -1,25 +1,29 @@
 using ParticleLibrary.Core.V3.Particles;
+using Terraria;
+using SystemVector2 = System.Numerics.Vector2;
 
 namespace Redemption.Particles
 {
     public class LaserParticleBehavior : Behavior<ParticleInfo>
     {
         public override string Texture { get; } = "Terraria/Images/Extra_98";
+        public override void Initialize(ref ParticleInfo info)
+        {
+            SystemVector2 scale = new SystemVector2(0.1f * info.InitialScale.X, info.InitialScale.Y);
+            info.Scale = scale;
+            info.Color = info.InitialColor with { A = 0 };
+        }
         public override void Update(ref ParticleInfo info)
         {
-            float timer = info.Time ;
-            info.Data[0] = 1 - timer / info.Duration;
+            float progress = Utils.GetLerpValue(0, 1, (float)info.Time / info.Duration, true);
 
-            float x = (info.Data[0] - 0.5f) * info.Data[1];
-            float opacity = 1 / (1 + x * x);
+            float initialScale = info.Data[0] == 0 ? 0 : Utils.GetLerpValue(0, info.Data[0], info.Duration - info.Time, true);
+            float scaleX = 0.1f + 0.1f * initialScale * Utils.GetLerpValue(info.Duration, info.Data[0], info.Duration - info.Time, true);
+            SystemVector2 scale = new SystemVector2(scaleX * info.InitialScale.X, info.InitialScale.Y);
 
-            System.Numerics.Vector2 scale = new System.Numerics.Vector2(0.075f + 0.2f * opacity, 1) * info.InitialScale.X;
-            Color color = Color.Multiply(info.InitialColor with { A = 0 }, 1);
+            info.Scale = scale;
+            info.Color = info.InitialColor with { A = 0 } * progress;
 
-            info.Scale = scale * new System.Numerics.Vector2(72);
-            info.Color = color * opacity;
-
-            info.Position += info.Velocity;
             info.Time--;
         }
     }

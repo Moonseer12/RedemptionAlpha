@@ -70,7 +70,7 @@ namespace Redemption.Items.Weapons.PreHM.Ritualist
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            RedeProjectile.Decapitation(target, ref damageDone, ref hit.Crit);
+            ProjHelper.Decapitation(target, ref damageDone, ref hit.Crit);
             if (Projectile.type == ModContent.ProjectileType<Incisor_Slash>())
                 target.AddBuff(ModContent.BuffType<IncisorDebuff>(), 300);
         }

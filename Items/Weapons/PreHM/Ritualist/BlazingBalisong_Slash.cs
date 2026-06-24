@@ -17,7 +17,7 @@ namespace Redemption.Items.Weapons.PreHM.Ritualist
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            RedeProjectile.Decapitation(target, ref damageDone, ref hit.Crit);
+            ProjHelper.Decapitation(target, ref damageDone, ref hit.Crit);
             target.AddBuff(BuffID.OnFire, 260);
             if (Main.rand.NextBool(2) && Projectile.owner == Main.myPlayer)
             {

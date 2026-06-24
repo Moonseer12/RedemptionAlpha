@@ -100,7 +100,7 @@ namespace Redemption.Items.Weapons.PreHM.Ritualist
             if (!Main.dedServ)
                 SoundEngine.PlaySound(CustomSounds.Slash2 with { Volume = .5f }, Projectile.position);
 
-            RedeProjectile.Decapitation(target, ref damageDone, ref hit.Crit);
+            ProjHelper.Decapitation(target, ref damageDone, ref hit.Crit);
 
             Vector2 velocity = Projectile.velocity.SafeNormalize(default) * 1;
             for (int i = 0; i < 4; i++)

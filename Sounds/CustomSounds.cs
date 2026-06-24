@@ -182,7 +182,17 @@ namespace Redemption
         public static readonly SoundStyle Ghost3 = new("Redemption/Sounds/Custom/Ghost", 2) { PitchVariance = .4f, SoundLimitBehavior = SoundLimitBehavior.IgnoreNew };
         public static readonly SoundStyle FlameRise2 = new("Redemption/Sounds/Custom/FlameRise2") { PitchVariance = .1f };
 
+        // EVFX
+        public static readonly SoundStyle QuickBlade = new("Redemption/Sounds/Custom/EVFX/QuickBlade") { PitchVariance = .1f };
+        public static readonly SoundStyle ChainCurrents = new("Redemption/Sounds/Custom/EVFX/ChainCurrents") { PitchVariance = .2f };
         public static readonly SoundStyle StaticFlare = new("Redemption/Sounds/Custom/EVFX/StaticFlare") { PitchVariance = .2f };
+        public static readonly SoundStyle SparkSlash = new("Redemption/Sounds/Custom/EVFX/SparkSlash") { PitchVariance = .2f };
+        public static readonly SoundStyle SparkStrike = new("Redemption/Sounds/Custom/EVFX/SparkStrike") { PitchVariance = .2f };
+        public static readonly SoundStyle SparkBlast = new("Redemption/Sounds/Custom/EVFX/SparkBlast") { PitchVariance = .2f };
+        public static readonly SoundStyle SparkPierce = new("Redemption/Sounds/Custom/EVFX/SparkPierce") { PitchVariance = .2f };
+        public static readonly SoundStyle NimbleThrust = new("Redemption/Sounds/Custom/EVFX/NimbleThrust") { PitchVariance = .1f };
+        public static readonly SoundStyle PlungingJavelin = new("Redemption/Sounds/Custom/EVFX/PlungingJavelin") { PitchVariance = .1f };
+        public static readonly SoundStyle StoneBlast = new("Redemption/Sounds/Custom/EVFX/StoneBlast") { PitchVariance = .5f };
 
         public static readonly SoundStyle BoneHit = new("Redemption/Sounds/Tiles/BoneHit", 3);
         public static readonly SoundStyle BrickHit = new("Redemption/Sounds/Tiles/BrickHit", 3);

@@ -330,7 +330,7 @@ namespace Redemption.NPCs.Friendly.TownNPCs
                 .Add<BookOfBonuses>(RedeConditions.ElementBookObtained)
                 .Add<SilverRapier>(Condition.DownedEarlygameBoss)
                 .Add<EaglecrestSpelltome>(Condition.DownedEowOrBoc)
-                .Add<SilverwoodBow>(Condition.DownedEowOrBoc)
+                .Add<DaerelsSilverwoodBow>(Condition.DownedEowOrBoc)
                 .Add<GolemEye>(RedeConditions.DownedEaglecrestGolem)
                 .Add<ChaliceFragments>()
                 .Add<EpidotraMusicBox>(Condition.Hardmode)
@@ -383,7 +383,7 @@ namespace Redemption.NPCs.Friendly.TownNPCs
         }
         public override void DrawTownAttackGun(ref Texture2D item, ref Rectangle itemFrame, ref float scale, ref int horizontalHoldoutOffset)
         {
-            int itemType = ItemType<SilverwoodBow>();
+            int itemType = ItemType<DaerelsSilverwoodBow>();
             Main.GetItemDrawFrame(itemType, out item, out itemFrame);
             horizontalHoldoutOffset = (int)Main.DrawPlayerItemPos(1f, itemType).X - 12;
         }

@@ -125,6 +125,8 @@ namespace Redemption.NPCs.PreHM
 
         private int AniFrameY;
         private int AniFrameX;
+        private bool parried;
+
         public override void OnSpawn(IEntitySource source)
         {
             ChoosePersonality();
@@ -281,23 +283,20 @@ namespace Redemption.NPCs.PreHM
                     if (NPC.velocity.Y == 0)
                         NPC.velocity.X *= 0.9f;
 
-                    if ((AniFrameY == 3 && globalNPC.attacker.Hitbox.Intersects(SlashHitbox1)) || (AniFrameY == 6 && globalNPC.attacker.Hitbox.Intersects(SlashHitbox2)))
+                    if (AniFrameY is 3 or 6)
                     {
-                        int damage = NPC.RedemptionNPCBuff().disarmed ? NPC.damage / 3 : NPC.damage;
-                        if (globalNPC.attacker is NPC attackerNPC && attackerNPC.immune[NPC.whoAmI] <= 0)
-                        {
-                            attackerNPC.immune[NPC.whoAmI] = 10;
-                            int hitDirection = attackerNPC.RightOfDir(NPC);
-                            BaseAI.DamageNPC(attackerNPC, damage, 6, hitDirection, NPC);
-                        }
-                        else if (globalNPC.attacker is Player attackerPlayer2)
-                        {
-                            int hitDirection = attackerPlayer2.RightOfDir(NPC);
-                            BaseAI.DamagePlayer(attackerPlayer2, damage, 6, hitDirection, NPC);
-                        }
+                        if (NPC.frameCounter == 0)
+                            parried = false;
+                        ProjHelper.SwordClashHostile(AniFrameY == 3 ? SlashHitbox1 : SlashHitbox2, NPC, ref parried);
+                        NPC.RedemptionHitbox().DamageInHitbox(NPC, AniFrameY == 3 ? SlashHitbox1 : SlashHitbox2, NPC.damage, 6f, parried, 10);
                     }
                     break;
             }
+            bool parryActive = false;
+            if (AniFrameY is 2 or 3 or 6)
+                parryActive = true;
+
+            NPC.Redemption().CreateParryWindow(AniFrameY == 3 ? SlashHitbox1 : SlashHitbox2, ref parryActive);
 
             if (Personality != PersonalityState.Greedy)
                 return;

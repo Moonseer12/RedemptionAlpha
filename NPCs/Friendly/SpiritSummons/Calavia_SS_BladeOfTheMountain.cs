@@ -98,7 +98,7 @@ namespace Redemption.NPCs.Friendly.SpiritSummons
                                     target.hostile = false;
                                     target.friendly = true;
                                 }
-                                target.Redemption().ReflectDamageIncrease = 4;
+                                target.RedemptionReflect().ReflectDamageIncrease = 4;
                                 target.velocity.X = -target.velocity.X * 0.9f;
                             }
                         }
@@ -340,7 +340,7 @@ namespace Redemption.NPCs.Friendly.SpiritSummons
                                     target.hostile = false;
                                     target.friendly = true;
                                 }
-                                target.Redemption().ReflectDamageIncrease = 4;
+                                target.RedemptionReflect().ReflectDamageIncrease = 4;
                                 target.velocity.X = -target.velocity.X * 0.9f;
                             }
                         }

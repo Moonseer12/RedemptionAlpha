@@ -221,7 +221,7 @@ namespace Redemption.Items.Weapons.HM.Magic
                 Projectile.Center = origPos + rand;
                 if (DischargeTimer >= 40)
                 {
-                    Projectile.NewProjectile(Projectile.GetItemSource_FromThis(), Projectile.Center, Vector2.Zero, ProjectileType<LightningRod_Discharge>(), Projectile.damage * 10, Projectile.knockBack * 5, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ProjectileType<LightningRod_Discharge>(), Projectile.damage * 10, Projectile.knockBack * 5, Projectile.owner);
                     if (!Main.dedServ)
                         SoundEngine.PlaySound(CustomSounds.MissileExplosion, Projectile.position);
                     RedeDraw.SpawnExplosion(Projectile.Center, Color.White, DustID.Electric, 60, 40, 2, 5);
