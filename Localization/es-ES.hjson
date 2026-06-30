@@ -2721,18 +2721,18 @@ Mods: {
 			}
 
 			CorruptedSentryBaseBuff: {
-				// DisplayName: Omega Sentry Stand
-				// Description: A platform for sentries
+				DisplayName: Soporte centinela Omega
+				Description: Una plataforma para centinelas
 			}
 
 			HoneycombStaffBuff: {
-				// DisplayName: Honeycomb Hive
-				// Description: Tell your enemies to buzz off!
+				DisplayName: Colmena de panal
+				Description: ¡Haz que salgan zumbando!
 			}
 
 			CosmosChainsDebuff: {
-				// DisplayName: Cosmos Chains Tag
-				// Description: ""
+				DisplayName: Cadenas cósmicas marcadas
+				Description: ""
 			}
 		}
 
@@ -3580,7 +3580,7 @@ Mods: {
 			}
 
 			CleaverHandle: {
-				DisplayName: Empuñadura de Cuchilla
+				DisplayName: Empuñadura de cuchilla
 				Tooltip: Invoca una Omini Cuchilla
 			}
 
@@ -6200,7 +6200,7 @@ Mods: {
 					[c/ffea9b:La oscuridad que enfrentamos en nuestras vidas,]
 					[c/ffea9b:Deja atrás el miedo,]
 					[c/ffea9b:Somos fuertes en número,]
-					[c/ffea9b:Reteniendo un destino de sueño eterno,]
+					[c/ffea9b:Sosteniendo un destino de sueño eterno,]
 					[c/ffea9b:Quiero quedarme para darte valor,]
 					[c/ffea9b:Uno al lado del otro es donde pertenecemos...']
 					{$Mods.Redemption.SpecialTooltips.Unbreakable5000}
@@ -6214,13 +6214,13 @@ Mods: {
 					[c/ffea9b:'He cometido errores que devastaron,]
 					[c/ffea9b:Demasiadas batallas perdidas para contar,]
 					[c/ffea9b:Si pudiera volver atrás en el tiempo para encontrarte,]
-					[c/ffea9b:También hallaría nuestra confianza.']
+					[c/ffea9b:Nuestra confianza también he de hallar.']
 					{$Mods.Redemption.SpecialTooltips.Unbreakable5000}
 					'''
 			}
 
 			KingChessPiece: {
-				DisplayName: Pieza de ajedrez del rey de mármol
+				DisplayName: Pieza de ajedrez: Rey de mármol
 				Tooltip: ""
 			}
 
@@ -6239,10 +6239,10 @@ Mods: {
 				Tooltip:
 					'''
 					[c/ffea9b:'De cenizas a cenizas; de polvo a polvo]
-					[c/ffea9b:Honor a la gloria; Y hierro al óxido]
-					[c/ffea9b:Odio al derramamiento de sangre; de ascenso a caída]
-					[c/ffea9b:Si nunca tengo que morir,]
-					[c/ffea9b:¿Estoy vivo en absoluto?']
+					[c/ffea9b:Honor para la gloria; hierro para el óxido]
+					[c/ffea9b:Desde el odio a derramar sangre; del ascenso a la caída]
+					[c/ffea9b:Si nunca tendré que morir,]
+					[c/ffea9b:¿En realidad estoy vivo?']
 					{$Mods.Redemption.SpecialTooltips.Unbreakable5000}
 					'''
 			}
@@ -6276,12 +6276,12 @@ Mods: {
 				DisplayName: Estatua del Protector
 				Tooltip:
 					'''
-					[c/ffea9b:'Hay cielos despejados]
+					[c/ffea9b:'Hay cielos despejados,]
 					[c/ffea9b:Más adelante en el camino de nuestras vidas,]
 					[c/ffea9b:El dolor que sientes ahora no es lo que parece,]
 					[c/ffea9b:Atormentado por los recuerdos,]
-					[c/ffea9b:Los momentos de esperanza no son lo que solían ser,]
-					[c/ffea9b:Son solo reflejos de un sueño']
+					[c/ffea9b:Esos momentos de esperanza ya no son lo que solían ser,]
+					[c/ffea9b:Tan solo son reflejos de un sueño.']
 					{$Mods.Redemption.SpecialTooltips.Unbreakable5000}
 					'''
 			}
@@ -6376,7 +6376,7 @@ Mods: {
 			}
 
 			WastelandCampfire: {
-				DisplayName: Hoguera de páramo
+				DisplayName: Hoguera de páramo
 				Tooltip:
 					'''
 					La regeneración de vida es mayor junto a una hoguera
@@ -6385,7 +6385,7 @@ Mods: {
 			}
 
 			WastelandTorch: {
-				DisplayName: Antorcha de páramo
+				DisplayName: Antorcha de páramo
 				Tooltip: ""
 			}
 
@@ -8184,9 +8184,10 @@ Mods: {
 				DisplayName: Pararrayos autosuficiente
 				Tooltip:
 					'''
-					Mantén pulsado clic izquierdo para cargar electricidad y suéltalo para disparar una descarga de rayos al cursor
-					Los rayos forman arcos hacia más enemigos y causan más daño a medida que se cargan
-					La sobrecarga hace que causen menos daño, pero tienen un radio más amplio
+					Haz clic derecho para colocar una barra metálica conductora en tu posición
+					La barra tiene un aura que electrocuta pasivamente a los enemigos cercanos
+					Haz clic izquierdo para disparar electricidad hacia la barra, aumentando su alcance
+					Sobrecargar la barra provocará una explosión y restablecerá la distancia del alcance
 					'''
 			}
 
@@ -8353,7 +8354,7 @@ Mods: {
 
 			InfectiousGlaive: {
 				DisplayName: Guja infecciosa
-				Tooltip: Dispara una ráfaga de fragmentos de xenomita cada dos golpes
+				Tooltip: Hace balancear la guja terminando con un giro mortal.
 			}
 
 			Midnight: {
@@ -8850,7 +8851,7 @@ Mods: {
 					'''
 				Lore:
 					'''
-					'El martillo de Ukko, fabricado por sus antepasados ​​y refinado por él.
+					'El martillo de Ukko, fabricado por sus antepasados y refinado por él.
 					Tras su muerte humana, el martillo fue colocado sobre su tumba, como es
 					costumbre en la tradición local. Es un gran conductor de la magia del Trueno.'
 					'''
@@ -9533,7 +9534,11 @@ Mods: {
 
 			AntlerStaff: {
 				DisplayName: Bastón cuernudo
-				Tooltip: Invoca un Forret para que luche por ti
+				Tooltip:
+					'''
+					Invoca un Forret para que luche por ti
+					Duplica su rapidez al golpear con un latigo un enemigo
+					'''
 			}
 
 			CorpseWalkerStaff: {
@@ -9695,7 +9700,7 @@ Mods: {
 				Lore:
 					'''
 					'Un bastón hecho con el Roble del Rey, un gran árbol solitario que alberga
-					las almas de los monarcas pasados ​​y presentes de Timbervalley.
+					las almas de los monarcas pasados y presentes de Timbervalley.
 					El bienestar del roble y el del rey están conectados como uno solo,
 					arraigando su emoción y vigor en las raíces del reino;
 					un pozo sin fondo de fuerza para todos los que caminan y crecen.
@@ -11241,33 +11246,33 @@ Mods: {
 			}
 
 			HolyAllianceStatue: {
-				// DisplayName: Holy Alliance Statue
-				// Tooltip: ""
+				DisplayName: Estatua de la Alianza Sagrada
+				Tooltip: ""
 			}
 
 			HolyAllianceStatue2: {
-				// DisplayName: Holy Alliance Crucible Statue
-				// Tooltip: ""
+				DisplayName: Estatua del Crisol de la Alianza Sagrada
+				Tooltip: ""
 			}
 
 			CorruptedSentryBase: {
-				// DisplayName: Omega Sentry Stand
-				/* Tooltip:
+				DisplayName: Soporte centinela Omega
+				Tooltip:
 					'''
 					{$CommonItemTooltip.Sentry}
-					Summons a platform to place other sentries atop
-					50% increased damage to sentries placed on the platform
-					''' */
+					Invoca una plataforma para colocar otras centinelas encima
+					50% de daño incrementado a las centinelas colocadas en la plataforma
+					'''
 			}
 
 			HoneycombStaff: {
-				// DisplayName: Honeycomb Staff
-				/* Tooltip:
+				DisplayName: Bastón de panal de miel
+				Tooltip:
 					'''
 					{$CommonItemTooltip.Sentry}
-					Summons a hive that produces friendly bees
-					Whip the hive to produce giant bees, but be careful to not make it angry!
-					''' */
+					Invoca una colmena que produce abejas amigables
+					Azota la colmena para producir abejas gigantes, ¡pero cuidado de hacerlas enojar!
+					'''
 			}
 		}
 
@@ -12591,8 +12596,8 @@ Mods: {
 			}
 
 			ShadestoneDresserTile: {
-				ContainerName: Aparador de piedra sombría
-				MapEntry: Aparador de piedra sombría
+				ContainerName: Aparador de piedra sombría
+				MapEntry: Aparador de piedra sombría
 			}
 
 			HolochestTile_Locked.MapEntry: Holocofre cerrado
@@ -12680,7 +12685,7 @@ Mods: {
 			ShadesteelPortcullisClose.MapEntry: Portón de acero sombrío cerrado
 			ShadesteelPortcullisClose_Unlocked.MapEntry: Portón de acero sombrío cerrado
 			ShadesteelPortcullisOpen.MapEntry: Portón de acero sombrío abierto
-			ShadestoneCrateTile.MapEntry: Caja de piedra sombría
+			ShadestoneCrateTile.MapEntry: Caja de piedra sombría
 			ShadestoneGateTile.MapEntry: Entrada de piedra sombría
 			ShadestoneMirrorTile.MapEntry: Espejo de piedra sombría especial
 			WaxCandlesTile.MapEntry: Velas de cera
@@ -12738,10 +12743,10 @@ Mods: {
 			IrradiatedBorealSapling.MapEntry: Retoño
 			IrradiatedPalmSapling.MapEntry: Retoño
 			IrradiatedPuritySapling.MapEntry: Retoño
-			ShadestoneBathtubTile.MapEntry: Bañera de piedra sombría
+			ShadestoneBathtubTile.MapEntry: Bañera de piedra sombría
 			ShadestoneBookcaseTile.MapEntry: Librería de piedra sombría
-			ShadestoneCandelabraTile.MapEntry: Candelabro de piedra sombría
-			ShadestoneCandleTile.MapEntry: Vela de piedra sombría
+			ShadestoneCandelabraTile.MapEntry: Candelabro de piedra sombría
+			ShadestoneCandleTile.MapEntry: Vela de piedra sombría
 			ShadestoneMirrorTile2.MapEntry: Espejo de piedra sombría
 			ShadestonePianoTile.MapEntry: Piano de piedra sombría
 			ShadestoneSofaTile.MapEntry: Sofá de piedra sombría

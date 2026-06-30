@@ -10566,7 +10566,11 @@ Mods: {
 
 			PureIronBow: {
 				DisplayName: Iron Realm Bow
-				Tooltip: Fired arrows leave lingering mist to chill enemies
+				Tooltip:
+					'''
+					Fired arrows leave lingering mist to chill enemies
+					Lights wooden arrows with frostburn
+					'''
 			}
 
 			ElderWoodToilet: {

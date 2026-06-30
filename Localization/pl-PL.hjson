@@ -2714,18 +2714,18 @@ Mods: {
 			}
 
 			CorruptedSentryBaseBuff: {
-				// DisplayName: Omega Sentry Stand
-				// Description: A platform for sentries
+				DisplayName: Stojak Działka Omegi
+				Description: Platforma dla działek
 			}
 
 			HoneycombStaffBuff: {
-				// DisplayName: Honeycomb Hive
-				// Description: Tell your enemies to buzz off!
+				DisplayName: Rój Miodowego Plastra
+				Description: Powiedz swoim wrogon aby bzzspadali!
 			}
 
 			CosmosChainsDebuff: {
-				// DisplayName: Cosmos Chains Tag
-				// Description: ""
+				DisplayName: Znacznik Łańcuchów Kosmosu
+				Description: ""
 			}
 		}
 
@@ -4560,31 +4560,31 @@ Mods: {
 			SkySquiresGreaves: {
 				DisplayName: Nagolenniki Niebiańskiego Dziedzica
 				Tooltip: ""
-				/* Lore:
+				Lore:
 					'''
-					'Greaves made of Kanite, worn by the Sky Squires of Ithon. The metal has a blue hue and a cold touch,
-					being used as a replacement for iron which is lacking in southern Ithon.'
-					''' */
+					'Nagolenniki wykonane z kanitu, noszone przez Niebiańskich Dziedziców Ithonu. Metal ma niebieskawy
+					odcień i jest zimny w dotyku, dlatego służy jako zamiennik żelaza, którego brakuje na południu Ithonu.'
+					'''
 			}
 
 			SkySquiresHelm: {
 				DisplayName: Hełm Niebiańskiego Dziedzica
 				Tooltip: ""
-				/* Lore:
+				Lore:
 					'''
-					'A sallet helm made of Kanite, worn by the Sky Squires of Ithon. The Sky Squires are a unit of the south,
-					protecting the kingdoms of Yln, Klycub, and Norapass.'
-					''' */
+					'Hełm typu salada wykonany z kanitu, noszony przez Niebiańskich Dziedziców Ithonu.
+					Niebieńscy Dziedzice to południowa jednostka wojskowa chroniąca królestwo Yln, Klycub i Norapass.'
+					'''
 			}
 
 			SkySquiresTabard: {
-				DisplayName: Tabard Giermka Nieba
+				DisplayName: Tabard Niebiańskiego Dziedzica 
 				Tooltip: ""
-				/* Lore:
+				Lore:
 					'''
-					'A tabard made of Kanite and cloth in a checkered pattern, worn by the Sky Squires of Ithon. The armour
-					allows better flexibility than most, useful for marching to the rescue swiftly.'
-					''' */
+					'Tabard wykonany z kanitu i tkaniny w kratę, noszony przez Niebiańskich Dziedziców Ithonu.
+					Zbroja zapewnia większą swobodę ruchów niż większość pancerzy, co pozwala szybko maszerować na ratunek.'
+					'''
 			}
 
 			SwordHeadband: {
@@ -8155,9 +8155,10 @@ Mods: {
 				DisplayName: Samowystarczalny Piorunochron
 				Tooltip:
 					'''
-					Przytrzymaj lewy przycisk, aby naładować elektryczność, puść, by wystrzelić piorun w miejsce kursora
-					Piorun łukuje do kolejnych wrogów i zadaje większe obrażenia w miarę ładowania
-					Przeładowanie zmniejsza obrażenia, ale zwiększa zasięg rażenia
+					Kliknij prawy przycisk myszy, aby umieścić przewodzący pręt
+					Przewodnik roztacza aurę, która będzie pasywnie razić wrogów
+					Kliknij lewy przycisk myszy, aby wystrzelić elektryczność w przewodnik, zwiększając jego zasięg
+					Przeciążenie przewodnika powoduję eksplozję oraz reset jego zasięgu
 					'''
 			}
 
@@ -8319,7 +8320,7 @@ Mods: {
 
 			InfectiousGlaive: {
 				DisplayName: Zaraźliwa Glewia
-				Tooltip: Co dwa zamachy wystrzeliwuje rozproszone odłamki xenomitu
+				Tooltip: Wykonuję serię wymachów zakończoną śmiercionośnym obrotem
 			}
 
 			Midnight: {
@@ -9450,7 +9451,11 @@ Mods: {
 
 			AntlerStaff: {
 				DisplayName: Rogowy Kostur
-				Tooltip: Przyzywa Foretke, by walczył u twego boku
+				Tooltip:
+					'''
+					Przywołuję Foretkę do walki u twojego boku
+					Jej prędkość się podwaja po uderzeniu wroga biczem
+					'''
 			}
 
 			CorpseWalkerStaff: {
@@ -10566,7 +10571,11 @@ Mods: {
 
 			PureIronBow: {
 				DisplayName: Łuk Żelaznej Domeny
-				Tooltip: Wystrzelone strzały pozostawiają unoszącą się mgłę, która zamraża wrogów
+				Tooltip:
+					'''
+					Wystrzelone strzały pozostawiają unoszącą się mgłę, która zamraża wrogów
+					Podpala drewniane strzały mroźnym ogniem
+					'''
 			}
 
 			ElderWoodToilet: {
@@ -11150,33 +11159,33 @@ Mods: {
 			}
 
 			HolyAllianceStatue: {
-				// DisplayName: Holy Alliance Statue
-				// Tooltip: ""
+				DisplayName: Posąg Świętego Sojuszu
+				Tooltip: ""
 			}
 
 			HolyAllianceStatue2: {
-				// DisplayName: Holy Alliance Crucible Statue
-				// Tooltip: ""
+				DisplayName: Posąg Tygla Świętego Sojuszu
+				Tooltip: ""
 			}
 
 			CorruptedSentryBase: {
-				// DisplayName: Omega Sentry Stand
-				/* Tooltip:
+				DisplayName: Stojak Działka Omegi
+				Tooltip:
 					'''
 					{$CommonItemTooltip.Sentry}
-					Summons a platform to place other sentries atop
-					50% increased damage to sentries placed on the platform
-					''' */
+					Przywołuje platformę, na której można umieszczać działka
+			        Działka umieszczone na platformie zadają o 50% więcej obrażeń
+					'''
 			}
 
 			HoneycombStaff: {
-				// DisplayName: Honeycomb Staff
-				/* Tooltip:
+				DisplayName: Kostur Miodowego Plastra
+				Tooltip:
 					'''
 					{$CommonItemTooltip.Sentry}
-					Summons a hive that produces friendly bees
-					Whip the hive to produce giant bees, but be careful to not make it angry!
-					''' */
+					Przywołuje ul produkujący przyjazne pszczoły 
+					Uderz biczem w ul, aby wytwarzał olbrzymie pszczoły, ale uważaj żeby ich nie rozzłościć!
+					'''
 			}
 		}
 
@@ -11917,12 +11926,12 @@ Mods: {
 			SunPalmFlare_Proj.DisplayName: Flara Słońca w Dłoniach
 			Blisterface_GirusTalk.DisplayName: Złowieszczy Głos
 			Blisterface_Drip_Proj.DisplayName: Kropla Mułu
-			// ErhanMagnifyingGlass_HoldOut.DisplayName: "{$Mods.Redemption.Items.ErhanMagnifyingGlass.DisplayName}"
-			// LightningRod_Conductor.DisplayName: Conductor Rod
-			// LightningRod_Discharge.DisplayName: "{$Mods.Redemption.Items.LightningRod.DisplayName}"
-			// CorruptedSentryBase_Proj.DisplayName: Corrupted Sentry Base_ Proj
-			// HoneycombStaff_Proj.DisplayName: Honeycomb Hive
-			// XenoSplat_Small.DisplayName: Xeno Splat
+			ErhanMagnifyingGlass_HoldOut.DisplayName: "{$Mods.Redemption.Items.ErhanMagnifyingGlass.DisplayName}"
+			LightningRod_Conductor.DisplayName: Przewodzący Pręt
+			LightningRod_Discharge.DisplayName: "{$Mods.Redemption.Items.LightningRod.DisplayName}"
+			CorruptedSentryBase_Proj.DisplayName: "{$Mods.Redemption.Items.CorruptedSentryBase.DisplayName}"
+			HoneycombStaff_Proj.DisplayName: Rój Miodowego Plastra
+			XenoSplat_Small.DisplayName: Xenobryzg
 		}
 
 		NPCs: {
