@@ -31,7 +31,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Item.UseSound = SoundID.Item40;
             Item.autoReuse = true;
             Item.shoot = ProjectileType<DrillRevolver_Bullet>();
-            Item.shootSpeed = 7;
+            Item.shootSpeed = 12;
             Item.useAmmo = AmmoID.Bullet;
         }
         public override void AddRecipes()

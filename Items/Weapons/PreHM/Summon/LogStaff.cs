@@ -26,8 +26,8 @@ namespace Redemption.Items.Weapons.PreHM.Summon
             Item.damage = 20;
             Item.DamageType = DamageClass.Summon;
             Item.sentry = true;
-            Item.width = 36;
-            Item.height = 36;
+            Item.width = 38;
+            Item.height = 40;
             Item.useTime = 30;
             Item.useAnimation = 30;
             Item.useStyle = ItemUseStyleID.Swing;
@@ -59,7 +59,7 @@ namespace Redemption.Items.Weapons.PreHM.Summon
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
             int floor = BaseWorldGen.GetFirstTileFloor((int)Main.MouseWorld.X / 16, (int)Main.MouseWorld.Y / 16);
-            position = new Vector2(Main.MouseWorld.X, floor * 16 - 10);
+            position = new Vector2(Main.MouseWorld.X, floor * 16 - 15);
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {

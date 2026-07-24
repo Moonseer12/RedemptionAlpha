@@ -15,7 +15,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                 + "\nReplaces arrows with Ukonvasara-tipped arrows\n" +
                 "Ukonvasara-tipped arrows impale into enemies and eventually cause thunder to strike them\n" +
                 "Two strikes will occur during a thunderstorm"); */
-            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<Pihlajasauva>();
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemType<AkkaRoseSentry>();
             Item.ResearchUnlockCount = 1;
         }
 

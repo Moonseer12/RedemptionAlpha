@@ -31,9 +31,7 @@ namespace Redemption.Projectiles.Ranged
         }
         public override void OnSpawn(IEntitySource source)
         {
-            Projectile.velocity = 30f * Projectile.velocity.SafeNormalize(default);
         }
-
         public override void OnKill(int timeLeft)
         {
             Player player = Main.player[Projectile.owner];

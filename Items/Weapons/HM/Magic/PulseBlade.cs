@@ -9,6 +9,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.Drawing;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -36,8 +37,8 @@ namespace Redemption.Items.Weapons.HM.Magic
             Item.damage = 42;
             Item.height = 28;
             Item.width = 28;
-            Item.useTime = 15;
-            Item.useAnimation = 15;
+            Item.useTime = 10;
+            Item.useAnimation = 10;
             Item.DamageType = DamageClass.Magic;
             Item.mana = 10;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -147,6 +148,7 @@ namespace Redemption.Items.Weapons.HM.Magic
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
 
             ElementID.ProjFire[Type] = true;
+            ElementID.ProjThunder[Type] = true;
             ElementID.ProjExplosive[Type] = true;
         }
         public override void SetDefaults()
@@ -326,7 +328,12 @@ namespace Redemption.Items.Weapons.HM.Magic
         public float Timer;
         private float speed;
         private float glow;
-
+        public Player Owner => Main.player[Projectile.owner];
+        private int maxTime;
+        public override void OnSpawn(IEntitySource source)
+        {
+            maxTime = (int)(Owner.HeldItem.useTime / Owner.GetWeaponAttackSpeed(Owner.HeldItem));
+        }
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
@@ -337,7 +344,7 @@ namespace Redemption.Items.Weapons.HM.Magic
             player.itemTime = 2;
             player.itemAnimation = 2;
 
-            Vector2 armCenter = player.RotatedRelativePoint(player.MountedCenter, true) + new Vector2(-player.direction * 3, -3);
+            Vector2 armCenter = player.RotatedRelativePoint(player.MountedCenter) + new Vector2(-player.direction * 3, -3);
             Projectile.Center = armCenter + vector;
 
             Projectile.spriteDirection = player.direction;
@@ -394,7 +401,7 @@ namespace Redemption.Items.Weapons.HM.Magic
                                 SoundEngine.PlaySound(CustomSounds.Swing1 with { Volume = (glow / 4) + .1f, Pitch = .2f }, player.position);
                             SoundEngine.PlaySound(SoundID.Item71 with { Volume = (glow / 4) + .1f }, player.position);
                         }
-                        if (Timer++ >= 15 && glow < 1)
+                        if (Timer++ >= maxTime && glow < 1)
                         {
                             glow += 0.2f;
                             Timer = 0;
@@ -478,9 +485,9 @@ namespace Redemption.Items.Weapons.HM.Magic
             // DisplayName.SetDefault("Explosion");
             Main.projFrames[Projectile.type] = 6;
             ElementID.ProjFire[Type] = true;
+            ElementID.ProjThunder[Type] = true;
             ElementID.ProjExplosive[Type] = true;
         }
-
         public override void SetDefaults()
         {
             Projectile.width = 104;

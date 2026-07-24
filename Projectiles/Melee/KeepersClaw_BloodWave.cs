@@ -20,9 +20,10 @@ namespace Redemption.Projectiles.Melee
         {
             base.SetDefaults();
             Projectile.friendly = true;
-            Projectile.penetrate = 6;
+            Projectile.penetrate = 2;
             Projectile.hostile = false;
             Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = -1;
             Projectile.stopsDealingDamageAfterPenetrateHits = true;
             Projectile.Redemption().friendlyHostile = false;
         }
@@ -40,13 +41,9 @@ namespace Redemption.Projectiles.Melee
             if (Projectile.alpha >= 255)
                 Projectile.Kill();
         }
-        public override bool? CanHitNPC(NPC target) => !target.friendly && Projectile.alpha < 200 && Projectile.ai[0] < 2 ? null : false;
+        public override bool? CanHitNPC(NPC target) => !target.friendly && Projectile.alpha < 200 ? null : false;
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.localNPCImmunity[target.whoAmI] = 40;
-            target.immune[Projectile.owner] = 0;
-
-            Projectile.ai[0]++;
             target.AddBuff(BuffID.Bleeding, 260);
             Player player = Main.player[Projectile.owner];
             if (player.statLife < player.statLifeMax2 - 5)

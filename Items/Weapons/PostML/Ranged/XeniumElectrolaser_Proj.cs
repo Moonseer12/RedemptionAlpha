@@ -44,9 +44,11 @@ namespace Redemption.Items.Weapons.PostML.Ranged
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter, true);
+            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter);
             if (!fakeKill)
                 ProjHelper.HoldOutProjBasics(Projectile, player, vector);
+            int maxTime = (int)(player.HeldItem.useTime / player.GetTotalAttackSpeed(DamageClass.Ranged));
+
             Projectile.Center = vector;
             Projectile.spriteDirection = Projectile.direction;
             Projectile.timeLeft = 2;
@@ -73,7 +75,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                 if (player.channel && player.GetModPlayer<EnergyPlayer>().statEnergy >= 2)
                 {
                     glowTimer++;
-                    for (int k = 0; k < 1 + (Timer * player.GetAttackSpeed(DamageClass.Ranged) / 120); k++)
+                    for (int k = 0; k < 1 + (Timer * player.GetTotalAttackSpeed(DamageClass.Ranged) / 120); k++)
                     {
                         Vector2 dustPos = Projectile.Center + RedeHelper.PolarVector(52 * Projectile.spriteDirection, Projectile.rotation);
                         Vector2 dVector;
@@ -85,7 +87,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                     shake += 0.02f;
                     Projectile.position += new Vector2(Main.rand.NextFloat(-shake, shake), Main.rand.NextFloat(-shake, shake));
 
-                    if (Timer++ > 0 && Timer % (int)(player.HeldItem.useTime / player.GetAttackSpeed(DamageClass.Ranged)) == 0 && Timer < (int)(player.HeldItem.useTime * 9 / player.GetAttackSpeed(DamageClass.Ranged)))
+                    if (Timer++ > 0 && Timer % maxTime == 0 && Timer < (maxTime * 9))
                     {
                         player.GetModPlayer<EnergyPlayer>().statEnergy -= 2;
                         if (!Main.dedServ)
@@ -101,29 +103,29 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                             float shotOff = MathHelper.Max(shotOff2, 0);
                             for (int i = 0; i < Main.rand.Next(4, 6); i++)
                             {
-                                Projectile.NewProjectile(Projectile.GetSource_FromAI(), gunPos, RedeHelper.PolarVector(3, Projectile.velocity.ToRotation() + Main.rand.NextFloat(-shotOff, shotOff)), ProjectileType<XeniumElectrolaser_Beam>(), (int)(Projectile.damage * 0.75f), Projectile.knockBack, player.whoAmI, 1);
+                                Projectile.NewProjectile(Projectile.GetSource_FromAI(), gunPos, Projectile.velocity.RotateRandom(shotOff) * 3, ProjectileType<XeniumElectrolaser_Beam>(), (int)(Projectile.damage * 0.75f), Projectile.knockBack, player.whoAmI, 1);
                             }
                         }
                         shotOff2 -= 0.06f;
                     }
-                    if (Timer >= (int)(player.HeldItem.useTime * 9 / player.GetAttackSpeed(DamageClass.Ranged)))
+                    if (Timer >= (maxTime * 9))
                         player.channel = false;
-                    if (Timer % (int)(player.HeldItem.useTime * 2 / player.GetAttackSpeed(DamageClass.Ranged)) == 0)
+                    if (Timer % (maxTime * 2) == 0)
                     {
                         if (!Main.dedServ)
                             SoundEngine.PlaySound(CustomSounds.ShieldActivate with { Volume = 0.6f, Pitch = Timer / 300 }, Projectile.position);
                         player.GetModPlayer<EnergyPlayer>().statEnergy -= 3;
                     }
                 }
-                else if (Timer >= (int)(player.HeldItem.useTime * 9 / player.GetAttackSpeed(DamageClass.Ranged)) && player.GetModPlayer<EnergyPlayer>().statEnergy >= 2)
+                else if (Timer >= (maxTime * 9) && player.GetModPlayer<EnergyPlayer>().statEnergy >= 2)
                 {
-                    if (Timer < (int)(player.HeldItem.useTime * 20 / player.GetAttackSpeed(DamageClass.Ranged)))
+                    if (Timer < (maxTime * 20))
                     {
-                        if (player.GetModPlayer<EnergyPlayer>().statEnergy > 0)
+                        if (player.GetModPlayer<EnergyPlayer>().statEnergy >= 0)
                         {
                             if (!Main.dedServ)
                             {
-                                if (Timer > (int)(player.HeldItem.useTime * 6 / player.GetAttackSpeed(DamageClass.Ranged)))
+                                if (Timer > (maxTime * 6))
                                 {
                                     SoundEngine.PlaySound(CustomSounds.MACEProjectLaunch, Projectile.position);
                                     SoundEngine.PlaySound(CustomSounds.SparkBlast.WithVolumeScale(2), Projectile.position);
@@ -136,17 +138,17 @@ namespace Redemption.Items.Weapons.PostML.Ranged
 
                             if (Projectile.owner == Main.myPlayer)
                             {
-                                Projectile.NewProjectile(Projectile.GetSource_FromAI(), gunPos, RedeHelper.PolarVector(3, Projectile.velocity.ToRotation()), ProjectileType<XeniumElectrolaser_Beam>(), Projectile.damage * 5, Projectile.knockBack, player.whoAmI, 20);
+                                Projectile.NewProjectile(Projectile.GetSource_FromAI(), gunPos, Projectile.velocity.RotateRandom(0) * 3, ProjectileType<XeniumElectrolaser_Beam>(), Projectile.damage * 5, Projectile.knockBack, player.whoAmI, 20);
 
                                 player.velocity -= RedeHelper.PolarVector(3, (Main.MouseWorld - player.Center).ToRotation());
                             }
                             player.RedemptionScreen().ScreenShakeIntensity += 20;
                         }
-                        Timer = player.HeldItem.useTime * 20;
+                        Timer = maxTime * 20;
                     }
                     else
                     {
-                        if (Timer++ >= player.HeldItem.useTime * 21)
+                        if (Timer++ >= maxTime * 21)
                             Projectile.Kill();
                     }
                 }
@@ -167,7 +169,6 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                     if (Projectile.owner == Main.myPlayer)
                     {
                         player.velocity -= RedeHelper.PolarVector(5, (Main.MouseWorld - player.Center).ToRotation());
-
                         Projectile.NewProjectile(Projectile.GetSource_FromAI(), stayPos, stayVel, ProjectileType<XeniumElectrolaser_Beam2>(), Projectile.damage, Projectile.knockBack, player.whoAmI);
                     }
                     offset = 25;
@@ -198,6 +199,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                     if (Timer >= 180)
                         Projectile.Kill();
                 }
+                RedeParticleManager.CreateAdditiveGlowParticle(stayPos, stayVel * 2, Vector2.One * 0.5f, new(186, 255, 185), 8);
             }
             shake = MathHelper.Min(shake, 3f);
             offset = MathHelper.Clamp(offset, 0, 40);

@@ -55,7 +55,7 @@ namespace Redemption.Projectiles.Magic
         {
             Player player = Main.player[Projectile.owner];
             Projectile host = Main.projectile[(int)Projectile.ai[0]];
-            Projectile.rotation = host.rotation + (host.spriteDirection == -1 ? (float)Math.PI : 0);
+            Projectile.rotation = host.rotation;
             Projectile.velocity = RedeHelper.PolarVector(1f, Projectile.rotation);
 
             RedeParticleManager.CreateEmberParticle(Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Main.rand.Next(0, Projectile.height)), RedeHelper.PolarVector(5, Projectile.rotation), 1, Main.rand.Next(90, 121));
@@ -76,7 +76,7 @@ namespace Redemption.Projectiles.Magic
             if (AITimer == 0)
                 LaserScale = 0.1f;
             else
-                Projectile.Center = host.Center + RedeHelper.PolarVector(6, host.rotation + MathHelper.PiOver2);
+                Projectile.Center = host.Center;
 
             if (AITimer <= 10)
             {

@@ -24,7 +24,7 @@ namespace Redemption.Items.Weapons.HM.Magic
 
         public override void SetDefaults()
         {
-            Item.damage = 65;
+            Item.damage = 60;
             Item.DamageType = DamageClass.Magic;
             Item.mana = 7;
             Item.width = 64;
@@ -52,10 +52,8 @@ namespace Redemption.Items.Weapons.HM.Magic
         {
             Vector2 Offset = Vector2.Normalize(velocity) * 70f;
 
-            if (Collision.CanHit(position, 0, 0, position + Offset, 0, 0))
-            {
+            if (Collision.CanHit(position, 16, 16, position + Offset, 16, 16))
                 position += Offset;
-            }
 
             if (CastCount++ > 0)
                 velocity *= (CastCount / 20f) + 1;

@@ -48,12 +48,17 @@ internal static class CrossMod
 		public static explicit operator Mod(ModEntry e) => e.Instance;
 	}
 
-	public static readonly ModEntry Fables = new("CalamityFables");
-	public static readonly ModEntry Thorium = new("ThoriumMod");
-	public static readonly ModEntry NewBeginnings = new("NewBeginnings");
-	public static readonly ModEntry MusicDisplay = new("MusicDisplay");
-	public static readonly ModEntry Reforged = new("SpiritReforged");
+    public static readonly ModEntry Fables = new("CalamityFables");
+    public static readonly ModEntry Thorium = new("ThoriumMod");
+    public static readonly ModEntry NewBeginnings = new("NewBeginnings");
+    public static readonly ModEntry MusicDisplay = new("MusicDisplay");
+    public static readonly ModEntry Reforged = new("SpiritReforged");
+    public static readonly ModEntry Spooky = new("Spooky");
+    public static readonly ModEntry TooltipIcon = new("TooltipIcon");
+    public static readonly ModEntry Infernum = new("InfernumMode");
+    public static readonly ModEntry Calamity = new("CalamityMod");
+    public static readonly ModEntry Synergia = new("Synergia");
 
-	/// <summary> The names and instances of loaded crossmod mods per <see cref="ModEntry"/>. </summary>
-	private static readonly Dictionary<string, Mod> LoadedMods = [];
+    /// <summary> The names and instances of loaded crossmod mods per <see cref="ModEntry"/>. </summary>
+    private static readonly Dictionary<string, Mod> LoadedMods = [];
 }

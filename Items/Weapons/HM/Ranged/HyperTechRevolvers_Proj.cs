@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -30,6 +31,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Projectile.alpha = 255;
             Projectile.hide = true;
         }
+        public override bool ShouldUpdatePosition() => false;
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
             if (Projectile.ai[0] == 1)
@@ -76,9 +78,11 @@ namespace Redemption.Items.Weapons.HM.Ranged
                 return;
             }
 
-            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter);
-            ProjHelper.HoldOutProjBasics(Projectile, player, vector);
-            Projectile.Center = vector;
+            Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter);
+            ProjHelper.HoldOutProjBasics(Projectile, player, playerCenter);
+            int firerate = (int)(player.HeldItem.useTime / player.GetTotalAttackSpeed(DamageClass.Ranged));
+
+            Projectile.Center = playerCenter;
             Projectile.spriteDirection = Projectile.direction;
             Projectile.timeLeft = 2;
             player.ChangeDir(Projectile.direction);
@@ -92,13 +96,12 @@ namespace Redemption.Items.Weapons.HM.Ranged
                 num = MathHelper.Pi;
             Projectile.rotation = Projectile.velocity.ToRotation() + num;
 
-            Vector2 gunPos = Projectile.Center + RedeHelper.PolarVector(21 * Projectile.spriteDirection, Projectile.rotation) + RedeHelper.PolarVector(-6, Projectile.rotation + MathHelper.PiOver2);
+            Vector2 gunPos = playerCenter + Projectile.velocity.SafeNormalize(default).RotatedBy(1.57f) * -4 * Projectile.direction + Projectile.velocity.SafeNormalize(default) * 20;
             if (Projectile.ai[0] == 1)
-                gunPos = Projectile.Center + RedeHelper.PolarVector(15 * Projectile.spriteDirection, Projectile.rotation) + RedeHelper.PolarVector(-12, Projectile.rotation + MathHelper.PiOver2);
+                gunPos = playerCenter + Projectile.velocity.SafeNormalize(default).RotatedBy(1.57f) * -14 * Projectile.direction + Projectile.velocity.SafeNormalize(default) * 20;
 
             offset -= 5;
-            rotOffset += 0.1f;
-            int firerate = player.HeldItem.useTime;
+            rotOffset += 0.05f;
             if (player.HasBuff<RevolverTossBuff>())
                 firerate = (int)(player.HeldItem.useTime * 0.8f);
             else if (player.HasBuff<RevolverTossBuff2>())
@@ -106,28 +109,40 @@ namespace Redemption.Items.Weapons.HM.Ranged
             else if (player.HasBuff<RevolverTossBuff3>())
                 firerate = (int)(player.HeldItem.useTime * 0.4f);
 
-            if (!player.channel)
-                Projectile.Kill();
-            else
+            if (Projectile.localAI[1]++ % firerate == 0)
             {
-                if (++Projectile.localAI[1] % firerate == 0)
+                if (!player.channel)
                 {
-                    if (!swap)
+                    Projectile.Kill();
+                    return;
+                }
+                if (!swap)
+                {
+                    if (player.PickAmmo(player.HeldItem, out bullet, out float shootSpeed, out int weaponDamage, out float weaponKnockback, out int usedAmmoId))
                     {
-                        if (player.PickAmmo(player.HeldItem, out bullet, out float shootSpeed, out int weaponDamage, out float weaponKnockback, out int usedAmmoId))
-                        {
-                            if (bullet == ProjectileID.Bullet)
-                                bullet = ProjectileID.NanoBullet;
+                        if (bullet == ProjectileID.Bullet)
+                            bullet = ProjectileID.NanoBullet;
 
-                            offset = 15;
-                            rotOffset = -0.6f;
-                            SoundEngine.PlaySound(SoundID.Item41, Projectile.position);
+                        offset = 15;
+                        rotOffset = -0.3f;
+                        SoundEngine.PlaySound(SoundID.Item41, Projectile.position);
 
-                            if (Projectile.owner == Main.myPlayer)
-                                Projectile.NewProjectile(Projectile.GetSource_FromAI(), gunPos, RedeHelper.PolarVector(shootSpeed, (Main.MouseWorld - gunPos).ToRotation()), bullet, Projectile.damage, Projectile.knockBack, player.whoAmI);
-                        }
+                        if (Projectile.owner == Main.myPlayer)
+                            Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), gunPos, Projectile.velocity.SafeNormalize(default) * shootSpeed, bullet, Projectile.damage, Projectile.knockBack, player.whoAmI).rotation = Projectile.velocity.ToRotation() + 1.57f;
                     }
-                    swap = !swap;
+                }
+                swap = !swap;
+            }
+            if (Main.mouseRight && Main.mouseRightRelease)
+            {
+                if (player.ownedProjectileCounts[ProjectileType<HyperTechRevolvers_Proj2>()] == 0 && Projectile.ai[0] == 1)
+                {
+                    SoundEngine.PlaySound(SoundID.Item7, player.Center);
+                    float dir = player.velocity.X > 0 ? 1 : -1;
+                    float speed = MathF.Abs(player.velocity.X);
+                    float velX = speed < 3 ? Main.rand.NextFloat(-3, 3) : Main.rand.NextFloat(3, 3 + speed * 0.2f) * dir;
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), playerCenter, new Vector2(velX, -10), ProjectileType<HyperTechRevolvers_Proj2>(), 0, 0, player.whoAmI, -player.direction);
+                    Projectile.Kill();
                 }
             }
             offset = MathHelper.Clamp(offset, 0, 20);
@@ -140,8 +155,8 @@ namespace Redemption.Items.Weapons.HM.Ranged
             SpriteEffects spriteEffects = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Texture2D glow = Request<Texture2D>(Texture + "_Glow").Value;
-            Vector2 drawOrigin = new(texture.Width / 2, Projectile.height / 2);
-            Vector2 v = RedeHelper.PolarVector(-26 + offset, Projectile.velocity.ToRotation());
+            Vector2 drawOrigin = Projectile.spriteDirection == 1 ? new(0, texture.Height / 2) : new(texture.Width, texture.Height / 2);
+            Vector2 v = RedeHelper.PolarVector(offset, Projectile.velocity.ToRotation());
             Vector2 pos = Projectile.Center;
             if (Projectile.ai[0] == 1)
                 pos = Projectile.Center - new Vector2(6 * Projectile.spriteDirection, 6);

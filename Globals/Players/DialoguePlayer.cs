@@ -12,6 +12,7 @@ namespace Redemption.Globals.Players
         {
             // There'll be a lot more here in 0.8.........
             AdamShop,
+            HollowfireSmith0,
 
             Count
         }

@@ -26,6 +26,7 @@ namespace Redemption.Globals
         public static int forestNymphVar;
         public static int calaviaVar;
         public static int slayerRep;
+        public static byte hollowfireSmithVar;
 
         public static bool[] adviceUnlocked = new bool[9];
         public static bool[] adviceSeen = new bool[20];
@@ -141,6 +142,7 @@ namespace Redemption.Globals
             forestNymphVar = 0;
             calaviaVar = 0;
             slayerRep = 0;
+            hollowfireSmithVar = 0;
 
             for (int k = 0; k < adviceUnlocked.Length; k++)
                 adviceUnlocked[k] = false;
@@ -183,6 +185,7 @@ namespace Redemption.Globals
             tag["FNV"] = forestNymphVar;
             tag["CV"] = calaviaVar;
             tag["slayerRep"] = slayerRep;
+            tag["hollowfireSmithVar"] = hollowfireSmithVar;
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -205,6 +208,7 @@ namespace Redemption.Globals
             forestNymphVar = tag.GetInt("FNV");
             calaviaVar = tag.GetInt("CV");
             slayerRep = tag.GetInt("slayerRep");
+            hollowfireSmithVar = tag.GetByte("hollowfireSmithVar");
         }
 
         #region Netcode
@@ -323,6 +327,7 @@ namespace Redemption.Globals
             writer.Write(forestNymphVar);
             writer.Write(calaviaVar);
             writer.Write(slayerRep);
+            writer.Write(hollowfireSmithVar);
         }
 
         public override void NetReceive(BinaryReader reader)
@@ -406,6 +411,7 @@ namespace Redemption.Globals
             forestNymphVar = reader.ReadInt32();
             calaviaVar = reader.ReadInt32();
             slayerRep = reader.ReadInt32();
+            hollowfireSmithVar = reader.ReadByte();
         }
         #endregion
     }

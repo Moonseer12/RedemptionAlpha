@@ -26,7 +26,7 @@ namespace Redemption.Projectiles.Ranged
             Projectile.tileCollide = true;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.ignoreWater = true;
-            Projectile.timeLeft = 180;
+            Projectile.timeLeft = 240;
             Projectile.hide = true;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 20;
@@ -37,21 +37,31 @@ namespace Redemption.Projectiles.Ranged
         }
         public override void AI()
         {
-            if (++Projectile.frameCounter >= 10)
+            if (Projectile.localAI[0] < 160)
             {
-                Projectile.frameCounter = 0;
-                if (++Projectile.frame >= 6)
+                if (++Projectile.frameCounter >= 10)
                 {
-                    Projectile.frame = 5;
+                    Projectile.frameCounter = 0;
+                    if (++Projectile.frame >= 6)
+                    {
+                        Projectile.frame = 5;
+                    }
                 }
             }
+            else
+            {
+                if (++Projectile.frameCounter >= 10)
+                {
+                    Projectile.frameCounter = 0;
+                    if (--Projectile.frame < 0)
+                    {
+                        Projectile.Kill();
+                    }
+                }
+            }
+
             Projectile.localAI[0]++;
             Projectile.velocity.Y++;
-
-            if (Projectile.localAI[0] >= 160)
-                Projectile.alpha += 10;
-            if (Projectile.alpha >= 255)
-                Projectile.Kill();
         }
         public override bool? CanHitNPC(NPC target) => !target.friendly && Projectile.frame >= 3 ? null : false;
 

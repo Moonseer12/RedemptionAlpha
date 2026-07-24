@@ -1,7 +1,12 @@
 using Microsoft.Xna.Framework.Graphics;
+using Redemption.Base;
 using Redemption.Effects;
+using Redemption.Globals;
+using Redemption.Particles;
+using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -24,6 +29,15 @@ namespace Redemption.Projectiles.Ranged
             Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.Ranged;
         }
+        public override bool ShouldUpdatePosition() => false;
+        private Vector2 origPos;
+        private Vector2 targetPos;
+        public override void OnSpawn(IEntitySource source)
+        {
+            origPos = Projectile.Center;
+            if (Main.myPlayer == Projectile.owner)
+                targetPos = Main.MouseWorld;
+        }
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
@@ -35,19 +49,15 @@ namespace Redemption.Projectiles.Ranged
             }
             int d2 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.DungeonSpirit, Projectile.velocity.X * 0.5f, Projectile.velocity.Y * 0.5f);
             Main.dust[d2].noGravity = true;
-            Vector2 vector = new Vector2(Projectile.ai[0], Projectile.ai[1]) - Projectile.Center;
-            if (vector.Length() < Projectile.velocity.Length())
+
+            if (Projectile.timeLeft > 3600 - 60)
             {
-                Projectile.velocity *= 0f;
-                Projectile.rotation = 0;
-                Projectile.localAI[0] = 1;
+                float p = EaseFunction.EaseQuinticOut.Ease(Utils.GetLerpValue(3600, 3600 - 60, Projectile.timeLeft, true));
+                Projectile.Center = Vector2.Lerp(origPos, targetPos, p);
             }
-            else if (Projectile.localAI[0] == 0)
-            {
-                vector.Normalize();
-                Projectile.velocity = Vector2.Lerp(Projectile.velocity, vector * 11.2f, 0.1f);
-                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            }
+            else
+                Projectile.velocity *= 0;
+
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile proj = Main.projectile[i];
@@ -55,7 +65,7 @@ namespace Redemption.Projectiles.Ranged
                     continue;
 
                 float point = 0;
-                if (other == null || !other.active || other.type != Type || !Collision.CheckAABBvLineCollision(proj.position, proj.Size, Projectile.Center, other.Center, 20, ref point))
+                if (other == null || !other.active || other.type != Type || !Collision.CheckAABBvLineCollision(proj.position, proj.Size, Projectile.Center, other.Center, 20 + proj.velocity.Length(), ref point))
                     continue;
 
                 SoundEngine.PlaySound(SoundID.Zombie53 with { Volume = 0.6f }, proj.Center);
@@ -63,7 +73,11 @@ namespace Redemption.Projectiles.Ranged
                 {
                     int d = Dust.NewDust(proj.position, proj.width, proj.height, DustID.DungeonSpirit, Projectile.velocity.X * 0.5f, Projectile.velocity.Y * 0.5f);
                     Main.dust[d].velocity *= 3f;
+                    Main.dust[d].noGravity = true;
+                    Vector2 vel = proj.velocity.RotateRandom(1) * Main.rand.NextFloat(0.1f, 1);
+                    RedeParticleManager.CreateSharpParticle(proj.position, vel, 0.5f, Color.LightCyan);
                 }
+               
                 proj.active = false;
                 Projectile.NewProjectile(Projectile.GetSource_FromAI(), proj.Center, proj.velocity, ProjectileType<SpiritArrow_Proj>(), proj.damage, proj.knockBack, player.whoAmI);
             }

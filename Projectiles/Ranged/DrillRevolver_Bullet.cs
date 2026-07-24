@@ -30,6 +30,7 @@ namespace Redemption.Projectiles.Ranged
             Projectile.timeLeft = 400;
             Projectile.tileCollide = false;
             Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 8;
             Projectile.extraUpdates = 1;
             origVelocity = Projectile.velocity;
         }
@@ -72,7 +73,7 @@ namespace Redemption.Projectiles.Ranged
 
             if (Projectile.localAI[0] == 1)
             {
-                Projectile.velocity = origVelocity / 8;
+                Projectile.velocity = Projectile.velocity.SafeNormalize(default) * 2;
                 if (Projectile.localAI[1]++ % 10 == 0)
                 {
                     for (int i = 0; i < 10; i++)
@@ -99,12 +100,7 @@ namespace Redemption.Projectiles.Ranged
                         Main.dust[d].noGravity = true;
                     }
                 }
-                if (Projectile.localAI[2] < 10)
-                {
-                    Projectile.velocity *= 0.1f;
-                }
-                else
-                    Projectile.velocity = origVelocity / 8;
+                Projectile.velocity = Projectile.velocity.SafeNormalize(default) * 1;
             }
             else
             {
@@ -117,14 +113,15 @@ namespace Redemption.Projectiles.Ranged
             modifiers.Knockback *= 0;
             modifiers.FinalDamage *= Projectile.penetrate / 30f;
 
+            if (!target.boss && target.knockBackResist > 0)
+                target.velocity *= 0.1f;
+
             if (Projectile.penetrate <= 2)
                 Projectile.Kill();
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffType<BrokenArmorDebuff>(), 40);
-            Projectile.localNPCImmunity[target.whoAmI] = 8;
-            target.immune[Projectile.owner] = 0;
         }
         public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
         {

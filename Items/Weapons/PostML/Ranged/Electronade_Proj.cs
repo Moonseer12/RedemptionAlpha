@@ -113,6 +113,8 @@ namespace Redemption.Items.Weapons.PostML.Ranged
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 180;
+            Projectile.usesIDStaticNPCImmunity = true;
+            Projectile.idStaticNPCHitCooldown = 20;
         }
         public override void AI()
         {

@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Redemption.Dusts;
 using Redemption.Globals;
 using Redemption.Items.Materials.PreHM;
+using Redemption.Particles;
 using Redemption.Projectiles.Magic;
 using System;
 using Terraria;
@@ -62,8 +63,8 @@ namespace Redemption.Items.Weapons.PreHM.Magic
         public override bool ShouldUpdatePosition() => false;
         public override void SetSafeDefaults()
         {
-            Projectile.width = 100;
-            Projectile.height = 100;
+            Projectile.width = 120;
+            Projectile.height = 120;
             Projectile.friendly = false;
             Projectile.hostile = false;
             Projectile.tileCollide = false;
@@ -87,11 +88,13 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             {
                 for (int i = 0; i < 15; i++)
                 {
-                    int dust = Dust.NewDust(Projectile.Center, 1, 1, DustType<GlowDust>(), direction.X, direction.Y, Scale: .5f);
-                    Main.dust[dust].velocity *= 3;
-                    Main.dust[dust].noGravity = true;
-                    Color dustColor = new(61, 255, 178) { A = 0 };
-                    Main.dust[dust].color = dustColor;
+                    Color dustColor = new(61, 255, 178);
+                    Vector2 pos = Projectile.Center;
+                    Vector2 vel = direction.RotateRandom(1) * Main.rand.NextFloat(4, 16);
+                    Vector2 scale = Vector2.One * Main.rand.NextFloat(0.5f, 0.75f);
+                    RedeParticleManager.CreateAdditiveGlowParticle(pos, vel, scale, dustColor, 24, 0.98f);
+                    RedeParticleManager.CreateAdditiveGlowParticle(pos, vel, scale, dustColor, 24, 0.98f);
+                    RedeParticleManager.CreateAdditiveGlowParticle(pos, vel, scale, dustColor, 24, 0.98f);
                 }
             }
             if (Timer < 10 && Projectile.ai[1] is 0)
@@ -120,6 +123,8 @@ namespace Redemption.Items.Weapons.PreHM.Magic
                         proj.localAI[0]++;
                     proj.timeLeft = 300;
                     proj.penetrate = 6 + (int)proj.localAI[0];
+                    proj.extraUpdates = 3;
+                    proj.ResetLocalNPCHitImmunity();
                     proj.netUpdate = true;
                     Projectile.ai[1] = 1;
                 }
@@ -138,8 +143,8 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             scale *= MathF.Pow(progress, 0.3f);
             float opacity = 1 - progress;
             Color color = new(61, 255, 178);
-            Main.EntitySpriteDraw(texture, Projectile.Center + direction * 20 - Main.screenPosition, new Rectangle?(rect), Projectile.GetAlpha(color) * opacity, Projectile.rotation, drawOrigin, scale * 0.6f, spriteEffects, 0);
-            Main.EntitySpriteDraw(texture, Projectile.Center + direction * 20 - Main.screenPosition, new Rectangle?(rect), Projectile.GetAlpha(color) * opacity, Projectile.rotation, drawOrigin, scale * 0.3f, spriteEffects, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center + direction * 10 - Main.screenPosition, new Rectangle?(rect), Projectile.GetAlpha(color) * opacity, Projectile.rotation, drawOrigin, scale * 0.6f, spriteEffects, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center + direction * 15 - Main.screenPosition, new Rectangle?(rect), Projectile.GetAlpha(color) * opacity, Projectile.rotation, drawOrigin, scale * 0.3f, spriteEffects, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.BeginDefault();

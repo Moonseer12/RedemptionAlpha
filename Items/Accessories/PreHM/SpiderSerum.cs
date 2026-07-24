@@ -20,7 +20,7 @@ namespace Redemption.Items.Accessories.PreHM
         }
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.buffImmune[BuffID.Webbed] = true;
+            player.buffImmune[BuffID.Rabies] = true;
             player.buffImmune[ModContent.BuffType<SpiderSwarmedDebuff>()] = true;
             BuffPlayer modPlayer = player.RedemptionPlayerBuff();
             modPlayer.spiderFriendly = true;

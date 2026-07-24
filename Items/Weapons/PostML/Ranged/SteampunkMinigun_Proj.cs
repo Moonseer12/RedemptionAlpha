@@ -40,6 +40,8 @@ namespace Redemption.Items.Weapons.PostML.Ranged
             Player player = Main.player[Projectile.owner];
             Vector2 vector = player.RotatedRelativePoint(player.MountedCenter);
             ProjHelper.HoldOutProjBasics(Projectile, player, vector);
+            int maxTime = (int)(player.HeldItem.useTime / player.GetTotalAttackSpeed(DamageClass.Ranged));
+
             Projectile.Center = vector;
             Projectile.spriteDirection = Projectile.direction;
             Projectile.timeLeft = 2;
@@ -55,7 +57,6 @@ namespace Redemption.Items.Weapons.PostML.Ranged
             Projectile.rotation = Projectile.velocity.ToRotation() + num;
 
             offset -= 1;
-            float maxTime = (player.HeldItem.useTime / player.GetAttackSpeed(DamageClass.Ranged));
             switch (Case)
             {
                 case 0:
@@ -67,11 +68,11 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                     }
 
                     Charge++;
-                    if (Charge >= (int)maxTime)
+                    if (Charge >= maxTime)
                         shake += 0.01f;
-                    if (Charge % (int)maxTime == (int)maxTime - 1 && !Main.dedServ)
+                    if (Charge % maxTime == maxTime - 1 && !Main.dedServ)
                         SoundEngine.PlaySound(CustomSounds.WindUp, Projectile.position);
-                    if (Charge >= (int)(maxTime * 3))
+                    if (Charge >= (maxTime * 3))
                     {
                         Case = 1;
                         if (!Main.dedServ)
@@ -122,7 +123,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                     }
                     if (Timer >= 2 && Charge > 0)
                     {
-                        Charge -= maxTime / 30f;
+                        Charge -= maxTime * 0.03333f;
                         Timer = 0;
                     }
 
@@ -134,7 +135,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
 
                     if (player.controlUseItem)
                     {
-                        if (Timer2++ % (int)(maxTime) == 0)
+                        if (Timer2++ % maxTime == 0)
                             SoundEngine.PlaySound(CustomSounds.WindUp, Projectile.position);
                         player.velocity.X *= 0.1f;
                         Charge++;
@@ -146,7 +147,7 @@ namespace Redemption.Items.Weapons.PostML.Ranged
                     break;
             }
             shake = MathHelper.Min(shake, 0.8f);
-            Charge = MathHelper.Clamp(Charge, 0, (int)(maxTime * 3));
+            Charge = MathHelper.Clamp(Charge, 0, maxTime * 3);
             offset = MathHelper.Clamp(offset, 0, 20);
             if (Projectile.ai[1]++ > 1)
                 Projectile.alpha = 0;

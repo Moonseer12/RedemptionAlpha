@@ -145,7 +145,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
                         break;
                     case 2:
                         player.GetModPlayer<EnergyPlayer>().statEnergy -= 2;
-                        int proj4 = Projectile.NewProjectile(source, position, velocity, ProjectileType<ReboundShot>(), damage * 3 / 2, knockback, player.whoAmI);
+                        int proj4 = Projectile.NewProjectile(source, position, velocity, ProjectileType<ReboundShot>(), damage, knockback, player.whoAmI);
                         Main.projectile[proj4].DamageType = DamageClass.Ranged;
                         Main.projectile[proj4].hostile = false;
                         Main.projectile[proj4].friendly = true;
@@ -177,11 +177,8 @@ namespace Redemption.Items.Weapons.HM.Ranged
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
             Vector2 Offset = Vector2.Normalize(velocity) * 40f;
-
-            if (Collision.CanHit(position, 0, 0, position + Offset, 0, 0))
-            {
+            if (Collision.CanHit(position, 16, 16, position + Offset, 16, 16))
                 position += Offset;
-            }
         }
         public override Vector2? HoldoutOffset()
         {

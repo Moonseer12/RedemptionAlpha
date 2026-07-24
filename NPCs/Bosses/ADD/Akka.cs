@@ -163,7 +163,7 @@ namespace Redemption.NPCs.Bosses.ADD
 
             notExpertRule.OnSuccess(ItemDropRule.NotScalingWithLuck(ModContent.ItemType<AkkaMask>(), 7));
 
-            notExpertRule.OnSuccess(ItemDropRule.OneFromOptions(1, ModContent.ItemType<PoemOfIlmatar>(), ModContent.ItemType<Pihlajasauva>()));
+            notExpertRule.OnSuccess(ItemDropRule.OneFromOptions(1, ItemType<PoemOfIlmatar>(), ItemType<Pihlajasauva>(), ItemType<AkkaRoseSentry>()));
             notExpertRule.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ViisaanKantele>(), 10));
 
             npcLoot.Add(notExpertRule);

@@ -1,8 +1,8 @@
-using Terraria.ModLoader;
-using Terraria.ID;
-using Redemption.Walls;
 using Redemption.Rarities;
+using Redemption.Walls;
 using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace Redemption.Items.Placeable.Tiles
 {
@@ -15,17 +15,17 @@ namespace Redemption.Items.Placeable.Tiles
 
         public override void SetDefaults()
         {
-            Item.DefaultToPlaceableWall((ushort)ModContent.WallType<ShinkiteBrickWallTile>());
+            Item.DefaultToPlaceableWall((ushort)WallType<ShinkiteBrickWallTile>());
             Item.width = 24;
             Item.height = 24;
             Item.maxStack = Item.CommonMaxStack;
-            Item.rare = ModContent.RarityType<TurquoiseRarity>();
+            Item.rare = RarityType<TurquoiseRarity>();
         }
 
         public override void AddRecipes()
         {
             CreateRecipe(4)
-                .AddIngredient(ModContent.ItemType<ShinkiteBrick>())
+                .AddIngredient(ItemType<ShinkiteBrick>())
                 .AddTile(TileID.WorkBenches)
                 .Register();
         }

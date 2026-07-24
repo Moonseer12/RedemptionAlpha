@@ -21,8 +21,8 @@ namespace Redemption.Projectiles.Magic
         }
         public override void SetDefaults()
         {
-            Projectile.width = 16;
-            Projectile.height = 24;
+            Projectile.width = 18;
+            Projectile.height = 28;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = 1;
             Projectile.hostile = false;
@@ -35,8 +35,8 @@ namespace Redemption.Projectiles.Magic
         }
         public override void AI()
         {
-            Projectile.width = 16;
-            Projectile.height = 24;
+            Projectile.width = 18;
+            Projectile.height = 28;
             Projectile.scale += 0.03f;
             Projectile.scale = MathHelper.Clamp(Projectile.scale, 0, 1);
             if (Projectile.scale >= 1)

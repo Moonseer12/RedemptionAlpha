@@ -14,9 +14,9 @@ namespace Redemption.Items.Placeable.Furniture.Misc
         }
         public override void SetDefaults()
         {
-            Item.DefaultToPlaceableTile(ModContent.TileType<KingChessPieceTile>(), 0);
-            Item.width = 20;
-            Item.height = 46;
+            Item.DefaultToPlaceableTile(TileType<KingChessPieceTile>(), 0);
+            Item.width = 22;
+            Item.height = 52;
             Item.maxStack = Item.CommonMaxStack;
             Item.value = Item.sellPrice(0, 0, 8, 0);
         }

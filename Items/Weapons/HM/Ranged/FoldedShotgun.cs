@@ -71,6 +71,8 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Player player = Main.player[Projectile.owner];
             Vector2 vector = player.RotatedRelativePoint(player.MountedCenter);
             ProjHelper.HoldOutProjBasics(Projectile, player, vector);
+            int maxTime = (int)(player.HeldItem.useTime / player.GetTotalAttackSpeed(DamageClass.Ranged));
+
             Projectile.timeLeft = 2;
             player.ChangeDir(Projectile.direction);
             player.heldProj = Projectile.whoAmI;
@@ -86,54 +88,54 @@ namespace Redemption.Items.Weapons.HM.Ranged
 
             if (Projectile.localAI[0]++ > 0 && Main.myPlayer == Projectile.owner)
             {
-                if (!player.channel && Projectile.localAI[1] >= (int)(player.HeldItem.useTime / player.GetAttackSpeed(DamageClass.Ranged)))
-                    Projectile.Kill();
-                else
+                if (Projectile.localAI[1]++ % maxTime == 0)
                 {
-                    if (Projectile.localAI[1]++ % (int)(player.HeldItem.useTime / player.GetAttackSpeed(DamageClass.Ranged)) == 0)
+                    if (!player.channel)
                     {
-                        if (player.PickAmmo(player.HeldItem, out bullet, out float shootSpeed, out int weaponDamage, out float weaponKnockback, out int usedAmmoId))
+                        Projectile.Kill();
+                        return;
+                    }
+                    if (player.PickAmmo(player.HeldItem, out bullet, out float shootSpeed, out int weaponDamage, out float weaponKnockback, out int usedAmmoId))
+                    {
+                        flashEffect = true;
+                        offset = 15;
+                        rotOffset = -0.5f;
+
+                        player.RedemptionScreen().ScreenShakeIntensity += 3;
+                        player.velocity -= RedeHelper.PolarVector(2, (Main.MouseWorld - player.Center).ToRotation());
+
+                        if (!Main.dedServ)
+                            SoundEngine.PlaySound(CustomSounds.HLShotgun1, Projectile.position);
+
+                        for (int i = 0; i < 20; i++)
                         {
-                            flashEffect = true;
-                            offset = 15;
-                            rotOffset = -0.5f;
+                            Vector2 vel = RedeHelper.PolarVector(Main.rand.NextFloat(3, 7) * Projectile.spriteDirection, Projectile.rotation + Main.rand.NextFloat(-0.4f, 0.4f));
+                            int num5 = Dust.NewDust(gunSmokePos - new Vector2(6), 12, 12, DustID.Smoke, 0, 0, Scale: 1f);
+                            Main.dust[num5].velocity = vel;
+                            Main.dust[num5].velocity *= 0.66f;
+                            Main.dust[num5].noGravity = true;
 
-                            player.RedemptionScreen().ScreenShakeIntensity += 3;
-                            player.velocity -= RedeHelper.PolarVector(2, (Main.MouseWorld - player.Center).ToRotation());
+                            vel = RedeHelper.PolarVector(Main.rand.NextFloat(4, 16) * Projectile.spriteDirection, Projectile.rotation + Main.rand.NextFloat(-0.3f, 0.3f));
+                            num5 = Dust.NewDust(gunSmokePos - new Vector2(6), 12, 12, DustID.Smoke, 0, 0, Scale: 2f);
+                            Main.dust[num5].velocity = vel;
+                            Main.dust[num5].velocity *= 0.66f;
+                            Main.dust[num5].noGravity = true;
 
-                            if (!Main.dedServ)
-                                SoundEngine.PlaySound(CustomSounds.HLShotgun1, Projectile.position);
-
-                            for (int i = 0; i < 20; i++)
-                            {
-                                Vector2 vel = RedeHelper.PolarVector(Main.rand.NextFloat(3, 7) * Projectile.spriteDirection, Projectile.rotation + Main.rand.NextFloat(-0.4f, 0.4f));
-                                int num5 = Dust.NewDust(gunSmokePos - new Vector2(6), 12, 12, DustID.Smoke, 0, 0, Scale: 1f);
-                                Main.dust[num5].velocity = vel;
-                                Main.dust[num5].velocity *= 0.66f;
-                                Main.dust[num5].noGravity = true;
-
-                                vel = RedeHelper.PolarVector(Main.rand.NextFloat(4, 16) * Projectile.spriteDirection, Projectile.rotation + Main.rand.NextFloat(-0.3f, 0.3f));
-                                num5 = Dust.NewDust(gunSmokePos - new Vector2(6), 12, 12, DustID.Smoke, 0, 0, Scale: 2f);
-                                Main.dust[num5].velocity = vel;
-                                Main.dust[num5].velocity *= 0.66f;
-                                Main.dust[num5].noGravity = true;
-
-                                num5 = Dust.NewDust(gunSmokePos - new Vector2(6), 12, 12, DustID.Torch, 0, 0, Scale: 2f);
-                                Main.dust[num5].velocity = vel;
-                                Main.dust[num5].velocity *= 0.66f;
-                                Main.dust[num5].noGravity = true;
-                            }
-
-                            int numberProjectiles = 4 + Main.rand.Next(3);
-                            for (int i = 0; i < numberProjectiles; i++)
-                            {
-                                Vector2 perturbedSpeed = RedeHelper.PolarVector(shootSpeed, (Main.MouseWorld - gunPos).ToRotation()).RotatedByRandom(MathHelper.ToRadians(15));
-                                float scale = 1f - (Main.rand.NextFloat() * .5f);
-                                perturbedSpeed *= scale;
-                                Projectile.NewProjectile(player.GetSource_FromThis(), Projectile.Center, perturbedSpeed, bullet, Projectile.damage, Projectile.knockBack, player.whoAmI);
-                            }
-                            RedeHelper.NPCRadiusDamage(Projectile.Center + RedeHelper.OffsetWithRotation(Projectile, 52, -5), 60, Projectile, Projectile.damage * 2, Projectile.knockBack);
+                            num5 = Dust.NewDust(gunSmokePos - new Vector2(6), 12, 12, DustID.Torch, 0, 0, Scale: 2f);
+                            Main.dust[num5].velocity = vel;
+                            Main.dust[num5].velocity *= 0.66f;
+                            Main.dust[num5].noGravity = true;
                         }
+
+                        int numberProjectiles = 4 + Main.rand.Next(3);
+                        for (int i = 0; i < numberProjectiles; i++)
+                        {
+                            Vector2 perturbedSpeed = RedeHelper.PolarVector(shootSpeed, (Main.MouseWorld - gunPos).ToRotation()).RotatedByRandom(MathHelper.ToRadians(15));
+                            float scale = 1f - (Main.rand.NextFloat() * .5f);
+                            perturbedSpeed *= scale;
+                            Projectile.NewProjectile(player.GetSource_FromThis(), Projectile.Center, perturbedSpeed, bullet, Projectile.damage, Projectile.knockBack, player.whoAmI);
+                        }
+                        RedeHelper.NPCRadiusDamage(Projectile.Center + RedeHelper.OffsetWithRotation(Projectile, 52, -5), 60, Projectile, Projectile.damage * 2, Projectile.knockBack, Projectile.CritChance);
                     }
                 }
             }

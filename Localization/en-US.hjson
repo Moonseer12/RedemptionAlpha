@@ -350,6 +350,7 @@ Mods: {
 			StarSerpent: Rare serpents from the highest skies of Ithon. They took a liking to a certain figure, and followed them through a Golden Gateway.
 			KS3_Magnet: This drone converts projectiles into energy to fire back at their targets.
 			KS3_MissileDrone: A missile drone built by King Slayer III during his million year voyage.
+			HollowfireSmith: A gentlemanly Hollowfire tasked with protecting the abandoned Blazing Bastion. Charged with blasphemy for his philosophical streak, he's no longer welcome in the Demonhollow. Now he's stuck smithing to keep the lights on.
 		}
 
 		Bestiary.Android: Apidroids were an experiment with a highly durable metal from a distant star system. The metal - dubbed 'Rose Titanium' by King Slayer III - is one of the strongest materials discovered in the galaxy. However, King Slayer III hated its pink tinge, and so stubbornly refused to use it after making a few Androids out of it.
@@ -452,12 +453,12 @@ Mods: {
 				EarthBonus: Deals extra damage and has a chance to stun grounded enemies
 				FireBonus: Chance to burn flammable enemies more intensely
 				HolyBonus: Increased damage to undead and demons, chance to set demons ablaze in holy flame
-				IceBonus: Chance to freeze slimes and slow down infected enemies
+				IceBonus: Chance to freeze slimes or soaked enemies and slow down infected enemies
 				NatureBonus: Chance to drop a defence-increasing Nature Boon upon hitting enemies inflicted with a non-fire debuff
 				PoisonBonus: Increased damage to poisoned enemies
 				PsychicBonus: Ignores enemy Guard Points
-				ShadowBonus: Slain enemies have a chance to drop a pickup which increases Shadow damage
-				ThunderBonus: Electrifies and deals extra damage if the target is in water
+				ShadowBonus: Slain enemies have a chance to drop a pickup which increases Shadow damage briefly
+				ThunderBonus: Electrifies and deals extra damage if the target is in water or soaked
 				WaterBonus: Increased damage to demons and can electrify robotic targets
 				WindBonus: Deals extra knockback to airborne targets
 			}
@@ -1496,6 +1497,13 @@ Mods: {
 			}
 
 			LabDrone: INTRUDER DETECTED...
+
+			HollowfireSmith: {
+				0: Eh?[1] It takes guts to tread on an old wreck like this place.
+				1: If you're looking fer trouble,[0.2] I'm afraid you won't find it 'ere,[0.4] not from a clever warrior,[0.1] anyway.
+				2: Time was,[0.2] an old platoon of Demons built an' guarded this place.[1] They all left an age ago.[0.5] Just me now.
+				3: Tread on,[0.1] voyager.[0.5] I won't stop ya.
+			}
 		}
 
 		GenericTerms: {
@@ -1892,6 +1900,12 @@ Mods: {
 				2: Other T-Bots?
 				3: Protector Volt?
 				4: MACE Project?
+			}
+
+			HollowfireSmith: {
+				A0: Where are you from?
+				A1: You stayed behind?
+				A2: So you aren't a blacksmith?
 			}
 		}
 
@@ -2723,6 +2737,11 @@ Mods: {
 				DisplayName: Cosmos Chains Tag
 				Description: ""
 			}
+
+			AkkaRoseSentryBuff: {
+				DisplayName: Red Rose
+				Description: Every rose has its thorns, and this one has a lot of them!
+			}
 		}
 
 		Biomes: {
@@ -2852,6 +2871,7 @@ Mods: {
 				UnconsciousStatus2: "{0} has been knocked out for {1} minute(s)."
 				Lad: lad
 				Lass: lass
+				Lassy: lassy
 			}
 
 			Angler: {
@@ -3301,22 +3321,6 @@ Mods: {
 				24: What are you saying Slayer? Another world?
 			}
 
-			Noza: {
-				Chat1:
-					'''
-					Wouldn't you like to know! I'm a bit early to the party - apparently I'm meant to be in the "full 0.8 update"... Whatever that means.
-					But I got impatient so here I am! With nothing to do! There isn't even anything unique here!
-					'''
-				Dialogue1: Nice horns, did your MOM make them for you? WHEHEHEHEHE!
-				Dialogue2: EEK! Get that holy weapon AWAY from me!
-				Dialogue3: Yuck! What's with that ring over your head? No goody-two-shoes in MY bastion!
-				Dialogue4TBot: What is a SILLY LITTLE METAL BUCKET doing in MY bastion!?
-				Dialogue5TBot: What even are you? Some sort of bucket cosplayer!? Wehehehe!
-				Dialogue4: What is a SILLY LITTLE HUMAN doing in MY bastion!?
-				Dialogue5: Look at ITTY BITTY you! Whehehehe! Humans look so STUPID!
-				Dialogue6: Wow! I forgot how TINY humans were! Whehehehe!
-			}
-
 			SkullDigger: {
 				WeddingRingDialogue1: What's this..? A ring..? Oh! Her spirit, her jolly spirit! It still remains infused within this ring. Why thank you, gracious soul, for this gift hath lifted my sorrowful shoulders. With this as a reminder, mayhaps I find peace too.
 				WeddingRingDialogue2: What's this..? A ring..? And your attire... Is this a proposal? ..Oh! Her spirit, her jolly spirit! It still remains infused within this ring. Why thank you, gracious soul, for this gift hath lifted my sorrowful shoulders. With this as a reminder, mayhaps I find peace too.
@@ -3554,6 +3558,16 @@ Mods: {
 			Toaster: {
 				2: Oh hey, how are you holding up? BECAUSE I AM A TOASTER.
 				1: Just a normal toaster.
+			}
+
+			HollowfireSmith: {
+				Chat0: You look inquisitive, {0}. Well, it's as I said; everyone else left years ago. Just as well that they left me behind, bein' that I'm not welcome back there anyway. A-he-he-he-hem, my Demonspeak ain't all it used to be, for one.
+				Chat7: Need somethin'? I'm low on metal at the moment, sorry'ta disappoint.
+				Chat8: What? Somethin' on my face?
+				Chat9: Suggest you get a move on. Unless ya want to peppered with shadowflame magic.
+				A0: Demonhollow. Surely even ye in Epidotra have heard of it? Home of the Demons, sworn revenge on Epidotra, that blasted Church, alla' that? Ah, perish the thought. I try not to think about it, these days.
+				A1: Ha! You make it sound like a choice, puttin' it like that. Truth is, I'd have returned in a flicker if it were up to me. But it wasn't, so no point in dwelling! Something something, actually a philosopher but became a blacksmith.
+				A2: Well, I'm smithin', aren't I? Limited pointa' view, if you ask me. But no, this all was just to make myself useful, 'posed to the alternative. Nowadays, a piece'a hot metal's just about the one thing keepin' me moving and sane. 'Sa shame, I guess...
 			}
 		}
 
@@ -7154,7 +7168,7 @@ Mods: {
 			}
 
 			ShinkiteBrickOrnate: {
-				DisplayName: Shinkite Brick Ornate
+				DisplayName: Ornate Shinkite Brick
 				Tooltip: ""
 			}
 
@@ -8152,7 +8166,7 @@ Mods: {
 				DisplayName: Self-Sufficient Lightning Rod
 				Tooltip:
 					'''
-					Right-click to place a conductor rod at your position
+					Right-click to place a conductor rod
 					The conductor has an aura that will passively zap enemies
 					Left-click to shoot electricity at the conductor, increasing its range
 					Overcharging the conductor causes an explosion and resets its range
@@ -8893,8 +8907,7 @@ Mods: {
 				DisplayName: Chains of the Cosmos
 				Tooltip:
 					'''
-					20 summon tag damage
-					10% summon tag critical strike chance
+					20% summon tag critical strike chance
 					{$CommonItemTooltip.Whips}
 					Strike enemies to summon friendly cosmic eyes
 					'''
@@ -10620,7 +10633,7 @@ Mods: {
 				Tooltip:
 					'''
 					Spider Swarmers become passive
-					Grants immunity to Webbed
+					Grants immunity to Feral Bite
 					'''
 			}
 
@@ -11181,6 +11194,94 @@ Mods: {
 					Summons a hive that produces friendly bees
 					Whip the hive to produce giant bees, but be careful to not make it angry!
 					'''
+			}
+
+			AkkaRoseSentry: {
+				DisplayName: Raunin Ruusu
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a red rose that shoots a barrage of thorns
+					'''
+			}
+
+			GaiaBoots: {
+				DisplayName: Gaia Boots
+				Tooltip:
+					'''
+					Allows flight, super fast running, and extra mobility in cobwebs
+					Flowers grow on the grass you walk on
+					Increases jump speed and allow auto-jump
+					Increases fall resistance
+					Grants immunity to Webbed
+					50% chance to ignore traps
+					10% increased {0} elemental resistance
+					'''
+			}
+
+			SpiderBoots: {
+				DisplayName: Spider Boots
+				Tooltip:
+					'''
+					Provides extra mobility in cobwebs
+					Grants immunity to Webbed
+					50% chance to ignore traps
+					'''
+			}
+
+			AshWoodBarrel: {
+				DisplayName: Ash Wood Barrel
+				Tooltip: ""
+			}
+
+			AshWoodBarrelWide: {
+				DisplayName: Wide Ash Wood Barrel
+				Tooltip: ""
+			}
+
+			AshWoodSign: {
+				DisplayName: Ash Wood Sign
+				Tooltip: ""
+			}
+
+			BlazingThrone: {
+				DisplayName: Blazing Throne
+				Tooltip: "{$Mods.Redemption.SpecialTooltips.Unbreakable5000}"
+			}
+
+			BrokenHellstoneBallista: {
+				DisplayName: Broken Hellstone Ballista
+				Tooltip: ""
+			}
+
+			NozaSign: {
+				DisplayName: Heart-Signed Ash Wood Sign
+				Tooltip: ""
+			}
+
+			DarkShinkiteBrick: {
+				DisplayName: Dark Shinkite Brick
+				Tooltip: ""
+			}
+
+			BastionGate: {
+				DisplayName: Bastion Gate
+				Tooltip: ""
+			}
+
+			DemonForgeTent: {
+				DisplayName: Demon Forge Tent
+				Tooltip: ""
+			}
+
+			DemonShopTent: {
+				DisplayName: Demon Shop Tent
+				Tooltip: ""
+			}
+
+			DemonTailorTent: {
+				DisplayName: Demon Tailor Tent
+				Tooltip: ""
 			}
 		}
 
@@ -11927,6 +12028,11 @@ Mods: {
 			CorruptedSentryBase_Proj.DisplayName: Corrupted Sentry Base_ Proj
 			HoneycombStaff_Proj.DisplayName: Honeycomb Hive
 			XenoSplat_Small.DisplayName: Xeno Splat
+			GhastlyRecurve_Holdout.DisplayName: Ghastly Recurve_ Holdout
+			AkkaRosePortal.DisplayName: Akka Rose Portal
+			AkkaRosePortal_Proj.DisplayName: Akka Rose Portal_ Proj
+			HellstoneBallista_Bolt.DisplayName: Hellstone Ballista_ Bolt
+			HellstoneBallista_Top.DisplayName: Hellstone Ballista_ Top
 		}
 
 		NPCs: {
@@ -12452,6 +12558,7 @@ Mods: {
 			MoonflareSkeleton.DisplayName: Moonflare Caster
 			TreebarkDryad_Savanna.DisplayName: "{$Mods.Redemption.NPCs.TreebarkDryad.DisplayName}"
 			KS3_Friendly.DisplayName: "{$Mods.Redemption.NPCs.KS3.DisplayName}"
+			HollowfireSmith.DisplayName: Anr'thre
 		}
 
 		Tiles: {
@@ -12703,6 +12810,20 @@ Mods: {
 			DesertStatuetteTile.MapEntry: Desert Statuette
 			ObsidianStatuetteTile.MapEntry: Obsidian Statuette
 			LostSoulBottleTile.MapEntry: Lost Soul in a Bottle
+			AshWoodBarrelTile.MapEntry: Ash Wood Barrel
+			AshWoodBarrelWideTile.MapEntry: Wide Ash Wood Barrel
+			AshWoodSignTile.MapEntry: Ash Wood Sign
+			BastionGateTile.MapEntry: Bastion Gate
+			BlazingThroneTile.MapEntry: Blazing Throne
+			DemonForgeTentTile.MapEntry: Demon Forge Tent
+			DemonShopTentTile.MapEntry: Demon Shop Tent
+			DemonTailorTentTile.MapEntry: Demon Tailor Tent
+			NozaSignTile.MapEntry: Heart-Signed Ash Wood Sign
+
+			HellstoneBallistaTile: {
+				MapEntry: Hellstone Ballista
+				Repair: Repair: [i/s30:HellstoneBar]
+			}
 		}
 
 		Keybinds: {

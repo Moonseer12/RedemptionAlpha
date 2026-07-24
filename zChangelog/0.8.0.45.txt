@@ -1,0 +1,52 @@
+=== 0.8 Beta .45 === (Blazing Patch)
+- Resprited item sprites of Sky Squire's Tabard and Sky Squire's Greaves (again)
+- Resprited Log Staff
+- Resprited Calcite Wand
+- Resprited Daerel's Dark-Steel Bow
+- Resprited Marble King Chess Piece
+- Corrected Chains of the Cosmos tooltip
+- Corrected Keeper's Claw piercing
+- Corrected Ornate Shinkite Brick name
+- Fixed Omega Sentry Stand's damage buff not working
+- Improved code of most ranger weapons, letting Attack Speed modifiers affect them
+- Changed use times of the following ranger weapons:
+> Drill Revolver: 7 to 12
+> Corrupted Double-Rifle: 90 to 9
+- Hyper-Tech Blaster rebound shot deals base damage now
+- Hyper-Tech Revolvers will be thrown more in the direction the player is moving
+- Blast Battery right-click can be held down
+- Drill Revolver's bullet slows targets on hit (If they aren't a boss and can take knockback)
+- Self-Sufficient Lightning Rod right-click spawns the rod at cursor point up to a certain distance, right-clicking again will despawn it. Corrected discharge's Shadow element to Thunder. The rod will despawn if the owner is far away
+- Dragon Slayer's Staff skull has a distance limit for where it can spawn, and checks for line of sight
+- Honeycomb Staff is now affected by Hive Pack, halved spawn rate of bees
+- Corrected Divinity use time from 40 to 14 and buffed knockback from 0 to 8. The Sun still has no knockback and gains 10 frames of local immunity
+- Gave Nanoswarmer 1 knockback for prefixes, the nanobots ignore this
+- Pulse Blade's mine explosions gain Thunder element. Changed use time from 15 to 10
+- Nerfed Xenomite Scepter damage from 65 to 60
+- Buffed Electronade damage from 190 to 320 and gave it 20 frames of static immunity
+- Cursed Thorn Bow's bramble traps have animation for disappearing
+- Increased hitbox of Death Metal's pulse from 100 to 120 pixels
+- Improved Death Metal skull's movement
+- Empyrean Blind orbs bounce off tiles
+- Added Blazing Throne
+- Added Ash Wood Barrel and Wide Ash Wood Barrel
+- Escorted Noza off the Bastion premises, but someone else decided to sit around there instead
+1499. Resprited Shinkite Beam
+1832. Added Dark Shinkite Bricks
+2063. Added a ruined bridge to the Underworld that leads to the Blazing Bastion
+2104. Added a watchtower in the underworld
+2105. Added Broken Hellstone Ballista to the watchtower, can be repaired and used to assist with enemies (and Wall of Flesh)
+2200. Built a Blazing Bastion
+2228. Added Ashwood Sign and Heart-Signed Ashwood Sign
+2263. Blazing Bastion can generate on the opposite side if Spooky Mod's Valley of Eyes biome is to the right side
+2347. Added a Bazaar to Blazing Bastion
+2360. Blazing Bastion can generate on the opposite side of Infernum's Providence arena and will not generate a bridge over Calamity's crags bridge
+2564. Ice bonus can now freeze wet enemies
+2569. Increased quantity of Evil Jelly from recipe to 5
+2570. Added Arcane element to more magic weapons: Nimbus Rod, Staff of Earth, Betsy's Wrath, Clinger Staff, Bat Scepter, Life Drain, Crimson Rod, Poison Staff, Venom Staff, Weather Pain, and Cursed Flames
+2572. Added Raunin Ruusu, an Akka sentry
+2575. Flower Boots and Fairy Boots increase Nature elemental damage by 10%
+2576. Spider Serum and Beelzebub Concoction grants immunity to Feral Bite instead of Webbed
+2577. Added Spider Boots
+2578. Added Gaia Boots
+===============

@@ -218,6 +218,14 @@ namespace Redemption.Globals.Items
                         tooltips.Insert(tooltipLocation + 1, elemLine);
                         tooltips.Insert(tooltipLocation + 1, elemLine2);
                         break;
+                    case ItemID.FlowerBoots:
+                        elemLine = new(Mod, "TooltipElem", Language.GetTextValue("Mods.Redemption.GenericTooltips.ArmorSetBonus.VanillaArmor.Resistance", 10, ElementID.NatureS));
+                        tooltips.Insert(tooltipLocation + 1, elemLine);
+                        break;
+                    case ItemID.FairyBoots:
+                        elemLine = new(Mod, "TooltipElem", Language.GetTextValue("Mods.Redemption.GenericTooltips.ArmorSetBonus.VanillaArmor.Resistance", 10, ElementID.NatureS));
+                        tooltips.Insert(tooltipLocation + 3, elemLine);
+                        break;
                 }
             }
         }
@@ -367,6 +375,12 @@ namespace Redemption.Globals.Items
                 case ItemID.WingsStardust:
                     modPlayer.ElementalResistance[ElementID.Celestial] += 0.1f;
                     modPlayer.ElementalResistance[ElementID.Arcane] += 0.1f;
+                    break;
+                case ItemID.FlowerBoots:
+                    modPlayer.ElementalResistance[ElementID.Nature] += 0.1f;
+                    break;
+                case ItemID.FairyBoots:
+                    modPlayer.ElementalResistance[ElementID.Nature] += 0.1f;
                     break;
             }
         }

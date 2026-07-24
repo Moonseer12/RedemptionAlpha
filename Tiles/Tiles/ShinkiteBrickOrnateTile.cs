@@ -1,7 +1,6 @@
-using Microsoft.Xna.Framework;
+using Redemption.Dusts.Tiles;
 using Terraria;
 using Terraria.ModLoader;
-using Redemption.Dusts.Tiles;
 
 namespace Redemption.Tiles.Tiles
 {
@@ -14,7 +13,7 @@ namespace Redemption.Tiles.Tiles
             Main.tileLighted[Type] = false;
             Main.tileBlockLight[Type] = true;
             Main.tileBrick[Type] = true;
-            DustType = ModContent.DustType<ShinkiteDust>();
+            DustType = DustType<ShinkiteDust>();
             MinPick = 200;
             MineResist = 4f;
             HitSound = CustomSounds.BrickHit;

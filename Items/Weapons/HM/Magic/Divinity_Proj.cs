@@ -1,17 +1,15 @@
 using Microsoft.Xna.Framework.Graphics;
-using ParticleLibrary.Core;
 using Redemption.Base;
 using Redemption.BaseExtension;
-using Redemption.Effects;
 using Redemption.Effects.Trails;
 using Redemption.Globals;
-using Redemption.Globals.Projectiles;
 using Redemption.Particles;
 using Redemption.Projectiles.Magic;
 using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -43,7 +41,7 @@ namespace Redemption.Items.Weapons.HM.Magic
         {
             Player player = Main.player[Projectile.owner];
             float num = MathHelper.ToRadians(0f);
-            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter, true);
+            Vector2 vector = player.RotatedRelativePoint(player.MountedCenter);
             if (Projectile.spriteDirection == -1)
                 num = MathHelper.ToRadians(180f);
 
@@ -51,7 +49,7 @@ namespace Redemption.Items.Weapons.HM.Magic
                 Projectile.Kill();
 
             ProjHelper.HoldOutProjBasics(Projectile, player, vector);
-            Projectile.position = player.RotatedRelativePoint(player.MountedCenter + RedeHelper.PolarVector(18, Projectile.velocity.ToRotation()), true) - Projectile.Size / 2f;
+            Projectile.position = player.RotatedRelativePoint(player.MountedCenter + RedeHelper.PolarVector(18, Projectile.velocity.ToRotation())) - Projectile.Size / 2f;
             Projectile.rotation = Projectile.velocity.ToRotation() + num;
             Projectile.spriteDirection = Projectile.direction;
             Projectile.timeLeft = 2;
@@ -64,7 +62,7 @@ namespace Redemption.Items.Weapons.HM.Magic
             if (Projectile.localAI[0]++ == 0 && Projectile.owner == Main.myPlayer)
             {
                 Projectile.alpha = 0;
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, new Vector2(-1, -8), ProjectileType<Divinity_Sun>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, new Vector2(-1, -8), ProjectileType<Divinity_Sun>(), Projectile.damage, 0, Projectile.owner, Projectile.whoAmI);
             }
         }
         public override bool PreDraw(ref Color lightColor)
@@ -95,23 +93,31 @@ namespace Redemption.Items.Weapons.HM.Magic
             Projectile.hostile = false;
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Magic;
+            Projectile.Redemption().TechnicallyMelee = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 600;
             Projectile.alpha = 255;
             Projectile.scale = 0.1f;
             Projectile.extraUpdates = 1;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 10;
         }
         private float godrayFade;
         public Vector2 mark;
         private int charged;
+        public Player Owner => Main.player[Projectile.owner];
+        private int maxTime;
+        public override void OnSpawn(IEntitySource source)
+        {
+            maxTime = (int)(Owner.HeldItem.useTime / Owner.GetWeaponAttackSpeed(Owner.HeldItem));
+        }
         public override void AI()
         {
             Projectile.width = Projectile.height = (int)(40 * Projectile.scale);
             Projectile.velocity *= 0.95f;
             Projectile.timeLeft = 10;
             Projectile staff = Main.projectile[(int)Projectile.ai[0]];
-            Player player = Main.player[staff.owner];
             switch (Projectile.ai[1])
             {
                 case 0:
@@ -123,7 +129,7 @@ namespace Redemption.Items.Weapons.HM.Magic
                     {
                         Projectile.localAI[1] = 30;
                         Projectile.scale = 1;
-                        if (player.channel)
+                        if (Owner.channel)
                             Projectile.ai[1] = 1;
                         else
                             Projectile.Kill();
@@ -131,26 +137,26 @@ namespace Redemption.Items.Weapons.HM.Magic
                     }
                     break;
                 case 1:
-                    if (player.DistanceSQ(Projectile.Center) > 1800 * 1800)
+                    if (Owner.DistanceSQ(Projectile.Center) > 1800 * 1800)
                     {
                         staff.active = false;
                         Projectile.Kill();
                         Projectile.netUpdate = true;
                     }
-                    if (Projectile.DistanceSQ(player.Center) > 300 * 300)
+                    if (Projectile.DistanceSQ(Owner.Center) > 300 * 300)
                     {
-                        float speed = MathHelper.Lerp(2, 16, Projectile.DistanceSQ(player.Center) / 1800 / 1800);
-                        Projectile.Move(player.Center - new Vector2(0, 100), speed, 20);
+                        float speed = MathHelper.Lerp(2, 16, Projectile.DistanceSQ(Owner.Center) / 1800 / 1800);
+                        Projectile.Move(Owner.Center - new Vector2(0, 100), speed, 20);
                     }
-                    if (Projectile.localAI[0]++ % 14 == 0 && Projectile.scale < 3)
+                    if (Projectile.localAI[0]++ % maxTime == 0 && Projectile.scale < 3)
                     {
-                        int mana = player.inventory[player.selectedItem].mana;
-                        if (BasePlayer.ReduceMana(player, mana / 10))
+                        int mana = Owner.inventory[Owner.selectedItem].mana;
+                        if (BasePlayer.ReduceMana(Owner, mana / 10))
                         {
                             SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, Projectile.Center);
                             if (Projectile.owner == Main.myPlayer)
                             {
-                                Projectile.NewProjectile(Projectile.GetSource_FromAI(), staff.Center, RedeHelper.PolarVector(Main.rand.Next(5, 9), (Main.MouseWorld - player.Center).ToRotation() + (MathHelper.PiOver2 * (Main.rand.NextBool() ? -1 : 1))), ProjectileType<Divinity_Ball>(), Projectile.damage / 2, 0, player.whoAmI, Projectile.whoAmI);
+                                Projectile.NewProjectile(Projectile.GetSource_FromAI(), staff.Center, RedeHelper.PolarVector(Main.rand.Next(5, 9), (Main.MouseWorld - Owner.Center).ToRotation() + (MathHelper.PiOver2 * (Main.rand.NextBool() ? -1 : 1))), ProjectileType<Divinity_Ball>(), Projectile.damage / 2, 0, Owner.whoAmI, Projectile.whoAmI);
                             }
                         }
                     }
@@ -164,7 +170,7 @@ namespace Redemption.Items.Weapons.HM.Magic
                             charged = 1;
                         }
                         if (Projectile.owner == Main.myPlayer)
-                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Main.MouseWorld, Vector2.Zero, ProjectileType<Divinity_Crosshair>(), 0, 0, player.whoAmI, Projectile.whoAmI);
+                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Main.MouseWorld, Vector2.Zero, ProjectileType<Divinity_Crosshair>(), 0, 0, Owner.whoAmI, Projectile.whoAmI);
                     }
                     if (Projectile.scale >= 3 && charged < 2)
                     {
@@ -173,13 +179,13 @@ namespace Redemption.Items.Weapons.HM.Magic
                             SoundEngine.PlaySound(CustomSounds.NebSound2 with { Volume = .5f }, Projectile.position);
                         charged = 2;
                     }
-                    if (!player.channel)
+                    if (!Owner.channel)
                     {
                         if (Projectile.scale >= 1.1f)
                         {
-                            player.RedemptionScreen().ScreenShakeIntensity += 10 * Projectile.scale;
                             if (!Main.dedServ)
                                 SoundEngine.PlaySound(CustomSounds.MACEProjectLaunch, Projectile.position);
+
                             int pieCut = 32;
                             for (int m = 0; m < pieCut; m++)
                             {
@@ -207,20 +213,23 @@ namespace Redemption.Items.Weapons.HM.Magic
         public override void OnKill(int timeLeft)
         {
             Projectile staff = Main.projectile[(int)Projectile.ai[0]];
-            Player player = Main.player[staff.owner];
-            player.RedemptionScreen().ScreenShakeIntensity += 20 * (Projectile.scale * 2);
+
             for (int i = 0; i < 80; i++)
                 RedeParticleManager.CreateEmberBurstParticle(Projectile.Center, RedeHelper.Spread(10 * Projectile.scale), 3 * Projectile.scale, Main.rand.Next(90, 121), 0.9f);
             for (int i = 0; i < 20; i++)
                 RedeParticleManager.CreateEmberParticle(Projectile.Center, RedeHelper.Spread(10 * Projectile.scale), 1, Main.rand.Next(90, 121));
+           
             SoundEngine.PlaySound(SoundID.Item100 with { Volume = 1 * Projectile.scale, SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest }, Projectile.position);
             SoundEngine.PlaySound(CustomSounds.FlameRise with { Pitch = -.3f }, Projectile.position);
 
             Projectile.GetGlobalProjectile<ElementalProjectile>().OverrideElement[ElementID.Explosive] = ElementID.AddElement;
 
             int boomOrigin = (int)(120 * Projectile.scale);
-            Rectangle boom = new((int)Projectile.Center.X - boomOrigin, (int)Projectile.Center.Y - boomOrigin, boomOrigin * 2, boomOrigin * 2);
-            RedeHelper.NPCRadiusDamage(boom, Projectile, Projectile.damage * 2, Projectile.knockBack, 0);
+            //Rectangle boom = new((int)Projectile.Center.X - boomOrigin, (int)Projectile.Center.Y - boomOrigin, boomOrigin * 2, boomOrigin * 2);
+            //RedeHelper.NPCRadiusDamage(boom, Projectile, Projectile.damage * 2, Projectile.knockBack, 0);
+            RedeHelper.NPCRadiusDamage(Projectile.Center, boomOrigin, Projectile, Projectile.damage, Projectile.knockBack, 100);
+            
+            Owner.RedemptionScreen().ScreenShakeIntensity += 20 * (Projectile.scale * 2);
             for (int i = 0; i < 20; i++)
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.OrangeTorch, Scale: 2);
@@ -232,7 +241,9 @@ namespace Redemption.Items.Weapons.HM.Magic
                 for (int i = 0; i < Main.rand.Next(8, 14) * Projectile.scale; i++)
                 {
                     int d = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, RedeHelper.SpreadUp(12), ProjectileID.MolotovFire3, Projectile.damage / 2, 1, Main.myPlayer);
+                    Main.projectile[d].usesIDStaticNPCImmunity = false;
                     Main.projectile[d].usesLocalNPCImmunity = true;
+                    Main.projectile[d].localNPCHitCooldown = 10;
                 }
             }
         }

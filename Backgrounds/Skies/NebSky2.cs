@@ -37,7 +37,7 @@ namespace Redemption.Backgrounds.Skies
                         MoonbeamIntensity += 0.05f;
                         break;
                     }
-                    else if (proj.type == ProjectileType<Neb_Lightning_Tele>())
+                    else if (proj.type == ProjectileType<Neb_Lightning>())
                     {
                         skyColor = new(0, 242, 170);
                         beamActive = true;

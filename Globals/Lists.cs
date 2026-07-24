@@ -4,6 +4,7 @@ using Redemption.Items.Usable;
 using Redemption.Items.Usable.Summons;
 using Redemption.Items.Weapons.PostML.Melee;
 using Redemption.Items.Weapons.PreHM.Summon;
+using Redemption.NPCs.Bastion.Bazaar;
 using Redemption.NPCs.Bosses.ADD;
 using Redemption.NPCs.Bosses.Cleaver;
 using Redemption.NPCs.Bosses.Erhan;
@@ -105,7 +106,7 @@ namespace Redemption.Globals
     {
         #region NPC Lists
 
-        public static List<int> DisablesSpawnsWhenNear = new() { ModContent.NPCType<Calavia_Intro>(), ModContent.NPCType<Calavia_NPC>(), NPCType<SkullDiggerFriendly>() };
+        public static List<int> DisablesSpawnsWhenNear = new() { ModContent.NPCType<Calavia_Intro>(), ModContent.NPCType<Calavia_NPC>(), NPCType<SkullDiggerFriendly>(), NPCType<HollowfireSmith>() };
 
         public static List<int> DisablesSpawnsWhenChatting = new() { NPCType<SpiritAssassin>(), NPCType<SpiritCommonGuard>(), NPCType<SpiritDruid>(), NPCType<SpiritGathicMan>(), NPCType<SpiritNiricLady>(), NPCType<SpiritWalkerMan>(), NPCType<SkullDiggerFriendly_Spirit>() };
 
@@ -128,7 +129,7 @@ namespace Redemption.Globals
 
         #region Spirit
 
-        public static List<int> Spirit = new() { NPCID.EnchantedSword, NPCID.CrimsonAxe, NPCID.CursedHammer, NPCID.DesertDjinn, NPCID.DungeonSpirit, NPCID.FloatyGross, NPCID.Ghost, NPCID.PossessedArmor, NPCID.Wraith, NPCID.Reaper, NPCID.Poltergeist, NPCID.PirateGhost, ModContent.NPCType<SkullDigger>(), ModContent.NPCType<VagrantSpirit>(), ModContent.NPCType<KeeperSpirit>(), ModContent.NPCType<ErhanSpirit>(), ModContent.NPCType<LostSoulNPC>(), ModContent.NPCType<NuclearShadow>(), ModContent.NPCType<WraithSlayer_Samurai>(), ModContent.NPCType<EpidotrianSkeleton_SS>(), ModContent.NPCType<ForestNymph_SS>(), ModContent.NPCType<SkeletonAssassin_SS>(), ModContent.NPCType<SkeletonFlagbearer_SS>(), ModContent.NPCType<SkeletonNoble_SS>(), ModContent.NPCType<SkeletonWarden_SS>(), ModContent.NPCType<SkeletonDuelist_SS>(), ModContent.NPCType<SkeletonWanderer_SS>(), ModContent.NPCType<Asher_SS>(), ModContent.NPCType<AncientGladestoneGolem_SS>(), ModContent.NPCType<MossyGoliath_SS>(), ModContent.NPCType<HeadlessChicken>(), ModContent.NPCType<GhostfireChicken>() };
+        public static List<int> Spirit = new() { NPCID.EnchantedSword, NPCID.CrimsonAxe, NPCID.CursedHammer, NPCID.DesertDjinn, NPCID.DungeonSpirit, NPCID.FloatyGross, NPCID.Ghost, NPCID.PossessedArmor, NPCID.Wraith, NPCID.Reaper, NPCID.Poltergeist, NPCID.PirateGhost, ModContent.NPCType<SkullDigger>(), ModContent.NPCType<VagrantSpirit>(), ModContent.NPCType<KeeperSpirit>(), ModContent.NPCType<ErhanSpirit>(), ModContent.NPCType<LostSoulNPC>(), ModContent.NPCType<NuclearShadow>(), ModContent.NPCType<WraithSlayer_Samurai>(), ModContent.NPCType<EpidotrianSkeleton_SS>(), ModContent.NPCType<ForestNymph_SS>(), ModContent.NPCType<SkeletonAssassin_SS>(), ModContent.NPCType<SkeletonFlagbearer_SS>(), ModContent.NPCType<SkeletonNoble_SS>(), ModContent.NPCType<SkeletonWarden_SS>(), ModContent.NPCType<SkeletonDuelist_SS>(), ModContent.NPCType<SkeletonWanderer_SS>(), ModContent.NPCType<Asher_SS>(), ModContent.NPCType<AncientGladestoneGolem_SS>(), ModContent.NPCType<MossyGoliath_SS>(), ModContent.NPCType<HeadlessChicken>(), ModContent.NPCType<GhostfireChicken>(), NPCType<HollowfireSmith>() };
 
         #endregion
 
@@ -139,7 +140,7 @@ namespace Redemption.Globals
         #endregion
 
         #region Demon
-        public static List<int> Demon = new() { NPCID.Demon, NPCID.VoodooDemon, NPCID.FireImp, NPCID.RedDevil, NPCID.WallofFlesh, NPCID.WallofFleshEye, NPCID.Krampus };
+        public static List<int> Demon = new() { NPCID.Demon, NPCID.VoodooDemon, NPCID.FireImp, NPCID.RedDevil, NPCID.WallofFlesh, NPCID.WallofFleshEye, NPCID.Krampus, NPCType<HollowfireSmith>() };
         #endregion
 
         #region Cold
@@ -147,7 +148,7 @@ namespace Redemption.Globals
         #endregion
 
         #region Hot
-        public static List<int> Hot = new() { NPCID.Antlion, NPCID.FlyingAntlion, NPCID.GiantFlyingAntlion, NPCID.GiantWalkingAntlion, NPCID.LarvaeAntlion, NPCID.WalkingAntlion, NPCID.FireImp, NPCID.Hellbat, NPCID.LavaSlime, NPCID.MeteorHead, NPCID.SandSlime, NPCID.TombCrawlerHead, NPCID.TombCrawlerBody, NPCID.TombCrawlerTail, NPCID.Vulture, NPCID.DesertBeast, NPCID.DuneSplicerHead, NPCID.DuneSplicerBody, NPCID.DuneSplicerTail, NPCID.DesertGhoul, NPCID.DesertGhoulCorruption, NPCID.DesertGhoulCrimson, NPCID.DesertGhoulHallow, NPCID.DesertDjinn, NPCID.HellArmoredBones, NPCID.HellArmoredBonesMace, NPCID.HellArmoredBonesSpikeShield, NPCID.HellArmoredBonesSword, NPCID.HoppinJack, NPCID.Lavabat, NPCID.DesertLamiaDark, NPCID.DesertLamiaLight, NPCID.Mummy, NPCID.BloodMummy, NPCID.DarkMummy, NPCID.LightMummy, NPCID.Tumbleweed, NPCID.SandShark, NPCID.SandsharkCorrupt, NPCID.SandsharkCrimson, NPCID.SandsharkHallow, NPCID.SandElemental, NPCID.SolarCorite, NPCID.SolarCrawltipedeTail, NPCID.SolarDrakomire, NPCID.SolarDrakomireRider, NPCID.SolarSolenian, NPCID.SolarSpearman, NPCID.SolarSroller, NPCID.DD2Betsy, NPCID.Pumpking, NPCID.MourningWood, NPCID.LunarTowerSolar, ModContent.NPCType<CorpseWalkerPriest>(), ModContent.NPCType<DevilsTongue>(), ModContent.NPCType<BloatedGhoul>(), ModContent.NPCType<BloatedSwarmer>() };
+        public static List<int> Hot = new() { NPCID.Antlion, NPCID.FlyingAntlion, NPCID.GiantFlyingAntlion, NPCID.GiantWalkingAntlion, NPCID.LarvaeAntlion, NPCID.WalkingAntlion, NPCID.FireImp, NPCID.Hellbat, NPCID.LavaSlime, NPCID.MeteorHead, NPCID.SandSlime, NPCID.TombCrawlerHead, NPCID.TombCrawlerBody, NPCID.TombCrawlerTail, NPCID.Vulture, NPCID.DesertBeast, NPCID.DuneSplicerHead, NPCID.DuneSplicerBody, NPCID.DuneSplicerTail, NPCID.DesertGhoul, NPCID.DesertGhoulCorruption, NPCID.DesertGhoulCrimson, NPCID.DesertGhoulHallow, NPCID.DesertDjinn, NPCID.HellArmoredBones, NPCID.HellArmoredBonesMace, NPCID.HellArmoredBonesSpikeShield, NPCID.HellArmoredBonesSword, NPCID.HoppinJack, NPCID.Lavabat, NPCID.DesertLamiaDark, NPCID.DesertLamiaLight, NPCID.Mummy, NPCID.BloodMummy, NPCID.DarkMummy, NPCID.LightMummy, NPCID.Tumbleweed, NPCID.SandShark, NPCID.SandsharkCorrupt, NPCID.SandsharkCrimson, NPCID.SandsharkHallow, NPCID.SandElemental, NPCID.SolarCorite, NPCID.SolarCrawltipedeTail, NPCID.SolarDrakomire, NPCID.SolarDrakomireRider, NPCID.SolarSolenian, NPCID.SolarSpearman, NPCID.SolarSroller, NPCID.DD2Betsy, NPCID.Pumpking, NPCID.MourningWood, NPCID.LunarTowerSolar, ModContent.NPCType<CorpseWalkerPriest>(), ModContent.NPCType<DevilsTongue>(), ModContent.NPCType<BloatedGhoul>(), ModContent.NPCType<BloatedSwarmer>(), NPCType<HollowfireSmith>() };
         #endregion
 
         #region Wet

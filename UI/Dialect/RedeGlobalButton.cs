@@ -9,6 +9,7 @@ using Redemption.NPCs.Minibosses.Calavia;
 using Redemption.UI.ChatUI;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.Localization;
 
@@ -19,6 +20,14 @@ namespace Redemption.UI.Dialect
         public static ModRedeNPC redeNPC = null;
         public static bool talkActive;
         public static int talkID;
+
+        public static void HangingButtonPosition(ChatButton chatButton, NPC npc, Player player, ref Vector2 position, int YOffset, bool rightSide = false)
+        {
+            int textLength = (int)FontAssets.MouseText.Value.MeasureString(ChatButtonLoader.GetText(chatButton, npc, player)).X;
+            position.X = (Main.screenWidth / 2) - 150 - (textLength / 2) + (rightSide ? 300 : 0);
+            position.Y += 56 + (46 * YOffset);
+        }
+
         public override void ModifyText(ChatButton chatButton, NPC npc, Player player, ref string buttonText)
         {
             if (npc is null)

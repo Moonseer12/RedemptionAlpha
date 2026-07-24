@@ -29,7 +29,7 @@ namespace Redemption.Items.Weapons.HM.Magic
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.ArmorPenetration = 15;
             Item.noMelee = true;
-            Item.knockBack = 0;
+            Item.knockBack = 1;
             Item.value = Item.sellPrice(0, 15, 0, 0);
             Item.rare = ItemRarityID.LightPurple;
             Item.UseSound = SoundID.Item40;

@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Redemption.Buffs.Debuffs;
 using Redemption.Globals.Players;
 using Redemption.Items.Weapons.HM.Summon;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -67,7 +68,10 @@ namespace Redemption.Items.Weapons.HM.Ranged
             if (player.altFunctionUse == 2 && player.ownedProjectileCounts[ProjectileType<HyperTechRevolvers_Proj2>()] == 0)
             {
                 SoundEngine.PlaySound(SoundID.Item7, player.Center);
-                Projectile.NewProjectile(source, position, new Vector2(Main.rand.NextFloat(-3, 3), -10), ProjectileType<HyperTechRevolvers_Proj2>(), 0, 0, player.whoAmI, -player.direction);
+                float dir = player.velocity.X > 0 ? 1 : -1;
+                float speed = MathF.Abs(player.velocity.X);
+                float velX = speed < 3 ? Main.rand.NextFloat(-3, 3) : Main.rand.NextFloat(3, 3 + speed * 0.2f) * dir;
+                Projectile.NewProjectile(source, position, new Vector2(velX, -10), ProjectileType<HyperTechRevolvers_Proj2>(), 0, 0, player.whoAmI, -player.direction);
                 return false;
             }
             if (player.ownedProjectileCounts[ProjectileType<HyperTechRevolvers_Proj2>()] == 0)

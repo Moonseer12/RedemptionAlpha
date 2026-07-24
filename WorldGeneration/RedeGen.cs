@@ -55,6 +55,8 @@ namespace Redemption.WorldGeneration
         public static bool dragonLeadSpawn;
         public static bool cryoCrystalSpawn;
         public static bool corpseCheck;
+        public static bool bastionLeftSide;
+
         public static Vector2 newbCaveVector = new(-1, -1);
         public static Vector2 gathicPortalVector = new(-1, -1);
         public static Vector2 slayerShipVector = new(-1, -1);
@@ -69,6 +71,7 @@ namespace Redemption.WorldGeneration
         public static Point16 HangingTiedPoint;
         public static Point16 SpiritOldLadyPoint;
         public static Point16 SpiritDruidPoint;
+        public static Point16 BastionWatchtowerPoint;
 
         public static bool lidenAtHomeWorld;
 
@@ -76,6 +79,8 @@ namespace Redemption.WorldGeneration
         {
             cryoCrystalSpawn = false;
             dragonLeadSpawn = false;
+            bastionLeftSide = false;
+
             newbCaveVector = new Vector2(-1, -1);
             gathicPortalVector = new Vector2(-1, -1);
             slayerShipVector = new Vector2(-1, -1);
@@ -90,6 +95,7 @@ namespace Redemption.WorldGeneration
             HangingTiedPoint = Point16.Zero;
             SpiritOldLadyPoint = Point16.Zero;
             SpiritDruidPoint = Point16.Zero;
+            BastionWatchtowerPoint = Point16.Zero;
             corpseCheck = false;
 
             lidenAtHomeWorld = false;
@@ -147,6 +153,19 @@ namespace Redemption.WorldGeneration
                                 break;
                             }
                         }
+                    }
+                }
+            }
+            bool spiderBootsPlaced = false;
+            for (int chestIndex = 0; chestIndex < Main.maxChests; chestIndex++)
+            {
+                Chest chest = Main.chest[chestIndex];
+                if (chest != null && Main.tile[chest.x, chest.y].TileType == TileID.Containers && Main.tile[chest.x, chest.y].TileFrameX == 15 * 36)
+                {
+                    if (!spiderBootsPlaced || WorldGen.genRand.NextBool())
+                    {
+                        chest.item[0].SetDefaults(ItemType<SpiderBoots>());
+                        spiderBootsPlaced = true;
                     }
                 }
             }
@@ -1671,28 +1690,21 @@ namespace Redemption.WorldGeneration
                     if (GoldenGatewayVector.X == -1 && JoShrinePoint.X == 0)
                         JoShrineGen(ref progress);
                 }));
-                if (!ModLoader.TryGetMod("InfernumMode", out Mod infernum) && !ModLoader.TryGetMod("Spooky", out Mod spooky) && !ModLoader.TryGetMod("Synergia", out Mod synergia))
+                tasks.Add(new PassLegacy("Blazing Bastion", delegate (GenerationProgress progress, GameConfiguration configuration)
                 {
-                    tasks.Add(new PassLegacy("Blazing Bastion", delegate (GenerationProgress progress, GameConfiguration configuration)
-                    {
-                        progress.Message = "Building Blazing Bastions";
-                        Point16 origin = new(Main.maxTilesX - 332, Main.maxTilesY - 192);
-                        WorldUtils.Gen(new Point(origin.X, origin.Y - 60), new Shapes.Rectangle(332, 215), Actions.Chain(new GenAction[]
-                        {
-                            new Actions.SetLiquid(0, 0)
-                        }));
-                        BastionVector = origin.ToVector2();
+                    progress.Message = "Building Blazing Bastions";
 
-                        BlazingBastion biome = new();
-                        BastionClear delete = new();
-                        delete.Place(origin.ToPoint(), GenVars.structures);
-                        biome.Place(origin.ToPoint(), GenVars.structures);
-                        WorldUtils.Gen(origin.ToPoint(), new Shapes.Rectangle(332, 68), Actions.Chain(new GenAction[]
-                        {
-                            new Actions.SetLiquid(0, 0)
-                        }));
-                    }));
-                }
+                    if (CrossMod.CrossMod.Calamity.Enabled)
+                        bastionLeftSide = Main.dungeonX < Main.maxTilesX / 2;
+                    if (CrossMod.CrossMod.Spooky.Enabled)
+                        bastionLeftSide = Main.dungeonX < Main.maxTilesX / 2;
+                    if (CrossMod.CrossMod.Infernum.Enabled || CrossMod.CrossMod.Synergia.Enabled)
+                        bastionLeftSide = true;
+
+                    Point16 origin = new(Main.maxTilesX - 332, Main.maxTilesY - 192);
+                    BlazingBastion biome = new();
+                    biome.Place(origin.ToPoint(), GenVars.structures);
+                }));
                 tasks.Add(new PassLegacy("Portals 2", delegate (GenerationProgress progress, GameConfiguration configuration)
                 {
                     if (gathicPortalVector.X == -1)
@@ -2901,6 +2913,8 @@ namespace Redemption.WorldGeneration
                 lists.Add("DLeadSpawn");
             if (cryoCrystalSpawn)
                 lists.Add("CCrystalSpawn");
+            if (bastionLeftSide)
+                lists.Add("bastionLeftSide");
             if (lidenAtHomeWorld)
                 lists.Add("lidenAtHomeWorld");
 
@@ -2921,6 +2935,8 @@ namespace Redemption.WorldGeneration
             tag["GoldenGatewayVectorY"] = GoldenGatewayVector.Y;
             tag["JShrineX"] = JoShrinePoint.X;
             tag["JShrineY"] = JoShrinePoint.Y;
+            tag["BWatchtowerX"] = BastionWatchtowerPoint.X;
+            tag["BWatchtowerY"] = BastionWatchtowerPoint.Y;
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -2928,6 +2944,7 @@ namespace Redemption.WorldGeneration
             var lists = tag.GetList<string>("lists");
             dragonLeadSpawn = lists.Contains("DLeadSpawn");
             cryoCrystalSpawn = lists.Contains("CCrystalSpawn");
+            bastionLeftSide = lists.Contains("bastionLeftSide");
             lidenAtHomeWorld = lists.Contains("lidenAtHomeWorld");
 
             newbCaveVector.X = tag.GetFloat("newbCaveVectorX");
@@ -2945,6 +2962,7 @@ namespace Redemption.WorldGeneration
             GoldenGatewayVector.X = tag.GetFloat("GoldenGatewayVectorX");
             GoldenGatewayVector.Y = tag.GetFloat("GoldenGatewayVectorY");
             JoShrinePoint = new Point16(tag.Get<ushort>("JShrineX"), tag.Get<ushort>("JShrineY"));
+            BastionWatchtowerPoint = new Point16(tag.Get<ushort>("BWatchtowerX"), tag.Get<ushort>("BWatchtowerY"));
 
             FargosIndestructibleCalls();
         }
@@ -2954,6 +2972,7 @@ namespace Redemption.WorldGeneration
             var flags = new BitsByte();
             flags[0] = dragonLeadSpawn;
             flags[1] = cryoCrystalSpawn;
+            flags[4] = bastionLeftSide;
             flags[5] = lidenAtHomeWorld;
             writer.Write(flags);
 
@@ -2966,12 +2985,15 @@ namespace Redemption.WorldGeneration
             writer.WritePackedVector2(GoldenGatewayVector);
             writer.Write(JoShrinePoint.X);
             writer.Write(JoShrinePoint.Y);
+            writer.Write(BastionWatchtowerPoint.X);
+            writer.Write(BastionWatchtowerPoint.Y);
         }
         public override void NetReceive(BinaryReader reader)
         {
             BitsByte flags = reader.ReadByte();
             dragonLeadSpawn = flags[0];
             cryoCrystalSpawn = flags[1];
+            bastionLeftSide = flags[4];
             lidenAtHomeWorld = flags[5];
 
             newbCaveVector = reader.ReadPackedVector2();
@@ -2982,6 +3004,7 @@ namespace Redemption.WorldGeneration
             BastionVector = reader.ReadPackedVector2();
             GoldenGatewayVector = reader.ReadPackedVector2();
             JoShrinePoint = new Point16(reader.ReadUInt16(), reader.ReadUInt16());
+            BastionWatchtowerPoint = new Point16(reader.ReadUInt16(), reader.ReadUInt16());
         }
     }
     public class GenUtils

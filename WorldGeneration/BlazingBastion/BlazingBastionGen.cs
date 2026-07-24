@@ -1,34 +1,16 @@
-using Microsoft.Xna.Framework;
 using Redemption.Base;
 using Redemption.Globals;
-using Redemption.Tiles.Furniture.Misc;
 using Redemption.Tiles.Tiles;
 using Redemption.Walls;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 
 namespace Redemption.WorldGeneration
 {
-    public class BastionClear : MicroBiome
-    {
-        public override bool Place(Point origin, StructureMap structures)
-        {
-            Dictionary<Color, int> colorToTile = new()
-            {
-                [new Color(150, 150, 150)] = -2,
-                [Color.Black] = -1
-            };
-
-            TexGenData tex = TexGen.GetTextureForGen("Redemption/WorldGeneration/BlazingBastion/BastionBase_Clear");
-            TexGen gen = TexGen.GetTexGenerator(tex, colorToTile);
-            gen.Generate(origin.X, origin.Y, true, false);
-
-            return true;
-        }
-    }
     public class BlazingBastion : MicroBiome
     {
         private readonly int WIDTH = 295;
@@ -36,454 +18,359 @@ namespace Redemption.WorldGeneration
         public override bool Place(Point origin, StructureMap structures)
         {
             Mod mod = Redemption.Instance;
-            Dictionary<Color, int> colorToTile = new()
-            {
-                [new Color(255, 0, 0)] = ModContent.TileType<ShinkiteBrickTile>(),
-                [new Color(150, 0, 0)] = ModContent.TileType<ShinkiteBeamTile>(),
-                [new Color(0, 255, 0)] = TileID.HellstoneBrick,
-                [new Color(0, 0, 255)] = TileID.ObsidianBrick,
-                [new Color(0, 255, 255)] = TileID.Ash,
-                [new Color(0, 150, 255)] = TileID.Grate,
-                [new Color(255, 0, 255)] = TileID.RedStucco,
-                [new Color(255, 255, 0)] = TileID.YellowStucco,
-                [new Color(255, 150, 0)] = TileID.GreenStucco,
-                [new Color(150, 150, 150)] = -2,
-                [Color.Black] = -1
-            };
-
-            Dictionary<Color, int> colorToWall = new()
-            {
-                [new Color(255, 0, 0)] = ModContent.WallType<ShinkiteBrickWallTile>(),
-                [new Color(0, 255, 0)] = WallID.HellstoneBrickUnsafe,
-                [new Color(0, 0, 255)] = WallID.ObsidianBrickUnsafe,
-                [new Color(255, 0, 255)] = WallID.Lavafall,
-                [new Color(0, 255, 255)] = WallID.RedStainedGlass,
-                [Color.Black] = -1
-            };
-
-            TexGenData tex = TexGen.GetTextureForGen("Redemption/WorldGeneration/BlazingBastion/BastionBase");
-            TexGenData texWalls = TexGen.GetTextureForGen("Redemption/WorldGeneration/BlazingBastion/BastionBase_Walls");
-            TexGenData texSlopes = TexGen.GetTextureForGen("Redemption/WorldGeneration/BlazingBastion/BastionBase_Slopes");
-            TexGenData texLiquids = TexGen.GetTextureForGen("Redemption/WorldGeneration/BlazingBastion/BastionBase_Liquids");
-            TexGen gen = TexGen.GetTexGenerator(tex, colorToTile, texWalls, colorToWall, texLiquids, texSlopes);
-            gen.Generate(origin.X, origin.Y, true, false);
-
-            for (int i = origin.X + 25; i < origin.X + 142; i++)
-            {
-                for (int j = origin.Y + 46; j < origin.Y + 50; j++)
-                {
-                    if (Framing.GetTileSafely(i, j).TileType == ModContent.TileType<ShinkiteBrickTile>() && WorldGen.InWorld(i, j))
-                        Wiring.ActuateForced(i, j);
-                }
-            }
-            for (int i = origin.X + 172; i < origin.X + 177; i++)
-            {
-                for (int j = origin.Y + 87; j < origin.Y + 107; j++)
-                {
-                    if ((Framing.GetTileSafely(i, j).TileType == ModContent.TileType<ShinkiteBrickTile>() ||
-                        Framing.GetTileSafely(i, j).TileType == TileID.ObsidianBrick ||
-                        Framing.GetTileSafely(i, j).TileType == TileID.HellstoneBrick) && WorldGen.InWorld(i, j))
-                        Wiring.ActuateForced(i, j);
-                }
-            }
-            for (int i = origin.X + 193; i < origin.X + 198; i++)
-            {
-                for (int j = origin.Y + 87; j < origin.Y + 107; j++)
-                {
-                    if ((Framing.GetTileSafely(i, j).TileType == ModContent.TileType<ShinkiteBrickTile>() ||
-                        Framing.GetTileSafely(i, j).TileType == TileID.ObsidianBrick ||
-                        Framing.GetTileSafely(i, j).TileType == TileID.HellstoneBrick) && WorldGen.InWorld(i, j))
-                        Wiring.ActuateForced(i, j);
-                }
-            }
-            for (int i = origin.X + 230; i < origin.X + 235; i++)
-            {
-                for (int j = origin.Y + 87; j < origin.Y + 107; j++)
-                {
-                    if ((Framing.GetTileSafely(i, j).TileType == ModContent.TileType<ShinkiteBrickTile>() ||
-                        Framing.GetTileSafely(i, j).TileType == TileID.ObsidianBrick ||
-                        Framing.GetTileSafely(i, j).TileType == TileID.HellstoneBrick) && WorldGen.InWorld(i, j))
-                        Wiring.ActuateForced(i, j);
-                }
-            }
-            for (int i = origin.X + 251; i < origin.X + 256; i++)
-            {
-                for (int j = origin.Y + 87; j < origin.Y + 107; j++)
-                {
-                    if ((Framing.GetTileSafely(i, j).TileType == ModContent.TileType<ShinkiteBrickTile>() ||
-                        Framing.GetTileSafely(i, j).TileType == TileID.ObsidianBrick ||
-                        Framing.GetTileSafely(i, j).TileType == TileID.HellstoneBrick) && WorldGen.InWorld(i, j))
-                        Wiring.ActuateForced(i, j);
-                }
-            }
-            // Tower 1
-            GenUtils.ObjectPlace(origin.X + 151, origin.Y + 53, TileID.TallGateClosed);
-            GenUtils.ObjectPlace(origin.X + 163, origin.Y + 53, TileID.TallGateClosed);
-            GenUtils.ObjectPlace(origin.X + 157, origin.Y + 56, TileID.Bookcases, 4);
-            GenUtils.ObjectPlace(origin.X + 155, origin.Y + 47, TileID.HangingLanterns, 32);
-            GenUtils.ObjectPlace(origin.X + 159, origin.Y + 47, TileID.HangingLanterns, 32);
-            GenUtils.ObjectPlace(origin.X + 155, origin.Y + 45, TileID.Lamps, 23);
-            GenUtils.ObjectPlace(origin.X + 159, origin.Y + 45, TileID.Lamps, 23);
-            GenUtils.ObjectPlace(origin.X + 152, origin.Y + 30, TileID.Chairs, 16);
-            GenUtils.ObjectPlace(origin.X + 162, origin.Y + 30, TileID.Chairs, 16, 1);
-            GenUtils.ObjectPlace(origin.X + 157, origin.Y + 25, TileID.Chandeliers, 32);
-            WorldGen.AddBuriedChest(origin.X + 154, origin.Y + 30, 0, false, 4);
-            // Tower 2
-            GenUtils.ObjectPlace(origin.X + 264, origin.Y + 53, TileID.TallGateClosed);
-            GenUtils.ObjectPlace(origin.X + 276, origin.Y + 53, TileID.TallGateClosed);
-            GenUtils.ObjectPlace(origin.X + 270, origin.Y + 56, TileID.Bookcases, 4);
-            GenUtils.ObjectPlace(origin.X + 268, origin.Y + 47, TileID.HangingLanterns, 32);
-            GenUtils.ObjectPlace(origin.X + 272, origin.Y + 47, TileID.HangingLanterns, 32);
-            GenUtils.ObjectPlace(origin.X + 268, origin.Y + 45, TileID.Lamps, 23);
-            GenUtils.ObjectPlace(origin.X + 272, origin.Y + 45, TileID.Lamps, 23);
-            GenUtils.ObjectPlace(origin.X + 265, origin.Y + 30, TileID.Chairs, 16);
-            GenUtils.ObjectPlace(origin.X + 275, origin.Y + 30, TileID.Chairs, 16, 1);
-            GenUtils.ObjectPlace(origin.X + 270, origin.Y + 25, TileID.Chandeliers, 32);
-            WorldGen.AddBuriedChest(origin.X + 274, origin.Y + 30, 0, false, 4);
-
-            // Bastion
-            GenUtils.ObjectPlace(origin.X + 180, origin.Y + 59, TileID.TallGateClosed);
-            GenUtils.ObjectPlace(origin.X + 247, origin.Y + 59, TileID.TallGateClosed);
-            GenUtils.ObjectPlace(origin.X + 187, origin.Y + 63, TileID.Benches, 10);
-            GenUtils.ObjectPlace(origin.X + 193, origin.Y + 63, TileID.Benches, 10);
-            GenUtils.ObjectPlace(origin.X + 190, origin.Y + 63, TileID.Bookcases, 4);
-            GenUtils.ObjectPlace(origin.X + 213, origin.Y + 63, TileID.GrandfatherClocks, 17);
-            GenUtils.ObjectPlace(origin.X + 211, origin.Y + 63, TileID.Dressers, 9);
-            GenUtils.ObjectPlace(origin.X + 216, origin.Y + 63, TileID.Dressers, 9);
-            GenUtils.ObjectPlace(origin.X + 237, origin.Y + 63, TileID.Chairs, 16);
-            GenUtils.ObjectPlace(origin.X + 232, origin.Y + 63, TileID.Chairs, 16, 1);
-            GenUtils.ObjectPlace(origin.X + 235, origin.Y + 63, TileID.Tables, 13);
-            GenUtils.ObjectPlace(origin.X + 235, origin.Y + 61, TileID.Candelabras, 25);
-            GenUtils.ObjectPlace(origin.X + 211, origin.Y + 61, TileID.Candles, 25);
-            GenUtils.ObjectPlace(origin.X + 216, origin.Y + 61, TileID.Candles, 25);
-            GenUtils.ObjectPlace(origin.X + 182, origin.Y + 90, TileID.Chandeliers, 32);
-            GenUtils.ObjectPlace(origin.X + 187, origin.Y + 90, TileID.Chandeliers, 32);
-            GenUtils.ObjectPlace(origin.X + 205, origin.Y + 90, TileID.Chandeliers, 32);
-            GenUtils.ObjectPlace(origin.X + 222, origin.Y + 90, TileID.Chandeliers, 32);
-            GenUtils.ObjectPlace(origin.X + 240, origin.Y + 90, TileID.Chandeliers, 32);
-            GenUtils.ObjectPlace(origin.X + 245, origin.Y + 90, TileID.Chandeliers, 32);
-
-            GenUtils.ObjectPlace(origin.X + 180, origin.Y + 39, TileID.Lamps, 23);
-            GenUtils.ObjectPlace(origin.X + 186, origin.Y + 39, TileID.Lamps, 23);
-            GenUtils.ObjectPlace(origin.X + 241, origin.Y + 39, TileID.Lamps, 23);
-            GenUtils.ObjectPlace(origin.X + 247, origin.Y + 39, TileID.Lamps, 23);
-
-            GenUtils.ObjectPlace(origin.X + 177, origin.Y + 87, ModContent.TileType<NozaCageHangingTile>());
-            GenUtils.ObjectPlace(origin.X + 200, origin.Y + 87, ModContent.TileType<NozaCageHangingTile>());
-            GenUtils.ObjectPlace(origin.X + 217, origin.Y + 87, ModContent.TileType<NozaCageHangingTile>());
-            GenUtils.ObjectPlace(origin.X + 249, origin.Y + 87, ModContent.TileType<NozaCageHangingTile>());
-            GenUtils.ObjectPlace(origin.X + 184, origin.Y + 106, ModContent.TileType<NozaCageTile>());
-            GenUtils.ObjectPlace(origin.X + 190, origin.Y + 106, ModContent.TileType<NozaCageLargeTile>(), 0, 1);
-            GenUtils.ObjectPlace(origin.X + 198, origin.Y + 106, ModContent.TileType<NozaCageSmallTile>());
-            GenUtils.ObjectPlace(origin.X + 221, origin.Y + 106, ModContent.TileType<NozaCageTile>());
-            GenUtils.ObjectPlace(origin.X + 224, origin.Y + 106, ModContent.TileType<NozaCageSmallTile>(), 0, 1);
-            GenUtils.ObjectPlace(origin.X + 242, origin.Y + 106, ModContent.TileType<NozaCageTile>(), 0, 1);
-            GenUtils.ObjectPlace(origin.X + 248, origin.Y + 106, ModContent.TileType<NozaCageLargeTile>());
-            GenUtils.ObjectPlace(origin.X + 190, origin.Y + 101, ModContent.TileType<NozaCageSmallTile>());
-            GenUtils.ObjectPlace(origin.X + 242, origin.Y + 103, ModContent.TileType<NozaCageSmallTile>(), 0, 1);
-
-            bool placedBigHouse = false;
+            bool placed = false;
+            bool nearEnd = false;
             int attempts = 0;
-            while (!placedBigHouse && attempts++ < 10000)
+            Point16 bridgeDims = StructureHelper.API.Generator.GetStructureDimensions("WorldGeneration/BlazingBastion/BastionBridgeMid", mod);
+            Point16 pillarDims = StructureHelper.API.Generator.GetStructureDimensions("WorldGeneration/BlazingBastion/BastionBridgePillar", mod);
+
+            int bridgesPlaced = 0;
+            while (!placed && attempts++ < Main.maxTilesX / 2)
             {
-                int placeX = WorldGen.genRand.Next(origin.X + 12, origin.X + 123);
-                int placeY = origin.Y + 28;
-                bool whitelist = false;
-                for (int i = -2; i <= 26; i++)
+                int nearEndNum = 1100;
+                int endNum = 500;
+                if (Main.maxTilesX <= 5000 && RedeGen.bastionLeftSide)
                 {
-                    for (int j = 0; j <= 30; j++)
-                    {
-                        int type = Framing.GetTileSafely(placeX + i, placeY + j).TileType;
-                        if (type == TileID.ObsidianBrick || type == TileID.HellstoneBrick)
-                        {
-                            whitelist = true;
-                            break;
-                        }
-                    }
+                    nearEndNum -= 200;
+                    endNum -= 200;
                 }
-                if (whitelist)
+
+                int tilesX = Main.maxTilesX / 2 + (RedeGen.bastionLeftSide ? -Main.maxTilesX / 4 : Main.maxTilesX / 4) + (RedeGen.bastionLeftSide ? -attempts : attempts);
+                int tilesY = Main.UnderworldLayer + 65;
+                if (RedeGen.bastionLeftSide ? tilesX < endNum : tilesX > Main.maxTilesX - endNum)
+                    break;
+
+                if (!WorldGen.InWorld(tilesX, tilesY))
                     continue;
 
-                Point bigHouseOrigin = new(placeX, placeY);
-                BigHouse(bigHouseOrigin);
-                placedBigHouse = true;
-            }
-            int placedHouse = 0;
-            attempts = 0;
-            while (placedHouse < 2 && attempts++ < 10000)
-            {
-                int placeX = WorldGen.genRand.Next(origin.X + 12, origin.X + 128);
-                int placeY = origin.Y + 38;
-                bool whitelist = false;
-                for (int i = -2; i <= 21; i++)
-                {
-                    for (int j = 0; j <= 20; j++)
-                    {
-                        int type = Framing.GetTileSafely(placeX + i, placeY + j).TileType;
-                        if (type == TileID.ObsidianBrick || type == TileID.HellstoneBrick)
-                        {
-                            whitelist = true;
-                            break;
-                        }
-                    }
-                }
-                if (whitelist)
+                while (!(WorldGen.SolidTile(tilesX, tilesY) || Framing.GetTileSafely(tilesX, tilesY).LiquidType == LiquidID.Lava) && tilesY <= Main.maxTilesY - 30)
+                    tilesY++;
+
+                if (tilesY > Main.maxTilesY - 30)
                     continue;
 
-                Point houseOrigin = new(placeX, placeY);
-                House(houseOrigin);
-                placedHouse++;
-            }
-            int placedMiniTower = 0;
-            attempts = 0;
-            while (placedMiniTower < 3 && attempts++ < 10000)
-            {
-                int placeX = WorldGen.genRand.Next(origin.X + 12, origin.X + 135);
-                int placeY = origin.Y + 29;
-                bool whitelist = false;
-                for (int i = -2; i <= 14; i++)
+                int segNum = WorldGen.genRand.Next(3, 7);
+                if (nearEnd)
+                    segNum = 6;
+
+                bool blacklist = false;
+                bool noBridge = false;
+                for (int x = 0; x < bridgeDims.X * segNum; x++)
                 {
-                    for (int j = 0; j <= 29; j++)
+                    for (int y = 0; y < bridgeDims.Y; y++)
                     {
-                        int type = Framing.GetTileSafely(placeX + i, placeY + j).TileType;
-                        if (type == TileID.ObsidianBrick || type == TileID.HellstoneBrick)
+                        int type = Framing.GetTileSafely(tilesX + x, tilesY + y).TileType;
+                        if (type == TileID.ObsidianBrick || type == TileID.HellstoneBrick || TileLists.BlacklistTiles.Contains(type))
                         {
-                            whitelist = true;
+                            blacklist = true;
                             break;
+                        }
+                        if (!WorldGen.InWorld(tilesX + x, tilesY + y) || !GenVars.structures.CanPlace(new Rectangle(tilesX, tilesY, x, y)))
+                        {
+                            blacklist = true;
+                            break;
+                        }
+                        if (!nearEnd && CrossMod.CrossMod.Calamity.Enabled)
+                        {
+                            if (CrossMod.CrossMod.Calamity.TryFind("BrimstoneSlab", out ModTile brimstoneSlab) && type == brimstoneSlab.Type)
+                                noBridge = true;
+                            //if (CrossMod.CrossMod.Calamity.TryFind("BrimstoneSlag", out ModTile brimstoneSlag) && type == brimstoneSlag.Type)
+                                //noBridge = true;
+                            //if (CrossMod.CrossMod.Calamity.TryFind("ScorchedRemains", out ModTile scorchedRemains) && type == scorchedRemains.Type)
+                                //noBridge = true;
                         }
                     }
                 }
-                if (whitelist)
+                if (blacklist)
                     continue;
 
-                Point towerOrigin = new(placeX, placeY);
-                MiniTower(towerOrigin);
-                placedMiniTower++;
+                Vector2 origin2 = new(tilesX, tilesY - WorldGen.genRand.Next(2, 6));
+                PlaceBridge(mod, segNum, origin2, bridgeDims, pillarDims, bridgesPlaced, noBridge);
+                bridgesPlaced++;
+
+                attempts += (bridgeDims.X * segNum) + WorldGen.genRand.Next(20, 61);
+                if (!nearEnd && RedeGen.bastionLeftSide ? origin2.X < nearEndNum : origin2.X > Main.maxTilesX - nearEndNum)
+                    nearEnd = true;
+
+                if (RedeGen.bastionLeftSide ? origin2.X < endNum : origin2.X > Main.maxTilesX - endNum)
+                    placed = true;
             }
-            for (int i = origin.X; i < origin.X + WIDTH; i++)
-            {
-                for (int j = origin.Y; j < origin.Y + HEIGHT; j++)
-                {
-                    switch (Framing.GetTileSafely(i, j).TileType)
-                    {
-                        case TileID.GreenStucco:
-                            Framing.GetTileSafely(i, j).ClearTile();
-                            WorldGen.PlaceTile(i, j, TileID.Platforms, true, false, -1, 13);
-                            WorldGen.SlopeTile(i, j, 1);
-                            break;
-                        case TileID.YellowStucco:
-                            Framing.GetTileSafely(i, j).ClearTile();
-                            WorldGen.PlaceTile(i, j, TileID.Platforms, true, false, -1, 13);
-                            WorldGen.SlopeTile(i, j, 2);
-                            break;
-                        case TileID.RedStucco:
-                            Framing.GetTileSafely(i, j).ClearTile();
-                            WorldGen.PlaceTile(i, j, TileID.Platforms, true, false, -1, 13);
-                            break;
-                    }
-                }
-            }
-            for (int i = origin.X; i < origin.X + WIDTH; i++)
-            {
-                for (int j = origin.Y + 29; j < origin.Y + HEIGHT; j++)
-                {
-                    if (WorldGen.genRand.NextBool(20))
-                        WorldGen.PlacePot(i, j - 1, 28, Main.rand.Next(13, 16));
-                    if (WorldGen.genRand.NextBool(30))
-                        GenUtils.ObjectPlace(i, j - 1, TileID.Statues, 49);
-                    if (WorldGen.genRand.NextBool(30))
-                    {
-                        switch (WorldGen.genRand.Next(3))
-                        {
-                            case 0:
-                                GenUtils.ObjectPlace(i, j - 1, TileID.PottedPlants2, WorldGen.genRand.Next(8, 10));
-                                break;
-                            case 1:
-                                GenUtils.ObjectPlace(i, j - 1, TileID.PottedLavaPlants, WorldGen.genRand.NextBool(2) ? 2 : 0);
-                                break;
-                            case 2:
-                                GenUtils.ObjectPlace(i, j - 1, TileID.PottedLavaPlantTendrils);
-                                break;
-                        }
-                    }
-                }
-            }
-            for (int i = origin.X; i < origin.X + WIDTH; i++)
-            {
-                for (int j = origin.Y; j < origin.Y + HEIGHT; j++)
-                {
-                    if (Framing.GetTileSafely(i, j).TileType == TileID.Platforms && WorldGen.InWorld(i, j))
-                        WorldGen.KillTile(i, j, true);
-                }
-            }
+
+            PlaceBastionGateAndBazaar(mod);
+
             return true;
         }
-        public static void MiniTower(Point origin)
+
+        void PlaceBastionGateAndBazaar(Mod mod)
         {
-            Mod mod = Redemption.Instance;
-            Dictionary<Color, int> colorToTile = new()
-            {
-                [new Color(255, 0, 0)] = ModContent.TileType<ShinkiteBrickTile>(),
-                [new Color(0, 255, 0)] = TileID.HellstoneBrick,
-                [new Color(0, 0, 255)] = TileID.ObsidianBrick,
-                [new Color(255, 0, 255)] = TileID.RedStucco,
-                [new Color(150, 150, 150)] = -2,
-                [Color.Black] = -1
-            };
-            Dictionary<Color, int> colorToWall = new()
-            {
-                [new Color(0, 255, 0)] = WallID.HellstoneBrickUnsafe,
-                [new Color(0, 0, 255)] = WallID.ObsidianBrickUnsafe,
-                [Color.Black] = -1
-            };
+            if (midBridgeSegments == null || midBridgeSegments.Count < 2)
+                return;
 
-            TexGenData tex = TexGen.GetTextureForGen("Redemption/WorldGeneration/BlazingBastion/MiniTower1");
-            TexGenData texWalls = TexGen.GetTextureForGen("Redemption/WorldGeneration/BlazingBastion/MiniTower1_Walls");
-            TexGenData texSlopes = TexGen.GetTextureForGen("Redemption/WorldGeneration/BlazingBastion/MiniTower1_Slopes");
-            TexGen gen = TexGen.GetTexGenerator(tex, colorToTile, texWalls, colorToWall, null, texSlopes);
-            gen.Generate(origin.X, origin.Y, true, false);
+            Point16 gateDims = StructureHelper.API.Generator.GetStructureDimensions("WorldGeneration/BlazingBastion/BastionGate", mod);
 
-            for (int i = origin.X; i < origin.X + 12; i++)
+            Point16 lastBridgeOrigin = midBridgeSegments[^1];
+            int x = 17;
+            int y = 5 - gateDims.Y;
+
+            if (RedeGen.bastionLeftSide)
             {
-                for (int j = origin.Y; j < origin.Y + 30; j++)
+                x -= 1 + gateDims.X;
+                Point16 gateOrigin = new(lastBridgeOrigin.X + x, lastBridgeOrigin.Y + y);
+                StructureHelper.API.Generator.GenerateStructure("WorldGeneration/BlazingBastion/BastionGateL", gateOrigin, mod);
+            }
+            else
+            {
+                x += 1;
+                Point16 gateOrigin = new(lastBridgeOrigin.X + x, lastBridgeOrigin.Y + y);
+                StructureHelper.API.Generator.GenerateStructure("WorldGeneration/BlazingBastion/BastionGate", gateOrigin, mod);
+            }
+
+            Point16 bazaarDims = StructureHelper.API.Generator.GetStructureDimensions("WorldGeneration/BlazingBastion/BastionBazaar", mod);
+
+            Point16 bazaarOrigin;
+            x = 17;
+            y = 5 - 11;
+
+            if (RedeGen.bastionLeftSide)
+            {
+                x -= 17 + bazaarDims.X + 18;
+                bazaarOrigin = new(lastBridgeOrigin.X + x, lastBridgeOrigin.Y + y);
+
+                WorldUtils.Gen(bazaarOrigin.ToPoint() + new Point(bazaarDims.X / 2, 9), new Shapes.Mound((bazaarDims.X / 2) + 5, 25), Actions.Chain(
+                [
+                    new Actions.ClearTile()
+                ]));
+                WorldUtils.Gen(bazaarOrigin.ToPoint() + new Point(-20, -40), new Shapes.Rectangle(bazaarDims.X + 40, 52), Actions.Chain(
+                [
+                    new Actions.SetLiquid(0, 0)
+                ]));
+
+                GenUtils.ClearTrees(new Point16(bazaarDims.X + 40, 52), bazaarOrigin.ToPoint() + new Point(-20, -40));
+
+                StructureHelper.API.Generator.GenerateStructure("WorldGeneration/BlazingBastion/BastionBazaarL", bazaarOrigin, mod);
+            }
+            else
+            {
+                x += 17 + 18;
+                bazaarOrigin = new(lastBridgeOrigin.X + x, lastBridgeOrigin.Y + y);
+
+                WorldUtils.Gen(bazaarOrigin.ToPoint() + new Point(bazaarDims.X / 2, 9), new Shapes.Mound((bazaarDims.X / 2) + 5, 25), Actions.Chain(
+                [
+                    new Actions.ClearTile()
+                ]));
+                WorldUtils.Gen(bazaarOrigin.ToPoint() + new Point(-20, -40), new Shapes.Rectangle(bazaarDims.X + 40, 52), Actions.Chain(
+                [
+                    new Actions.SetLiquid(0, 0)
+                ]));
+
+                GenUtils.ClearTrees(new Point16(bazaarDims.X + 40, 52), bazaarOrigin.ToPoint() + new Point(-20, -40));
+
+                StructureHelper.API.Generator.GenerateStructure("WorldGeneration/BlazingBastion/BastionBazaar", bazaarOrigin, mod);
+            }
+
+            // Fill in pillars of Bazaar
+            int pillarX = RedeGen.bastionLeftSide ? 105 : 6;
+            for (int i = pillarX; i < pillarX + 6; i++)
+            {
+                for (int j = bazaarDims.Y; j < Main.maxTilesY - 20; j++)
                 {
-                    switch (Framing.GetTileSafely(i, j).TileType)
-                    {
-                        case TileID.RedStucco:
-                            Framing.GetTileSafely(i, j).ClearTile();
-                            WorldGen.PlaceTile(i, j, TileID.Platforms, true, false, -1, 13);
-                            break;
-                    }
+                    Point16 pos = new(bazaarOrigin.X + i, bazaarOrigin.Y + j);
+                    WorldGen.KillTile(pos.X, pos.Y);
+                    WorldGen.PlaceTile(pos.X, pos.Y, TileType<DarkShinkiteBrickTile>(), true, true);
+                    //WorldGen.SlopeTile(pos.X, pos.Y, 0);
                 }
             }
-            GenUtils.ObjectPlace(origin.X + 1, origin.Y + 26, TileID.ClosedDoor, 19);
-            GenUtils.ObjectPlace(origin.X + 10, origin.Y + 26, TileID.ClosedDoor, 19);
-            GenUtils.ObjectPlace(origin.X + 3, origin.Y + 19, TileID.Lamps, 23);
-            GenUtils.ObjectPlace(origin.X + 8, origin.Y + 19, TileID.Lamps, 23);
-            GenUtils.ObjectPlace(origin.X + 2, origin.Y + 7, TileID.Chairs, 16);
-            GenUtils.ObjectPlace(origin.X + 9, origin.Y + 7, TileID.Chairs, 16, 1);
-            GenUtils.ObjectPlace(origin.X + 3, origin.Y + 4, TileID.Torches, 7);
-            GenUtils.ObjectPlace(origin.X + 8, origin.Y + 4, TileID.Torches, 7);
-            WorldGen.AddBuriedChest(origin.X + 6, origin.Y + 6, 0, false, 4);
+            pillarX = RedeGen.bastionLeftSide ? 83 : 26;
+            for (int i = pillarX; i < pillarX + 8; i++)
+            {
+                for (int j = bazaarDims.Y; j < Main.maxTilesY - 20; j++)
+                {
+                    Point16 pos = new(bazaarOrigin.X + i, bazaarOrigin.Y + j);
+                    WorldGen.KillTile(pos.X, pos.Y);
+                    WorldGen.PlaceTile(pos.X, pos.Y, TileType<DarkShinkiteBrickTile>(), true, true);
+                    //WorldGen.SlopeTile(pos.X, pos.Y, 0);
+                }
+            }
+            pillarX = RedeGen.bastionLeftSide ? 49 : 60;
+            for (int i = pillarX; i < pillarX + 8; i++)
+            {
+                for (int j = bazaarDims.Y; j < Main.maxTilesY - 20; j++)
+                {
+                    Point16 pos = new(bazaarOrigin.X + i, bazaarOrigin.Y + j);
+                    WorldGen.KillTile(pos.X, pos.Y);
+                    WorldGen.PlaceTile(pos.X, pos.Y, TileType<DarkShinkiteBrickTile>(), true, true);
+                    //WorldGen.SlopeTile(pos.X, pos.Y, 0);
+                }
+            }
+
+            // Bastion
+            Point16 bastionDims = StructureHelper.API.Generator.GetStructureDimensions("WorldGeneration/BlazingBastion/BlazingBastion", mod);
+
+            Point16 bastionOrigin;
+            x = 0;
+            y = Main.maxTilesY - 42 - bastionDims.Y;
+
+            if (RedeGen.bastionLeftSide)
+            {
+                x -= bastionDims.X + 72;
+                bastionOrigin = new(bazaarOrigin.X + bazaarDims.X + x, y);
+
+                WorldUtils.Gen(bastionOrigin.ToPoint() + new Point(0, -40), new Shapes.Rectangle(bastionDims.X, bastionDims.Y - 40), Actions.Chain(
+                [
+                    new Actions.SetLiquid(0, 0)
+                ]));
+
+                GenUtils.ClearTrees(new Point16(bastionDims.X, bastionDims.Y - 40), bastionOrigin.ToPoint() + new Point(0, 0));
+
+                StructureHelper.API.Generator.GenerateStructure("WorldGeneration/BlazingBastion/BlazingBastionL", bastionOrigin, mod);
+            }
+            else
+            {
+                x += 72;
+                bastionOrigin = new(bazaarOrigin.X + x, y);
+
+                WorldUtils.Gen(bastionOrigin.ToPoint() + new Point(0, -40), new Shapes.Rectangle(bastionDims.X, bastionDims.Y - 40), Actions.Chain(
+                [
+                    new Actions.SetLiquid(0, 0)
+                ]));
+
+                GenUtils.ClearTrees(new Point16(bastionDims.X, bastionDims.Y - 40), bastionOrigin.ToPoint() + new Point(0, 0));
+
+                StructureHelper.API.Generator.GenerateStructure("WorldGeneration/BlazingBastion/BlazingBastion", bastionOrigin, mod);
+            }
+
+            for (int i = 0; i < bastionDims.X; i++)
+            {
+                for (int j = 0; j < bastionDims.Y; j++)
+                {
+                    int wallX = bastionOrigin.X + i;
+                    int wallY = bastionOrigin.Y + j;
+                    ushort wall = Framing.GetTileSafely(wallX, wallY).WallType;
+
+                    if (wall == WallType<ShinkiteBrickWallTile>())
+                        WorldGen.ReplaceWall(wallX, wallY, (ushort)WallType<ShinkiteBrickWallTileUnsafe>());
+                    if (wall == WallType<ShinkiteBrickOrnateWallTile>())
+                        WorldGen.ReplaceWall(wallX, wallY, (ushort)WallType<ShinkiteBrickOrnateWallTileUnsafe>());
+                }
+            }
+
+            RedeGen.BastionVector = bastionOrigin.ToVector2();
         }
-        public static void BigHouse(Point origin)
+
+        private readonly List<Point16> midBridgeSegments = new();
+        void PlaceBridge(Mod mod, int segNum, Vector2 origin, Point16 bridgeDims, Point16 pillarDims, int bridgeID, bool noBridge = false)
         {
-            Mod mod = Redemption.Instance;
-            Dictionary<Color, int> colorToTile = new()
-            {
-                [new Color(255, 0, 0)] = ModContent.TileType<ShinkiteBrickTile>(),
-                [new Color(150, 0, 0)] = ModContent.TileType<ShinkiteBeamTile>(),
-                [new Color(0, 255, 0)] = TileID.HellstoneBrick,
-                [new Color(0, 0, 255)] = TileID.ObsidianBrick,
-                [new Color(255, 0, 255)] = TileID.RedStucco,
-                [new Color(255, 255, 0)] = TileID.YellowStucco,
-                [new Color(150, 150, 150)] = -2,
-                [Color.Black] = -1
-            };
-            Dictionary<Color, int> colorToWall = new()
-            {
-                [new Color(255, 0, 0)] = ModContent.WallType<ShinkiteBrickWallTile>(),
-                [new Color(0, 255, 0)] = WallID.HellstoneBrickUnsafe,
-                [new Color(0, 0, 255)] = WallID.ObsidianBrickUnsafe,
-                [Color.Black] = -1
-            };
+            int endNum = 500;
+            if (Main.maxTilesX <= 5000 && RedeGen.bastionLeftSide)
+                endNum -= 200;
 
-            TexGenData tex = TexGen.GetTextureForGen("Redemption/WorldGeneration/BlazingBastion/House1");
-            TexGenData texWalls = TexGen.GetTextureForGen("Redemption/WorldGeneration/BlazingBastion/House1_Walls");
-            TexGenData texSlopes = TexGen.GetTextureForGen("Redemption/WorldGeneration/BlazingBastion/House1_Slopes");
-            TexGen gen = TexGen.GetTexGenerator(tex, colorToTile, texWalls, colorToWall, null, texSlopes);
-            gen.Generate(origin.X, origin.Y, true, false);
-
-            for (int i = origin.X; i < origin.X + 24; i++)
+            if (noBridge && bridgeID != 0)
             {
-                for (int j = origin.Y; j < origin.Y + 31; j++)
+                for (int i = 0; i < segNum - 2; i++)
                 {
-                    switch (Framing.GetTileSafely(i, j).TileType)
-                    {
-                        case TileID.RedStucco:
-                            Framing.GetTileSafely(i, j).ClearTile();
-                            WorldGen.PlaceTile(i, j, TileID.Platforms, true, false, -1, 13);
-                            break;
-                        case TileID.YellowStucco:
-                            Framing.GetTileSafely(i, j).ClearTile();
-                            WorldGen.PlaceTile(i, j, TileID.Platforms, true, false, -1, 13);
-                            WorldGen.SlopeTile(i, j, 2);
-                            break;
-                    }
+                    if (RedeGen.bastionLeftSide ? origin.X < endNum : origin.X > Main.maxTilesX - endNum)
+                        break;
+
+                    origin.X += bridgeDims.X;
+                    midBridgeSegments.Add(origin.ToPoint16());
+                }
+                return;
+            }
+            for (int i = 0; i < segNum; i++)
+            {
+                GenUtils.ClearTrees(new Vector2(bridgeDims.X * segNum, 24).ToPoint16(), origin.ToPoint16() - new Point16(0, 20));
+
+                WorldUtils.Gen(origin.ToPoint() - new Point(10 - (bridgeDims.X * i), 40), new Shapes.Rectangle(bridgeDims.X + 20, 57), Actions.Chain(
+                [
+                        new Actions.SetLiquid(0, 0)
+                ]));
+
+                int extra = 0;
+                if (i == 0)
+                    extra = bridgeDims.X / 2;
+                else if (i == segNum - 1)
+                    extra = -bridgeDims.X / 2;
+                WorldUtils.Gen(origin.ToPoint() + new Point((bridgeDims.X / 2) + (bridgeDims.X * i) + extra, 4), new Shapes.Mound(bridgeDims.X, 20), Actions.Chain(
+                [
+                        new Actions.ClearTile()
+                ]));
+                WorldUtils.Gen(origin.ToPoint() + new Point((bridgeDims.X / 2) + (bridgeDims.X * i) + extra, 4), new Shapes.Circle(bridgeDims.X, WorldGen.genRand.Next(7, 26)), Actions.Chain(
+                [
+                        new Actions.ClearTile()
+                ]));
+            }
+            StructureHelper.API.MultiStructureGenerator.GenerateMultistructureRandom("WorldGeneration/BlazingBastion/BastionBridgeLeft", origin.ToPoint16(), mod);
+            PlaceBridgePillar(mod, origin, bridgeDims, pillarDims);
+            bool specialPlaced = false;
+            Point16 specialOrigin = origin.ToPoint16();
+
+            for (int i = 0; i < segNum - 2; i++)
+            {
+                if (RedeGen.bastionLeftSide ? origin.X < endNum : origin.X > Main.maxTilesX - endNum)
+                    break;
+
+                origin.X += bridgeDims.X;
+                StructureHelper.API.Generator.GenerateStructure("WorldGeneration/BlazingBastion/BastionBridgeMid", origin.ToPoint16(), mod);
+                PlaceBridgePillar(mod, origin, bridgeDims, pillarDims);
+
+                midBridgeSegments.Add(origin.ToPoint16());
+
+                if (bridgeID == 0 && !specialPlaced)
+                {
+                    specialOrigin = origin.ToPoint16() + new Point16(-33, -38);
+                    specialPlaced = true;
                 }
             }
-            GenUtils.ObjectPlace(origin.X + 2, origin.Y + 27, TileID.ClosedDoor, 19);
-            GenUtils.ObjectPlace(origin.X + 15, origin.Y + 27, TileID.ClosedDoor, 19);
-            GenUtils.ObjectPlace(origin.X + 14, origin.Y + 17, TileID.ClosedDoor, 19);
-            GenUtils.ObjectPlace(origin.X + 5, origin.Y + 29, TileID.Bookcases, 4);
-            GenUtils.ObjectPlace(origin.X + 11, origin.Y + 29, TileID.WorkBenches, 14);
-            GenUtils.ObjectPlace(origin.X + 10, origin.Y + 29, TileID.Chairs, 16, 1);
-            GenUtils.ObjectPlace(origin.X + 8, origin.Y + 22, TileID.Candelabras, 25);
-            GenUtils.ObjectPlace(origin.X + 19, origin.Y + 19, TileID.Beds, 8);
-            GenUtils.ObjectPlace(origin.X + 19, origin.Y + 15, TileID.HangingLanterns, 32);
-            GenUtils.ObjectPlace(origin.X + 7, origin.Y + 13, TileID.Pianos, 15);
-            GenUtils.ObjectPlace(origin.X + 12, origin.Y + 12, TileID.Tables, 13);
-            GenUtils.ObjectPlace(origin.X + 10, origin.Y + 12, TileID.Chairs, 16, 1);
-            GenUtils.ObjectPlace(origin.X + 8, origin.Y + 5, TileID.PotsSuspended, 8);
-            GenUtils.ObjectPlace(origin.X + 12, origin.Y + 10, TileID.Candles, 25);
-            GenUtils.ObjectPlace(origin.X + 18, origin.Y + 29, TileID.Campfire, 2);
-            GenUtils.ObjectPlace(origin.X + 11, origin.Y + 16, TileID.Banners, WorldGen.genRand.Next(14, 22));
-            GenUtils.ObjectPlace(origin.X + 12, origin.Y + 25, TileID.Painting3X2, WorldGen.genRand.NextBool(2) ? 0 : WorldGen.genRand.Next(16, 18));
+            origin.X += bridgeDims.X;
+            StructureHelper.API.MultiStructureGenerator.GenerateMultistructureRandom("WorldGeneration/BlazingBastion/BastionBridgeRight", origin.ToPoint16(), mod);
+            PlaceBridgePillar(mod, origin, bridgeDims, pillarDims);
+
+            if (bridgeID == 0)
+            {
+                StructureHelper.API.Generator.GenerateStructure("WorldGeneration/BlazingBastion/BastionWatchtower", specialOrigin, mod);
+
+                RedeGen.BastionWatchtowerPoint = specialOrigin;
+
+                if (RedeGen.bastionLeftSide)
+                {
+                    Point16 ballista = specialOrigin + new Point16(62, 14);
+                    WorldGen.KillTile(ballista.X, ballista.Y);
+                }
+                else
+                {
+                    Point16 ballista = specialOrigin + new Point16(40, 14);
+                    WorldGen.KillTile(ballista.X, ballista.Y);
+                }
+            }
+
         }
-        public static void House(Point origin)
+
+        static void PlaceBridgePillar(Mod mod, Vector2 origin, Point16 bridgeDims, Point16 pillarDims)
         {
-            Mod mod = Redemption.Instance;
-            Dictionary<Color, int> colorToTile = new()
+            int pillarNum = WorldGen.genRand.Next(3, 7);
+            for (int i = 0; i < pillarNum; i++)
             {
-                [new Color(255, 0, 0)] = ModContent.TileType<ShinkiteBrickTile>(),
-                [new Color(0, 255, 0)] = TileID.HellstoneBrick,
-                [new Color(0, 0, 255)] = TileID.ObsidianBrick,
-                [new Color(255, 0, 255)] = TileID.RedStucco,
-                [new Color(150, 150, 150)] = -2,
-                [Color.Black] = -1
-            };
-            Dictionary<Color, int> colorToWall = new()
-            {
-                [new Color(255, 0, 0)] = ModContent.WallType<ShinkiteBrickWallTile>(),
-                [new Color(0, 255, 0)] = WallID.HellstoneBrickUnsafe,
-                [new Color(0, 0, 255)] = WallID.ObsidianBrickUnsafe,
-                [Color.Black] = -1
-            };
-
-            TexGenData tex = TexGen.GetTextureForGen("Redemption/WorldGeneration/BlazingBastion/House2");
-            TexGenData texWalls = TexGen.GetTextureForGen("Redemption/WorldGeneration/BlazingBastion/House2_Walls");
-            TexGenData texSlopes = TexGen.GetTextureForGen("Redemption/WorldGeneration/BlazingBastion/House2_Slopes");
-            TexGen gen = TexGen.GetTexGenerator(tex, colorToTile, texWalls, colorToWall, null, texSlopes);
-            gen.Generate(origin.X, origin.Y, true, false);
-
-            for (int i = origin.X; i < origin.X + 19; i++)
-            {
-                for (int j = origin.Y; j < origin.Y + 21; j++)
+                Point16 pillarOrigin = new((int)origin.X + 15, (int)origin.Y + bridgeDims.Y + (pillarDims.Y * i));
+                StructureHelper.API.Generator.GenerateStructure("WorldGeneration/BlazingBastion/BastionBridgePillar", pillarOrigin, mod);
+                if (i == pillarNum - 1)
                 {
-                    switch (Framing.GetTileSafely(i, j).TileType)
-                    {
-                        case TileID.RedStucco:
-                            Framing.GetTileSafely(i, j).ClearTile();
-                            WorldGen.PlaceTile(i, j, TileID.Platforms, true, false, -1, 13);
-                            break;
-                    }
+                    int randX = WorldGen.genRand.Next(pillarDims.X, pillarDims.X + 5);
+                    int randY = WorldGen.genRand.Next(5, 11);
+                    WorldUtils.Gen(pillarOrigin.ToPoint() + new Point(pillarDims.X, pillarDims.Y) - new Point(randX / 2, randY / 2), new Shapes.Circle(randX, randY), Actions.Chain(
+                    [
+                            new Actions.SetSlope((int)SlopeType.Solid),
+                            new Actions.PlaceTile(TileID.Ash)
+                    ]));
                 }
             }
-            GenUtils.ObjectPlace(origin.X + 2, origin.Y + 17, TileID.ClosedDoor, 19);
-            GenUtils.ObjectPlace(origin.X + 16, origin.Y + 17, TileID.ClosedDoor, 19);
-            GenUtils.ObjectPlace(origin.X + 9, origin.Y + 19, TileID.Tables, 13);
-            GenUtils.ObjectPlace(origin.X + 7, origin.Y + 19, TileID.Chairs, 16, 1);
-            GenUtils.ObjectPlace(origin.X + 11, origin.Y + 19, TileID.Chairs, 16);
-            GenUtils.ObjectPlace(origin.X + 9, origin.Y + 17, TileID.Candles, 25);
-            GenUtils.ObjectPlace(origin.X + 4, origin.Y + 12, TileID.Lamps, 23);
-            GenUtils.ObjectPlace(origin.X + 14, origin.Y + 12, TileID.Lamps, 23);
-            GenUtils.ObjectPlace(origin.X + 9, origin.Y + 5, TileID.Chandeliers, 32);
-            GenUtils.ObjectPlace(origin.X + 5, origin.Y + 12, TileID.GrandfatherClocks, 17);
-            GenUtils.ObjectPlace(origin.X + 12, origin.Y + 12, TileID.Benches, 10);
-            GenUtils.ObjectPlace(origin.X + 5, origin.Y + 14, TileID.Banners, WorldGen.genRand.Next(14, 22));
-            GenUtils.ObjectPlace(origin.X + 13, origin.Y + 14, TileID.Banners, WorldGen.genRand.Next(14, 22));
-            if (WorldGen.genRand.NextBool(2))
-                GenUtils.ObjectPlace(origin.X + 9, origin.Y + 8, TileID.Painting3X2, WorldGen.genRand.NextBool(2) ? 0 : WorldGen.genRand.Next(16, 18));
+            for (int i = (int)origin.X; i < origin.X + bridgeDims.X; i++)
+            {
+                for (int j = (int)origin.Y - 20; j < origin.Y + bridgeDims.Y; j++)
+                {
+                    if (WorldGen.genRand.NextBool(10))
+                        WorldGen.PlacePot(i, j - 1, 28, Main.rand.Next(13, 16));
+                }
+            }
         }
     }
 }

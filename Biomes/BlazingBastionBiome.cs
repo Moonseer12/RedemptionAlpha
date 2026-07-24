@@ -7,7 +7,7 @@ namespace Redemption.Biomes
 {
     public class BlazingBastionBiome : ModBiome
     {
-        public override string BestiaryIcon => base.BestiaryIcon;
+        public override string BestiaryIcon => "Redemption/Textures/Bestiary/BlazingBastion";
         public override string BackgroundPath => base.BackgroundPath;
         public override Color? BackgroundColor => base.BackgroundColor;
         public override int Music => MusicID.OtherworldlyUnderworld;

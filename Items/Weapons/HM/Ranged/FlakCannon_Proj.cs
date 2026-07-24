@@ -36,6 +36,8 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Player player = Main.player[Projectile.owner];
             Vector2 vector = player.RotatedRelativePoint(player.MountedCenter);
             ProjHelper.HoldOutProjBasics(Projectile, player, vector);
+            float maxTime = (player.HeldItem.useTime / player.GetTotalAttackSpeed(DamageClass.Ranged));
+
             Projectile.Center = vector;
             Projectile.spriteDirection = Projectile.direction;
             Projectile.timeLeft = 2;
@@ -51,9 +53,12 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Projectile.rotation = Projectile.velocity.ToRotation() + num;
 
             offset -= 6;
-            float maxTime = (player.HeldItem.useTime / player.GetAttackSpeed(DamageClass.Ranged));
             if (!player.channel)
+                Projectile.ai[0] = 1;
+
+            if (Projectile.ai[0] == 1)
             {
+                Projectile.ai[0] = 1;
                 if (Projectile.localAI[0]++ == 0)
                 {
                     if (player.PickAmmo(player.HeldItem, out int grenade, out float shootSpeed, out int weaponDamage, out float weaponKnockback, out int usedAmmoId, firstShot))
@@ -124,6 +129,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
             shake = MathHelper.Min(shake, 0.8f);
             Projectile.localAI[1] = MathHelper.Min(Projectile.localAI[1], (int)(maxTime * 4));
             offset = MathHelper.Clamp(offset, 0, 40);
+
             if (Projectile.ai[1]++ > 1)
                 Projectile.alpha = 0;
         }

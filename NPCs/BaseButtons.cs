@@ -8,6 +8,41 @@ using Terraria.Localization;
 
 namespace Redemption.NPCs
 {
+    public abstract class HangingButtonBase : ChatButton
+    {
+        public abstract int YOffset { get; }
+        public abstract int NPCType { get; }
+        public virtual bool RightSide => false;
+        public virtual bool ActiveRequirements => true;
+        public virtual bool RevealRequirements => true;
+        public virtual bool DisableText => false;
+
+        public override double Priority => 200.0;
+        public override void ModifyPosition(NPC npc, Player player, ref Vector2 position)
+        {
+            RedeGlobalButton.HangingButtonPosition(this, npc, player, ref position, YOffset, RightSide);
+        }
+        public override bool IsActive(NPC npc, Player player) => npc.type == NPCType && ActiveRequirements;
+
+        public virtual string NewText(NPC npc, Player player) => "";
+        public override string Text(NPC npc, Player player)
+        {
+            return RevealRequirements ? (DisableText ? "..." : NewText(npc, player)) : "???";
+        }
+        public virtual Color? NewColor(NPC npc, Player player) => null;
+        public override Color? OverrideColor(NPC npc, Player player)
+        {
+            return !RevealRequirements || DisableText ? Color.Gray : NewColor(npc, player);
+        }
+        public virtual void NewOnClick(NPC npc, Player player) { }
+        public override void OnClick(NPC npc, Player player)
+        {
+            if (!RevealRequirements || DisableText)
+                return;
+
+            NewOnClick(npc, player);
+        }
+    }
     public abstract class TalkButtonBase : ChatButton
     {
         protected abstract int YOffset { get; }

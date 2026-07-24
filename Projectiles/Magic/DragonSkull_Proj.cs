@@ -30,112 +30,112 @@ namespace Redemption.Projectiles.Magic
             Projectile.friendly = false;
             Projectile.tileCollide = false;
         }
-
+        public override bool ShouldUpdatePosition() => false;
         private int maxTime;
-        private float speedBonus;
+        public Player Owner => Main.player[Projectile.owner];
         public override void OnSpawn(IEntitySource source)
         {
-            Player player = Main.player[Projectile.owner];
-            maxTime = (int)(player.HeldItem.useTime / player.GetAttackSpeed(DamageClass.Magic));
-            speedBonus = 30f / maxTime;
+            maxTime = (int)(Owner.HeldItem.useTime / Owner.GetWeaponAttackSpeed(Owner.HeldItem));
         }
         private bool faceLeft;
         private float jawRot;
+        private float rotation;
         public override void AI()
         {
-            Player player = Main.player[Projectile.owner];
-            if (player.noItems || player.CCed || player.dead || !player.active)
+            if (Owner.noItems || Owner.CCed || Owner.dead || !Owner.active)
                 Projectile.Kill();
 
-            player.heldProj = Projectile.whoAmI;
-            player.itemTime = 2;
-            player.itemAnimation = 2;
+            Owner.heldProj = Projectile.whoAmI;
+            Owner.itemTime = 2;
+            Owner.itemAnimation = 2;
 
-            if (player.channel && Projectile.ai[1] == 0)
+            if (Main.myPlayer == Projectile.owner)
             {
-                if (Main.myPlayer == Projectile.owner)
+                if (Owner.channel && Projectile.ai[1] == 0)
                 {
-                    if (Main.MouseWorld.X > Projectile.Center.X)
+                    if (Projectile.rotation >= -1.57f && Projectile.rotation <= 1.57f)
                     {
                         if (faceLeft)
                         {
-                            Projectile.rotation -= MathHelper.Pi;
                             faceLeft = false;
+                            Projectile.spriteDirection = 1;
                         }
-                        Projectile.spriteDirection = 1;
                     }
                     else
                     {
                         if (!faceLeft)
                         {
-                            Projectile.rotation += MathHelper.Pi;
                             faceLeft = true;
+                            Projectile.spriteDirection = -1;
                         }
-                        Projectile.spriteDirection = -1;
                     }
-                }
-                int mana = player.inventory[player.selectedItem].mana;
-                if (Main.myPlayer == Projectile.owner)
-                {
-                    if (Projectile.ai[0] < 40)
-                        Projectile.rotation = (Main.MouseWorld - Projectile.Center).ToRotation() + (Projectile.spriteDirection == -1 ? (float)Math.PI : 0);
-                    else
-                        Projectile.rotation.SlowRotation((Main.MouseWorld - Projectile.Center).ToRotation() + (Projectile.spriteDirection == -1 ? (float)Math.PI : 0), (float)Math.PI / (Projectile.ai[0] >= 180 ? 300 : 80));
-                }
-                if (Projectile.ai[0]++ == 0)
-                {
-                    for (int i = 0; i < 20; i++)
-                        Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, Scale: 2);
-                }
-                if (Projectile.ai[0] >= 20 && Projectile.ai[0] < 30)
-                {
-                    jawRot += 0.03f;
-                }
-                if (Projectile.ai[0] == maxTime)
-                {
-                    SoundEngine.PlaySound(CustomSounds.FlameRise2, Projectile.position);
-                    SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, Projectile.position);
-                }
-                if (Projectile.ai[0] >= maxTime && Projectile.ai[0] % 3 == 0 && Projectile.ai[0] <= 180 && Main.myPlayer == Projectile.owner)
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + RedeHelper.PolarVector(6, Projectile.rotation + MathHelper.PiOver2), RedeHelper.PolarVector(5, Projectile.rotation + (Projectile.spriteDirection == -1 ? (float)Math.PI : 0)), ProjectileType<DragonSkullFlames_Proj>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-
-                if (Projectile.ai[0] == maxTime * 6)
-                {
-                    jawRot += 0.15f;
-                    if (BasePlayer.ReduceMana(player, mana * 2))
+                    int mana = Owner.inventory[Owner.selectedItem].mana;
+                    if (Main.myPlayer == Projectile.owner)
                     {
-                        player.RedemptionScreen().ScreenShakeIntensity += 6;
-                        SoundEngine.PlaySound(SoundID.Item122, Projectile.position);
-                        DustHelper.DrawCircle(Projectile.Center, DustID.Torch, 2, 4, 4, 1, 2, nogravity: true);
-                        if (Main.myPlayer == Projectile.owner)
-                        {
-                            Vector2 pos = Projectile.Center + RedeHelper.PolarVector(6, Projectile.rotation + MathHelper.PiOver2);
-                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), pos, Vector2.Zero, ProjectileType<HeatRay>(),Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
-                        }
+                        float responsiveness = 0;
+                        if (Projectile.ai[0] > 40)
+                            responsiveness = 80;
+                        if (Projectile.ai[0] >= 180)
+                            responsiveness = 160;
+                        Projectile.rotation.SlowRotation(Projectile.Center.DirectionTo(Main.MouseWorld).ToRotation(), MathF.PI / responsiveness);
                     }
-                    else
+                    if (Projectile.ai[0]++ == 0)
+                    {
+                        for (int i = 0; i < 20; i++)
+                            Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, Scale: 2);
+                    }
+                    if (Projectile.ai[0] >= 20 && Projectile.ai[0] < 30)
+                    {
+                        jawRot += 0.03f;
+                    }
+                    if (Projectile.ai[0] == maxTime)
+                    {
+                        SoundEngine.PlaySound(CustomSounds.FlameRise2, Projectile.position);
+                        SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, Projectile.position);
+                    }
+                    Vector2 pos = Projectile.Center + Projectile.rotation.ToRotationVector2() * 6;
+                    if (Projectile.ai[0] >= maxTime && Projectile.ai[0] % 3 == 0 && Projectile.ai[0] <= 180 && Main.myPlayer == Projectile.owner)
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), pos, Projectile.rotation.ToRotationVector2() * 6, ProjectileType<DragonSkullFlames_Proj>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                    if (Projectile.ai[0] == maxTime * 6)
+                    {
+                        jawRot += 0.15f;
+                        if (BasePlayer.ReduceMana(Owner, mana * 2))
+                        {
+                            Owner.RedemptionScreen().ScreenShakeIntensity += 6;
+                            SoundEngine.PlaySound(SoundID.Item122, Projectile.position);
+                            DustHelper.DrawCircle(Projectile.Center, DustID.Torch, 2, 4, 4, 1, 2, nogravity: true);
+                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), pos, Vector2.Zero, ProjectileType<HeatRay>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
+                        }
+                        else
+                            Projectile.ai[1] = 1;
+                    }
+                    if (Projectile.ai[0] >= 380)
                         Projectile.ai[1] = 1;
                 }
-                if (Projectile.ai[0] >= 380)
+                else
+                {
                     Projectile.ai[1] = 1;
-            }
-            else
-            {
-                Projectile.ai[1] = 1;
-                Projectile.alpha += 10;
-                if (Projectile.alpha >= 255)
-                    Projectile.Kill();
+                    Projectile.alpha += 20;
+                    if (Projectile.alpha >= 255)
+                        Projectile.Kill();
+                }
             }
         }
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Texture2D jawTex = Request<Texture2D>(Texture + "_Jaw").Value;
-            Vector2 drawOrigin = new(texture.Width / 2, texture.Height / 2);
-            var effects = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Vector2 origin2 = new(4, texture.Height);
+            Vector2 origin1 = new(4, 8);
+            if (faceLeft)
+            {
+                origin1 = new(4, texture.Height - 12);
+                origin2 = new(4, 0);
+            }
+            var effects = !faceLeft ? SpriteEffects.None : SpriteEffects.FlipVertically;
 
-            Main.EntitySpriteDraw(jawTex, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation + (jawRot * Projectile.spriteDirection), drawOrigin - new Vector2(Projectile.spriteDirection == -1 ? -12 : 18, 12), Projectile.scale, effects, 0);
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation - (jawRot * Projectile.spriteDirection), drawOrigin + new Vector2(-13 * Projectile.spriteDirection, 6), Projectile.scale, effects, 0);
+            Main.EntitySpriteDraw(jawTex, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation + (jawRot * Projectile.spriteDirection), origin1, Projectile.scale, effects, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation - (jawRot * Projectile.spriteDirection), origin2, Projectile.scale, effects, 0);
             return false;
         }
     }

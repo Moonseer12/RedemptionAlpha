@@ -350,6 +350,7 @@ Mods: {
 			StarSerpent: Extrañas serpientes de los cielos más altos de Ithon. Sintieron aprecio por cierta figura y la siguieron a través de una puerta dorada.
 			KS3_Magnet: Este dron convierte proyectiles en energía para disparar a sus objetivos.
 			KS3_MissileDrone: Un dron misilero construido por King Slayer III durante su viaje de millones de años.
+			// HollowfireSmith: A gentlemanly Hollowfire tasked with protecting the abandoned Blazing Bastion. Charged with blasphemy for his philosophical streak, he's no longer welcome in the Demonhollow. Now he's stuck smithing to keep the lights on.
 		}
 
 		Bestiary.Android: Los apidroides fueron un experimento con un metal muy duradero de un sistema estelar distante. El metal, bautizado como "titanio rosa" por King Slayer III, es uno de los materiales más resistentes descubiertos en la galaxia. Sin embargo, King Slayer III odiaba su tono rosado, por lo que se negó obstinadamente a usarlo después de crear algunos androides con él.
@@ -1498,6 +1499,13 @@ Mods: {
 			}
 
 			LabDrone: INTRUSO DETECTADO...
+
+			HollowfireSmith: {
+				// 0: Eh?[1] It takes guts to tread on an old wreck like this place.
+				// 1: If you're looking fer trouble,[0.2] I'm afraid you won't find it 'ere,[0.4] not from a clever warrior,[0.1] anyway.
+				// 2: Time was,[0.2] an old platoon of Demons built an' guarded this place.[1] They all left an age ago.[0.5] Just me now.
+				// 3: Tread on,[0.1] voyager.[0.5] I won't stop ya.
+			}
 		}
 
 		GenericTerms: {
@@ -1899,6 +1907,12 @@ Mods: {
 				2: ¿Otros T-Bots?
 				3: ¿Protector Volt?
 				4: ¿Proyecto MACE?
+			}
+
+			HollowfireSmith: {
+				// A0: Where are you from?
+				// A1: You stayed behind?
+				// A2: So you aren't a blacksmith?
 			}
 		}
 
@@ -2734,6 +2748,11 @@ Mods: {
 				DisplayName: Cadenas cósmicas marcadas
 				Description: ""
 			}
+
+			AkkaRoseSentryBuff: {
+				// DisplayName: Red Rose
+				// Description: Every rose has its thorns, and this one has a lot of them!
+			}
 		}
 
 		Biomes: {
@@ -2863,6 +2882,7 @@ Mods: {
 				UnconsciousStatus2: "{0} está noqueado por {1} minuto(s)."
 				Lad: muchacho
 				Lass: muchacha
+				// Lassy: lassy
 			}
 
 			Angler: {
@@ -3311,22 +3331,6 @@ Mods: {
 				24: ¿De qué hablas, Slayer? ¿Otro mundo?
 			}
 
-			Noza: {
-				Chat1:
-					'''
-					¡No te gustaría saberlo! Me he adelantado un poco a la fiesta - aparentemente se supone que estoy en la 'actualización 0.8 completa'... signifique lo que signifique.
-					Pero me impacienté y aquí estoy. Sin nada que hacer. ¡No hay nada especial por aquí!
-					'''
-				Dialogue1: ¡Bonitos cuernos! ¿Los hizo tu MAMI para ti? ¡WHEJEJEJEJEJ!
-				Dialogue2: ¡EEK! ¡Aleja esa arma sagrada de mí!
-				Dialogue3: ¡Qué asco! ¿Qué es ese anillo sobre tu cabeza? ¡Nada de santitos en MI bastión!
-				Dialogue4TBot: ¿Qué hace un PEQUEÑO Y RIDÍCULO BASURRÓN DE METAL en MI bastión?
-				Dialogue5TBot: ¿Qué se supone que eres? ¿Un cosplayer de chatarra? ¡Wejejeje!
-				Dialogue4: ¿Qué hace un PEQUEÑO Y RIDÍCULO HUMANO en MI bastión?
-				Dialogue5: ¡Mira lo ENANOS que son! ¡Whejejej! ¡Los humanos se ven TAN ESTÚPIDOS!
-				Dialogue6: ¡Guau! ¡Olvidé lo PEQUEÑOS que eran los humanos! ¡Whejejeje!
-			}
-
 			SkullDigger: {
 				WeddingRingDialogue1: ¿Qué es esto..? ¿Un anillo..? ¡Oh! ¡Su espíritu, su alegre espíritu! ¡Aún permanece dentro de este anillo! Gracias, noble alma, por este obsequio que ha aligerado mis tristes hombros. Con esto como recordatorio, tal vez también encuentre paz.
 				WeddingRingDialogue2: ¿Qué es esto..? ¿Un anillo..? Y tu atuendo... ¿Es esto una propuesta? ..¡Oh! ¡Su espíritu, su alegre espíritu! ¡Aún permanece dentro de este anillo! Gracias, noble alma, por este obsequio que ha aligerado mis tristes hombros. Con esto como recordatorio, tal vez también encuentre paz.
@@ -3564,6 +3568,16 @@ Mods: {
 			Toaster: {
 				2: Oh, oye, ¿cómo te va? PORQUE YO SOY UNA TOSTADORA.
 				1: Solo una tostadora normal.
+			}
+
+			HollowfireSmith: {
+				// Chat0: You look inquisitive, {0}. Well, it's as I said; everyone else left years ago. Just as well that they left me behind, bein' that I'm not welcome back there anyway. A-he-he-he-hem, my Demonspeak ain't all it used to be, for one.
+				// Chat7: Need somethin'? I'm low on metal at the moment, sorry'ta disappoint.
+				// Chat8: What? Somethin' on my face?
+				// Chat9: Suggest you get a move on. Unless ya want to peppered with shadowflame magic.
+				// A0: Demonhollow. Surely even ye in Epidotra have heard of it? Home of the Demons, sworn revenge on Epidotra, that blasted Church, alla' that? Ah, perish the thought. I try not to think about it, these days.
+				// A1: Ha! You make it sound like a choice, puttin' it like that. Truth is, I'd have returned in a flicker if it were up to me. But it wasn't, so no point in dwelling! Something something, actually a philosopher but became a blacksmith.
+				// A2: Well, I'm smithin', aren't I? Limited pointa' view, if you ask me. But no, this all was just to make myself useful, 'posed to the alternative. Nowadays, a piece'a hot metal's just about the one thing keepin' me moving and sane. 'Sa shame, I guess...
 			}
 		}
 
@@ -8965,8 +8979,7 @@ Mods: {
 				DisplayName: Cadena del Cosmos
 				Tooltip:
 					'''
-					20 de daño de conexión por invocación
-					Probabilidad de 10% de impacto crítico por conexión por invocación
+					Probabilidad de 20% de impacto crítico por conexión por invocación
 					{$CommonItemTooltip.Whips}
 					Golpea a los enemigos para invocar ojos cósmicos amistosos
 					'''
@@ -11274,6 +11287,96 @@ Mods: {
 					Azota la colmena para producir abejas gigantes, ¡pero cuidado de hacerlas enojar!
 					'''
 			}
+
+			AkkaRoseSentry: {
+				// DisplayName: Raunin Ruusu
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a red rose that shoots a barrage of thorns
+					''' */
+			}
+
+			GaiaBoots: {
+				// DisplayName: Gaia Boots
+				/* Tooltip:
+					'''
+					Allows flight
+					The wearer can run super fast
+					Flowers grow on the grass you walk on
+					Increases jump speed and allow auto-jump
+					Increases fall resistance
+					Provides extra mobility in cobwebs
+					Grants immunity to Webbed
+					50% chance to ignore traps
+					10% increased {0} elemental resistance
+					''' */
+			}
+
+			SpiderBoots: {
+				// DisplayName: Spider Boots
+				/* Tooltip:
+					'''
+					Provides extra mobility in cobwebs
+					Grants immunity to Webbed
+					50% chance to ignore traps
+					''' */
+			}
+
+			AshWoodBarrel: {
+				// DisplayName: Ash Wood Barrel
+				// Tooltip: ""
+			}
+
+			AshWoodBarrelWide: {
+				// DisplayName: Wide Ash Wood Barrel
+				// Tooltip: ""
+			}
+
+			AshWoodSign: {
+				// DisplayName: Ash Wood Sign
+				// Tooltip: ""
+			}
+
+			BlazingThrone: {
+				// DisplayName: Blazing Throne
+				// Tooltip: "{$Mods.Redemption.SpecialTooltips.Unbreakable5000}"
+			}
+
+			BrokenHellstoneBallista: {
+				// DisplayName: Broken Hellstone Ballista
+				// Tooltip: ""
+			}
+
+			NozaSign: {
+				// DisplayName: Heart-Signed Ash Wood Sign
+				// Tooltip: ""
+			}
+
+			DarkShinkiteBrick: {
+				// DisplayName: Dark Shinkite Brick
+				// Tooltip: ""
+			}
+
+			BastionGate: {
+				// DisplayName: Bastion Gate
+				// Tooltip: ""
+			}
+
+			DemonForgeTent: {
+				// DisplayName: Demon Forge Tent
+				// Tooltip: ""
+			}
+
+			DemonShopTent: {
+				// DisplayName: Demon Shop Tent
+				// Tooltip: ""
+			}
+
+			DemonTailorTent: {
+				// DisplayName: Demon Tailor Tent
+				// Tooltip: ""
+			}
 		}
 
 		Projectiles: {
@@ -12019,6 +12122,11 @@ Mods: {
 			// CorruptedSentryBase_Proj.DisplayName: Corrupted Sentry Base_ Proj
 			// HoneycombStaff_Proj.DisplayName: Honeycomb Hive
 			// XenoSplat_Small.DisplayName: Xeno Splat
+			// GhastlyRecurve_Holdout.DisplayName: Ghastly Recurve_ Holdout
+			// AkkaRosePortal.DisplayName: Akka Rose Portal
+			// AkkaRosePortal_Proj.DisplayName: Akka Rose Portal_ Proj
+			// HellstoneBallista_Bolt.DisplayName: Hellstone Ballista_ Bolt
+			// HellstoneBallista_Top.DisplayName: Hellstone Ballista_ Top
 		}
 
 		NPCs: {
@@ -12544,6 +12652,7 @@ Mods: {
 			MoonflareSkeleton.DisplayName: Seguidor llamalunar
 			TreebarkDryad_Savanna.DisplayName: "{$Mods.Redemption.NPCs.TreebarkDryad.DisplayName}"
 			KS3_Friendly.DisplayName: "{$Mods.Redemption.NPCs.KS3.DisplayName}"
+			// HollowfireSmith.DisplayName: Anr'thre
 		}
 
 		Tiles: {
@@ -12795,6 +12904,20 @@ Mods: {
 			DesertStatuetteTile.MapEntry: Estatuilla desértica
 			ObsidianStatuetteTile.MapEntry: Estatuilla de obsidiana
 			LostSoulBottleTile.MapEntry: Alma perdida embotellada
+			// AshWoodBarrelTile.MapEntry: Ash Wood Barrel
+			// AshWoodBarrelWideTile.MapEntry: Wide Ash Wood Barrel
+			// AshWoodSignTile.MapEntry: Ash Wood Sign
+			// BastionGateTile.MapEntry: Bastion Gate
+			// BlazingThroneTile.MapEntry: Blazing Throne
+			// DemonForgeTentTile.MapEntry: Demon Forge Tent
+			// DemonShopTentTile.MapEntry: Demon Shop Tent
+			// DemonTailorTentTile.MapEntry: Demon Tailor Tent
+			// NozaSignTile.MapEntry: Heart-Signed Ash Wood Sign
+
+			HellstoneBallistaTile: {
+				// MapEntry: Hellstone Ballista
+				// Repair: Repair: [i/s30:HellstoneBar]
+			}
 		}
 
 		Keybinds: {

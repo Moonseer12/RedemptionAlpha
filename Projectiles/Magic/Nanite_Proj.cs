@@ -1,6 +1,4 @@
 using Redemption.Globals;
-using Redemption.Globals.NPCs;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -70,12 +68,6 @@ namespace Redemption.Projectiles.Magic
             }
             Projectile.scale = MathHelper.Clamp(Projectile.scale, 0.1f, 1);
         }
-        private static void AdjustMagnitude(ref Vector2 vector)
-        {
-            float magnitude = (float)Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-            if (magnitude > 18f)
-                vector *= 17f / magnitude;
-        }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             if (Projectile.velocity.X != oldVelocity.X)
@@ -100,6 +92,10 @@ namespace Redemption.Projectiles.Magic
             Projectile.localNPCImmunity[target.whoAmI] = 60;
             target.immune[Projectile.owner] = 0;
             target.AddBuff(BuffID.Confused, 70);
+        }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            modifiers.DisableKnockback();
         }
     }
 }

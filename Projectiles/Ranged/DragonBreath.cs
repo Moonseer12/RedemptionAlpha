@@ -56,7 +56,9 @@ namespace Redemption.Projectiles.Ranged
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.timeLeft = 21;
             Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = -1;
         }
+        private Vector2 origPos;
         public override void AI()
         {
             Projectile.rotation += .1f;
@@ -67,8 +69,14 @@ namespace Redemption.Projectiles.Ranged
             {
                 Projectile.frameCounter = 0;
                 if (++Projectile.frame >= 7)
-                    Projectile.frame = 0;
+                    Projectile.Kill();
             }
+            Projectile.friendly = Projectile.timeLeft > 5;
+
+            origPos = Projectile.Center;
+            Projectile.width = (int)(100 * Projectile.scale);
+            Projectile.height = (int)(100 * Projectile.scale);
+            Projectile.Center = origPos;
 
             for (int k = Projectile.oldPos.Length - 1; k > 0; k--)
             {

@@ -20,13 +20,13 @@ namespace Redemption.Items.Weapons.HM.Magic
             Item.damage = 200;
             Item.height = 30;
             Item.width = 36;
-            Item.useTime = 40;
-            Item.useAnimation = 40;
+            Item.useTime = 14;
+            Item.useAnimation = 14;
             Item.reuseDelay = 30;
             Item.DamageType = DamageClass.Magic;
             Item.mana = 20;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.knockBack = 0;
+            Item.knockBack = 8;
             Item.channel = true;
             Item.rare = ItemRarityID.Yellow;
             Item.noMelee = true;

@@ -17,7 +17,7 @@ namespace Redemption.Items.Armor.Vanity.SkySquire
 
         public override void SetDefaults()
         {
-            Item.width = 34;
+            Item.width = 38;
             Item.height = 20;
             Item.value = Item.sellPrice(0, 0, 74, 0);
             Item.rare = ItemRarityID.Blue;

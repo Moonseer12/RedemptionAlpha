@@ -1,65 +1,65 @@
-using ParticleLibrary.Core;
-using ParticleLibrary.Utilities;
 using Redemption.BaseExtension;
 using Redemption.Globals;
 using Redemption.Particles;
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 
 namespace Redemption.Projectiles.Ranged
 {
-    public class CorruptedDoubleRifle_Beam : ModRedeProjectile
+    public class CorruptedDoubleRifle_Beam : ModProjectile
     {
         public override string Texture => Redemption.EMPTY_TEXTURE;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Omega Beam");
             ElementID.ProjThunder[Type] = true;
         }
         public override void SetDefaults()
         {
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.Redemption().EnergyBased = true;
             Projectile.width = 4;
             Projectile.height = 4;
+
             Projectile.friendly = true;
             Projectile.hostile = false;
-            Projectile.extraUpdates = 50;
+
+            Projectile.tileCollide = true;
+            Projectile.ignoreWater = true;
+
             Projectile.timeLeft = 700;
             timeLeftMax = Projectile.timeLeft;
-            Projectile.penetrate = 8;
-            Projectile.tileCollide = true;
-            Projectile.DamageType = DamageClass.Ranged;
-            Projectile.usesIDStaticNPCImmunity = true;
-            Projectile.idStaticNPCHitCooldown = 10;
-            Projectile.Redemption().EnergyBased = true;
+            Projectile.penetrate = 1;
+            Projectile.extraUpdates = 25;
+
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 10;
         }
         private int timeLeftMax;
-        public ref float Distance => ref Projectile.ai[1];
+        public override bool ShouldUpdatePosition() => true;
+        private Vector2 origPos;
+        private Vector2 targetPos;
+        public override void OnSpawn(IEntitySource source)
+        {
+            origPos = Projectile.Center;
+            if (Main.myPlayer == Projectile.owner)
+                targetPos = Main.MouseWorld;
+        }
         public override void AI()
         {
-            if (Projectile.localAI[0] % 2 == 0)
-            {
-                Vector2 v = Projectile.position;
-                Color bright = Color.Multiply(new(255, 146, 135, 0), 1);
-                Color mid = Color.Multiply(new(255, 62, 55, 0), 1);
-                Color dark = Color.Multiply(new(150, 20, 54, 0), 1);
+            float p = EaseFunction.EaseQuinticOut.Ease(Utils.GetLerpValue(700, 100, Projectile.timeLeft, true));
+            Projectile.Center = Vector2.Lerp(origPos, targetPos, p);
 
-                Color emberColor = Color.Multiply(Color.Lerp(bright, dark, (float)(timeLeftMax - Projectile.timeLeft) / timeLeftMax), 1);
-                Color glowColor = Color.Multiply(Color.Lerp(mid, dark, (float)(timeLeftMax - Projectile.timeLeft) / timeLeftMax), 1f);
-                RedeParticleManager.CreateQuadParticle(v, Vector2.Zero, new Vector2(.5f * ((float)Projectile.timeLeft / timeLeftMax)), emberColor, glowColor, 10);
-            }
-            if (Projectile.ai[0] == 1)
-            {
-                Projectile.extraUpdates = 25;
-                Distance = MathF.Max(Distance, 1f);
-                float progress = 1 - Projectile.timeLeft / 700;
-                float r = 0.992f;
-                if (progress > 0.1)
-                {
-                    Projectile.velocity *= r;
-                }
-            }
+            Vector2 v = Projectile.position;
+            Color bright = Color.Multiply(new(255, 146, 135, 0), 1);
+            Color mid = Color.Multiply(new(255, 62, 55, 0), 1);
+            Color dark = Color.Multiply(new(150, 20, 54, 0), 1);
+
+            Color emberColor = Color.Multiply(Color.Lerp(bright, dark, (float)(timeLeftMax - Projectile.timeLeft) / timeLeftMax), 1);
+            Color glowColor = Color.Multiply(Color.Lerp(mid, dark, (float)(timeLeftMax - Projectile.timeLeft) / timeLeftMax), 1f);
+            RedeParticleManager.CreateQuadParticle(v, Vector2.Zero, new Vector2(.35f), emberColor, glowColor, 10);
         }
         public override void OnKill(int timeLeft)
         {
@@ -68,7 +68,7 @@ namespace Redemption.Projectiles.Ranged
             if (!Main.dedServ)
                 SoundEngine.PlaySound(CustomSounds.PlasmaBlast with { Volume = 0.5f }, Projectile.position);
             if (Projectile.owner == Main.myPlayer)
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity / 3, Vector2.Zero, ProjectileType<PlasmaRound_Blast>(), Projectile.damage, Projectile.knockBack, Main.myPlayer);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ProjectileType<PlasmaRound_Blast>(), Projectile.damage, Projectile.knockBack, Main.myPlayer);
             player.RedemptionScreen().ScreenShakeIntensity += 3;
         }
     }

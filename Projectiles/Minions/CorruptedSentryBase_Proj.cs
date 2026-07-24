@@ -161,7 +161,7 @@ namespace Redemption.Projectiles.Minions
             if (SentryBaseBuffed <= 0)
                 return base.PreAI(projectile);
 
-            if (projectile.ContinuouslyUpdateDamageStats)
+            if (projectile.sentry)
                 projectile.damage = (int)(projectile.damage * 1.5f);
             return base.PreAI(projectile);
         }

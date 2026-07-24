@@ -24,7 +24,7 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.DamageType = DamageClass.Magic;
             Item.mana = 5;
             Item.width = 34;
-            Item.height = 36;
+            Item.height = 34;
             Item.useTime = 17;
             Item.useAnimation = 17;
             Item.useStyle = ItemUseStyleID.Shoot;

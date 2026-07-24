@@ -1191,6 +1191,28 @@ namespace Redemption.Globals
             projectile.velocity = reverse ? -move : move;
         }
 
+        public static void Move2(this Projectile projectile, Vector2 vector, float speed, float turnResistance = 10f,
+    bool toPlayer = false, bool reverse = false, float speedMultiplier = 1)
+        {
+            Player player = Main.player[projectile.owner];
+            Vector2 moveTo = toPlayer ? player.Center + vector : vector;
+            Vector2 move = moveTo - projectile.Center;
+            float magnitude = Magnitude(move);
+            if (magnitude > speed / speedMultiplier)
+            {
+                move *= speed / magnitude;
+            }
+
+            move = ((reverse ? -projectile.velocity : projectile.velocity) * turnResistance + move) / (turnResistance + 1f);
+            magnitude = Magnitude(move);
+            if (magnitude > speed / speedMultiplier)
+            {
+                move *= speed / magnitude;
+            }
+
+            projectile.velocity = reverse ? -move : move;
+        }
+
         public static void Move(this Terraria.Player player, Vector2 vector, float speed, float turnResistance = 10f)
         {
             Vector2 moveTo = vector;

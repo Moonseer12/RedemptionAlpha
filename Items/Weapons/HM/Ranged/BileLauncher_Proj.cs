@@ -36,6 +36,8 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Player player = Main.player[Projectile.owner];
             Vector2 vector = player.RotatedRelativePoint(player.MountedCenter);
             ProjHelper.HoldOutProjBasics(Projectile, player, vector);
+            int maxTime = (int)(player.HeldItem.useTime / player.GetTotalAttackSpeed(DamageClass.Ranged));
+           
             Projectile.Center = vector;
             Projectile.spriteDirection = Projectile.direction;
             Projectile.timeLeft = 2;
@@ -53,7 +55,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
             offset -= 2;
             if (Main.myPlayer == Projectile.owner)
             {
-                if (Projectile.localAI[1] >= player.HeldItem.useTime / player.GetAttackSpeed(DamageClass.Ranged))
+                if (Projectile.localAI[1] >= maxTime)
                 {
                     if (Projectile.localAI[0]++ % 3 == 0)
                     {
@@ -80,7 +82,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
                 {
                     Projectile.localAI[1]++;
                     shake += 0.05f;
-                    if (Projectile.localAI[1] >= player.HeldItem.useTime - 1 && !Main.dedServ)
+                    if (Projectile.localAI[1] >= maxTime - 1 && !Main.dedServ)
                         SoundEngine.PlaySound(CustomSounds.ShootChange, Projectile.position);
                     Projectile.position += new Vector2(Main.rand.NextFloat(-shake, shake), Main.rand.NextFloat(-shake, shake));
                 }

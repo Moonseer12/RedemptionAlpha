@@ -60,11 +60,11 @@ namespace Redemption.Projectiles.Minions
                 if (!CheckActive(Owner))
                     return;
 
-                if (++Timer % 60 == 0)
+                if (++Timer % 120 == 0)
                 {
                     if (Main.myPlayer == Projectile.owner)
                     {
-                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, RedeHelper.Spread(2), ProjectileID.Bee, Projectile.damage, Projectile.knockBack, Owner.whoAmI);
+                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, RedeHelper.Spread(2), Owner.strongBees ? ProjectileID.GiantBee : ProjectileID.Bee, Projectile.damage, Projectile.knockBack, Owner.whoAmI);
                         Main.projectile[p].usesIDStaticNPCImmunity = false;
                         Main.projectile[p].usesLocalNPCImmunity = true;
                         Main.projectile[p].localNPCHitCooldown = 10;
@@ -142,7 +142,7 @@ namespace Redemption.Projectiles.Minions
 
                         if (Main.myPlayer == Projectile.owner)
                         {
-                            int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, RedeHelper.Spread(2), ProjectileID.GiantBee, Projectile.damage, Projectile.knockBack, Owner.whoAmI);
+                            int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, RedeHelper.Spread(2), Owner.strongBees ? ProjectileID.GiantBee : ProjectileID.Bee, Projectile.damage, Projectile.knockBack, Owner.whoAmI);
                             Main.projectile[p].usesIDStaticNPCImmunity = false;
                             Main.projectile[p].usesLocalNPCImmunity = true;
                             Main.projectile[p].localNPCHitCooldown = 10;
@@ -174,12 +174,12 @@ namespace Redemption.Projectiles.Minions
             if (Projectile.velocity.X != oldVelocity.X)
             {
                 SoundEngine.PlaySound(SoundID.NPCDeath1, Projectile.position);
-                for(int i = 0; i < 10; i++)
+                for (int i = 0; i < 10; i++)
                     Dust.NewDust(Projectile.position, 16, 16, DustID.Hive);
 
-                NPC.NewNPC(Projectile.GetSource_FromThis(), (int)Projectile.Center.X, (int)Projectile.Center.Y, NPCID.Bee);
-                NPC.NewNPC(Projectile.GetSource_FromThis(), (int)Projectile.Center.X, (int)Projectile.Center.Y, NPCID.BeeSmall);
-                NPC.NewNPC(Projectile.GetSource_FromThis(), (int)Projectile.Center.X, (int)Projectile.Center.Y, NPCID.BeeSmall);
+                NPC.NewNPC(Projectile.GetSource_FromAI(), (int)Projectile.Center.X, (int)Projectile.Center.Y, NPCID.Bee);
+                NPC.NewNPC(Projectile.GetSource_FromAI(), (int)Projectile.Center.X, (int)Projectile.Center.Y, NPCID.BeeSmall);
+                NPC.NewNPC(Projectile.GetSource_FromAI(), (int)Projectile.Center.X, (int)Projectile.Center.Y, NPCID.BeeSmall);
                 Projectile.Kill();
             }
             return false;
@@ -201,7 +201,7 @@ namespace Redemption.Projectiles.Minions
             {
                 origin = rect.Size() / 2;
                 pos = Projectile.Center;
-            }   
+            }
             Main.EntitySpriteDraw(texture.Value, pos - Main.screenPosition, new Rectangle?(rect), Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, 0, 0);
             return false;
         }

@@ -28,6 +28,7 @@ using Redemption.NPCs.Lab;
 using Redemption.NPCs.Lab.Janitor;
 using Redemption.NPCs.Lab.Volt;
 using Redemption.NPCs.Minibosses.Calavia;
+using Redemption.Tiles.Furniture.Bastion;
 using Redemption.UI;
 using Redemption.UI.ChatUI;
 using Redemption.WorldGeneration.Misc;
@@ -444,6 +445,9 @@ namespace Redemption
                     break;
                 case ModMessageType.RequestSyncArena:
                     ArenaSystem.HandleRequestSyncArena(whoAmI);
+                    break;
+                case ModMessageType.SpawnBazaarSmithNPC:
+                    DemonForgeTentTile.HandlerSpawnDemon(reader, whoAmI);
                     break;
             }
         }

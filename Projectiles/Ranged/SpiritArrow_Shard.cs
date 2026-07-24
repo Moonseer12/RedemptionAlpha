@@ -19,8 +19,8 @@ namespace Redemption.Projectiles.Ranged
         }
         public override void SetDefaults()
         {
-            Projectile.width = 18;
-            Projectile.height = 18;
+            Projectile.width = 12;
+            Projectile.height = 12;
             Projectile.friendly = false;
             Projectile.hostile = false;
             Projectile.tileCollide = false;
@@ -31,8 +31,10 @@ namespace Redemption.Projectiles.Ranged
         NPC target;
         public override void AI()
         {
-            int d = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.DungeonSpirit);
-            Main.dust[d].noGravity = true;
+            Dust dust = Dust.NewDustPerfect(Main.rand.NextVector2FromRectangle(Projectile.Hitbox), DustID.DungeonSpirit);
+            dust.noGravity = true;
+            dust.velocity *= 0.5f;
+
             Projectile.rotation = Projectile.velocity.ToRotation();
 
             if (Projectile.timeLeft > 150)
@@ -64,9 +66,9 @@ namespace Redemption.Projectiles.Ranged
         {
             for (int i = 0; i < 8; i++)
             {
-                int d = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.DungeonSpirit, Projectile.velocity.X * 0.5f, Projectile.velocity.Y * 0.5f);
-                Main.dust[d].noGravity = true;
-                Main.dust[d].velocity *= 5f;
+                Dust dust = Dust.NewDustPerfect(Main.rand.NextVector2FromRectangle(Projectile.Hitbox), DustID.DungeonSpirit);
+                dust.noGravity = true;
+                dust.velocity *= 0.5f;
             }
         }
     }

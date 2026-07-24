@@ -35,7 +35,7 @@ namespace Redemption.Items.Usable.Potions
         }
         public override void AddRecipes()
         {
-            CreateRecipe()
+            CreateRecipe(5)
                 .AddIngredient<GrimShard>()
                 .AddIngredient(ItemID.Gel, 20)
                 .AddTile(TileID.CookingPots)

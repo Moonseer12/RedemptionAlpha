@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Enums;
@@ -17,7 +16,8 @@ namespace Redemption.Tiles.Furniture.Misc
             Main.tileNoAttach[Type] = true;
             TileObjectData.newTile.CopyFrom(TileObjectData.Style2xX);
             TileObjectData.newTile.Height = 5;
-            TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16, 16, 16, 18 };
+            TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16, 16, 16, 26 };
+            TileObjectData.newTile.DrawYOffset = -8;
             TileObjectData.newTile.Origin = new Point16(0, 4);
             TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide | AnchorType.Table, TileObjectData.newTile.Width, 0);
             TileObjectData.newTile.Direction = TileObjectDirection.PlaceLeft;

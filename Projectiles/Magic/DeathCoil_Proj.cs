@@ -32,6 +32,8 @@ namespace Redemption.Projectiles.Magic
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 300;
             Projectile.DamageType = DamageClass.Magic;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 10;
         }
         private readonly int NUMPOINTS = 10;
         public Color baseColor = new Color(171, 242, 217);
@@ -56,7 +58,7 @@ namespace Redemption.Projectiles.Magic
             if (Projectile.ai[1]++ > 15)
             {
                 Projectile.ai[0] = 1;
-                Projectile.Move(p.Center, speed, 10 / (1 + (.15f * Projectile.localAI[0])));
+                Projectile.Move(p.Center, speed, 6 / (1 + 0.1f * Projectile.localAI[0]));
                 if (Projectile.Hitbox.Intersects(p.Hitbox))
                     Projectile.Kill();
             }
@@ -78,32 +80,16 @@ namespace Redemption.Projectiles.Magic
             }
             if (Projectile.ai[0] is 0)
             {
-                Vector2 move = Vector2.Zero;
-                float distance = 200f;
-                bool target = false;
-                for (int k = 0; k < Main.maxNPCs; k++)
+                NPC target = null;
+                if (RedeHelper.ClosestNPC(ref target, 200f, Projectile.Center, true, -1, npc => Projectile.localNPCImmunity[npc.whoAmI] == 0))
                 {
-                    NPC npc = Main.npc[k];
-                    if (npc.active && !npc.dontTakeDamage && !npc.friendly && npc.lifeMax > 5 && !npc.immortal && !npc.GetGlobalNPC<RedeNPC>().invisible)
-                    {
-                        Vector2 newMove = npc.Center - Projectile.Center;
-                        float distanceTo = (float)Math.Sqrt(newMove.X * newMove.X + newMove.Y * newMove.Y);
-                        if (distanceTo < distance)
-                        {
-                            move = newMove;
-                            distance = distanceTo;
-                            target = true;
-                        }
-                    }
-                }
-                if (target)
-                {
-                    AdjustMagnitude(ref move, speed);
-                    Projectile.velocity = (10 * Projectile.velocity + move) / 11f;
-                    AdjustMagnitude(ref Projectile.velocity, speed);
+                    Projectile.Move2(target.Center, speed, 6 / (1 + 0.2f * Projectile.localAI[0]), speedMultiplier: 2);
                 }
             }
-            opacity = MathHelper.Clamp(Projectile.velocity.Length() * 0.1f, 0, 1);
+            opacity = EaseFunction.EaseQuinticIn.Ease(MathHelper.Clamp(Projectile.velocity.Length(), 0, 1));
+            if (Projectile.extraUpdates >= 1)
+                Projectile.extraUpdates--;
+
             if (Main.netMode != NetmodeID.Server)
             {
                 TrailHelper.ManageBasicCaches(ref cache, ref cache2, NUMPOINTS, Projectile.Center + Projectile.velocity);

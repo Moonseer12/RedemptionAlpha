@@ -3,6 +3,7 @@ using Redemption.BaseExtension;
 using Redemption.Globals;
 using Redemption.Globals.Players;
 using Redemption.Items.Materials.HM;
+using Redemption.Projectiles.Ranged;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -40,7 +41,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Item.rare = ItemRarityID.Yellow;
             Item.UseSound = SoundID.Item36;
             Item.autoReuse = true;
-            Item.shootSpeed = 90;
+            Item.shootSpeed = 9;
             Item.shoot = ProjectileID.PurificationPowder;
             Item.useAmmo = AmmoID.Bullet;
 
@@ -80,16 +81,39 @@ namespace Redemption.Items.Weapons.HM.Ranged
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             int laser = 0;
-            if (player.altFunctionUse == 2 && Charged)
+            if (player.altFunctionUse == 2)
             {
-                laser = 1;
+                Item.noUseGraphic = false;
+                Item.channel = false;
+                if (Charged)
+                {
+                    Count = 0;
+                    Charged = false;
+                    Ready = false;
+                    if (!Main.dedServ)
+                        SoundEngine.PlaySound(CustomSounds.PlasmaShot, player.position);
+                    player.GetModPlayer<EnergyPlayer>().statEnergy -= 6;
+
+                    Vector2 Offset = Vector2.Normalize(velocity) * 76;
+                    if (Collision.CanHit(position, 16, 16, position + Offset, 16, 16))
+                        position += Offset;
+
+                    Projectile.NewProjectile(source, position, velocity, ProjectileType<CorruptedDoubleRifle_Beam>(), damage * 3, knockback, player.whoAmI, laser);
+                    Projectile.NewProjectile(source, position, velocity, ProjectileType<CorruptedDoubleRifle_Beam>(), damage * 3, knockback, player.whoAmI, laser);
+                }
+                return false;
             }
-            Projectile.NewProjectile(source, position, velocity, ProjectileType<CorruptedDoubleRifle_Proj>(), damage, knockback, player.whoAmI, laser);
+            else
+            {
+                Item.noUseGraphic = true;
+                Item.channel = true;
+                Projectile.NewProjectile(source, position, velocity, ProjectileType<CorruptedDoubleRifle_Proj>(), damage, knockback, player.whoAmI, laser);
+            }  
             return false;
         }
         public override Vector2? HoldoutOffset()
         {
-            return new Vector2(-4, 0);
+            return new Vector2(-8, 0);
         }
     }
     public class CorruptedDoubleRifleGlobal : GlobalProjectile //base code from slr, modified

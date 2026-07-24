@@ -66,6 +66,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
 
                 Projectile.netUpdate = true;
             }
+            int maxTime = (int)(player.HeldItem.useTime / player.GetTotalAttackSpeed(DamageClass.Ranged));
             Projectile.Center = vector;
             Projectile.spriteDirection = Projectile.direction;
             Projectile.timeLeft = 2;
@@ -84,7 +85,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Vector2 gunSmokePos = Projectile.Center + RedeHelper.PolarVector(45 * Projectile.spriteDirection, Projectile.rotation) + RedeHelper.PolarVector(-12, Projectile.rotation + MathHelper.PiOver2);
             offset -= 6;
             rotOffset += 0.1f;
-            if (Projectile.localAI[0]++ == 2 || Projectile.localAI[0] == (int)(player.HeldItem.useTime * 1.5f / player.GetAttackSpeed(DamageClass.Ranged)))
+            if (Projectile.localAI[0]++ == 2 || Projectile.localAI[0] == (maxTime * 3 / 2))
             {
                 if (player.PickAmmo(player.HeldItem, out bullet, out float shootSpeed, out int weaponDamage, out float weaponKnockback, out int usedAmmoId, !Main.rand.NextBool(3)))
                 {
@@ -128,7 +129,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
                         player.velocity -= RedeHelper.PolarVector(3, (Main.MouseWorld - player.Center).ToRotation());
                 }
             }
-            if (Projectile.localAI[0] == (int)(player.HeldItem.useTime * 4 / player.GetAttackSpeed(DamageClass.Ranged)))
+            if (Projectile.localAI[0] == (maxTime * 4))
             {
                 if (player.channel && player.GetModPlayer<EnergyPlayer>().statEnergy >= 15 && (Projectile.rotation < MathHelper.Pi - 0.8f + (Projectile.spriteDirection == -1 ? MathHelper.Pi : 0) && Projectile.rotation > 0.8f + (Projectile.spriteDirection == -1 ? MathHelper.Pi : 0)))
                 {
@@ -138,7 +139,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
                 }
                 spinRot = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.Pi : 0);
             }
-            if (Projectile.localAI[0] >= player.HeldItem.useTime * 4 / player.GetAttackSpeed(DamageClass.Ranged))
+            if (Projectile.localAI[0] >= (maxTime * 4))
             {
                 if (!player.channel && (Projectile.localAI[1] == 0 || Projectile.localAI[0] < player.HeldItem.useTime * 6))
                 {
@@ -151,13 +152,13 @@ namespace Redemption.Items.Weapons.HM.Ranged
                     spinSpeed *= 1.03f;
 
                     int speed = 8;
-                    if (Projectile.localAI[0] >= player.HeldItem.useTime * 7 / player.GetAttackSpeed(DamageClass.Ranged))
+                    if (Projectile.localAI[0] >= (maxTime * 7))
                         speed = 6;
-                    if (Projectile.localAI[0] >= player.HeldItem.useTime * 8 / player.GetAttackSpeed(DamageClass.Ranged))
+                    if (Projectile.localAI[0] >= (maxTime * 8))
                         speed = 4;
-                    if (Projectile.localAI[0] >= player.HeldItem.useTime * 9 / player.GetAttackSpeed(DamageClass.Ranged))
+                    if (Projectile.localAI[0] >= (maxTime * 9))
                         speed = 2;
-                    if (Projectile.localAI[0] >= player.HeldItem.useTime * 5 / player.GetAttackSpeed(DamageClass.Ranged) && Projectile.localAI[0] % speed == 0)
+                    if (Projectile.localAI[0] >= (maxTime * 5) && Projectile.localAI[0] % speed == 0)
                     {
                         if (player.PickAmmo(player.HeldItem, out bullet, out float shootSpeed, out int weaponDamage, out float weaponKnockback, out int usedAmmoId, !Main.rand.NextBool(10)))
 
@@ -190,7 +191,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
                 }
                 else
                 {
-                    if (Projectile.localAI[0] < (int)(player.HeldItem.useTime * 6 / player.GetAttackSpeed(DamageClass.Ranged)))
+                    if (Projectile.localAI[0] < (maxTime * 6))
                     {
                         for (int k = 0; k < 2; k++)
                         {
@@ -205,7 +206,7 @@ namespace Redemption.Items.Weapons.HM.Ranged
                         shake += 0.3f;
                         Projectile.position += new Vector2(Main.rand.NextFloat(-shake, shake), Main.rand.NextFloat(-shake, shake));
                     }
-                    if (Projectile.localAI[0] == (int)(player.HeldItem.useTime * 6 / player.GetAttackSpeed(DamageClass.Ranged)))
+                    if (Projectile.localAI[0] == (maxTime * 6))
                     {
                         offset = 30;
                         spinRot = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.Pi : 0);
@@ -239,12 +240,12 @@ namespace Redemption.Items.Weapons.HM.Ranged
                             Main.dust[num5].noGravity = true;
                         }
                     }
-                    if (Projectile.localAI[0] >= player.HeldItem.useTime * 8 / player.GetAttackSpeed(DamageClass.Ranged))
+                    if (Projectile.localAI[0] >= (maxTime * 8))
                         Projectile.Kill();
                 }
             }
             shake = MathHelper.Min(shake, 3f);
-            Projectile.localAI[1] = MathHelper.Min(Projectile.localAI[1], player.HeldItem.useTime * 7);
+            Projectile.localAI[1] = MathHelper.Min(Projectile.localAI[1], maxTime * 7);
             offset = MathHelper.Clamp(offset, 0, 40);
             rotOffset = MathHelper.Clamp(rotOffset, -1, 0);
             spinSpeed = MathHelper.Clamp(spinSpeed, 0, 0.2f);

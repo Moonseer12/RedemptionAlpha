@@ -22,7 +22,7 @@ namespace Redemption.Items.Accessories.PreHM
             player.AddBuff(ModContent.BuffType<DevilScentedDebuff>(), 30);
             BuffPlayer modPlayer = player.RedemptionPlayerBuff();
             modPlayer.erleasFlower = true;
-            player.buffImmune[BuffID.Webbed] = true;
+            player.buffImmune[BuffID.Rabies] = true;
             player.buffImmune[ModContent.BuffType<SpiderSwarmedDebuff>()] = true;
             modPlayer.spiderFriendly = true;
             modPlayer.beelzebub = true;

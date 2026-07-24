@@ -1564,7 +1564,7 @@ namespace Redemption.NPCs.Bosses.Neb.Phase2
                             {
                                 int rand = Main.rand.Next(4, 6);
                                 for (int i = 0; i < rand; i++)
-                                    NPC.Shoot(player.Center + new Vector2(Main.rand.Next(-(Main.screenWidth / 2), Main.screenWidth / 2), -1500), ProjectileType<Neb_Lightning_Tele>(), (int)(NPC.damage * .67f), new Vector2(Main.rand.Next(-12, 13), 0));
+                                    NPC.Shoot(player.Center + new Vector2(Main.rand.Next(-(Main.screenWidth / 2), Main.screenWidth / 2), -1500), ProjectileType<Neb_Lightning>(), (int)(NPC.damage * .67f), new Vector2(Main.rand.Next(-12, 13), 0));
                             }
                             if (NPC.ai[2] == 310)
                                 ArmAnimation(10);

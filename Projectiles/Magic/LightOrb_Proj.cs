@@ -32,7 +32,7 @@ namespace Redemption.Projectiles.Magic
             Projectile.hostile = false;
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Magic;
-            Projectile.tileCollide = false;
+            Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 240;
             Projectile.alpha = 5;
@@ -40,6 +40,7 @@ namespace Redemption.Projectiles.Magic
         protected float squish;
         public override void AI()
         {
+            Lighting.AddLight(Projectile.Center, .5f, .5f, .1f);
             Projectile.velocity *= 0.96f;
             if (Projectile.localAI[1] == 0)
             {
@@ -54,7 +55,7 @@ namespace Redemption.Projectiles.Magic
                     Projectile.localAI[1] = 0;
             }
             NPC target = null;
-            if (RedeHelper.ClosestNPC(ref target, 500, Projectile.Center))
+            if (RedeHelper.ClosestNPC(ref target, 500, Projectile.Center, true))
             {
                 if (Projectile.localAI[0]++ >= 20 + Main.player[Projectile.owner].ownedProjectileCounts[Type] && Main.myPlayer == Projectile.owner)
                 {
@@ -89,7 +90,14 @@ namespace Redemption.Projectiles.Magic
                 Main.dust[dust].color = dustColor;
             }
         }
-
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            if (Projectile.velocity.X != oldVelocity.X)
+                Projectile.velocity.X = -oldVelocity.X;
+            if (Projectile.velocity.Y != oldVelocity.Y)
+                Projectile.velocity.Y = -oldVelocity.Y;
+            return false;
+        }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Main.rand.NextBool(3))

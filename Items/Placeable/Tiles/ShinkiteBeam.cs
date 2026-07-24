@@ -1,8 +1,8 @@
 using Redemption.Rarities;
 using Redemption.Tiles.Tiles;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria;
 
 namespace Redemption.Items.Placeable.Tiles
 {
@@ -10,21 +10,20 @@ namespace Redemption.Items.Placeable.Tiles
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 50;
+            Item.ResearchUnlockCount = 100;
         }
-
         public override void SetDefaults()
         {
-            Item.DefaultToPlaceableTile(ModContent.TileType<ShinkiteBeamTile>(), 0);
+            Item.DefaultToPlaceableTile(TileType<ShinkiteBeamTile>(), 0);
             Item.width = 16;
             Item.height = 16;
             Item.maxStack = Item.CommonMaxStack;
-            Item.rare = ModContent.RarityType<TurquoiseRarity>();
+            Item.rare = RarityType<TurquoiseRarity>();
         }
         public override void AddRecipes()
         {
             CreateRecipe(2)
-                .AddIngredient(ModContent.ItemType<ShinkiteBrick>())
+                .AddIngredient(ItemType<ShinkiteBrick>())
                 .AddTile(TileID.Sawmill)
                 .Register();
         }

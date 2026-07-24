@@ -40,24 +40,26 @@ namespace Redemption.Items.Weapons.PreHM.Magic
             Item.channel = true;
             Item.rare = ItemRarityID.Orange;
             Item.UseSound = SoundID.DD2_BetsySummon;
-            Item.shootSpeed = 0;
+            Item.shootSpeed = 1;
             Item.shoot = ProjectileType<DragonSkull_Proj>();
         }
-
-        public override bool CanUseItem(Player player)
-        {
-            Tile tile = Framing.GetTileSafely(Player.tileTargetX, Player.tileTargetY);
-            if (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType] && !Main.tileCut[tile.TileType])
-                return false;
-
-            return true;
-        }
-
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            position = Main.MouseWorld;
+            velocity.Normalize();
+            float dist = 0;
+            for (int i = 0; i < 20; i++)
+            {
+                if (!Collision.CanHitLine(position, 2, 2, position + velocity * 16, 2, 2))
+                {
+                    position -= velocity * 16;
+                    break;
+                }
+                position += velocity * 16;
+                dist += velocity.Length() * 16;
+                if (player.Center.Distance(Main.MouseWorld) < dist)
+                    break;
+            }
         }
-
         public override void AddRecipes()
         {
             CreateRecipe()

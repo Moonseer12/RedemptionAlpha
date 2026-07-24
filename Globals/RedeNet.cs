@@ -21,6 +21,7 @@ namespace Redemption.Globals
             RequestArena,
             SyncArena,
             RequestSyncArena,
+            SpawnBazaarSmithNPC,
         }
         public static void SpawnNPCFromClient(int npcType, Vector2 pos, float ai0 = 0, float ai1 = 0, float ai2 = 0)
         {

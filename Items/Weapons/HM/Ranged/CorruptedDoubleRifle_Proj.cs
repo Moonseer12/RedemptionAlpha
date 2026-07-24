@@ -8,6 +8,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
+using Terraria.Map;
 using Terraria.ModLoader;
 
 namespace Redemption.Items.Weapons.HM.Ranged
@@ -17,14 +18,16 @@ namespace Redemption.Items.Weapons.HM.Ranged
         public override string Texture => "Redemption/Items/Weapons/HM/Ranged/CorruptedDoubleRifle";
         public override void SetSafeDefaults()
         {
+            Projectile.DamageType = DamageClass.Ranged;
             Projectile.width = 76;
             Projectile.height = 32;
             Projectile.friendly = false;
             Projectile.hostile = false;
-            Projectile.penetrate = -1;
-            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.penetrate = -1;
         }
+        public override bool ShouldUpdatePosition() => false;
         private float offset;
         private float rotOffset;
         private float heatOpacity;
@@ -34,6 +37,8 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Player player = Main.player[Projectile.owner];
             Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter);
             ProjHelper.HoldOutProjBasics(Projectile, player, playerCenter);
+            int maxTime = (int)(player.HeldItem.useTime / player.GetTotalAttackSpeed(DamageClass.Ranged));
+
             Projectile.timeLeft = 2;
             player.ChangeDir(Projectile.direction);
             player.heldProj = Projectile.whoAmI;
@@ -45,55 +50,59 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Vector2 gunPos2 = playerCenter + Projectile.velocity.SafeNormalize(default).RotatedBy(1.57f) * -2 * Projectile.direction + Projectile.velocity.SafeNormalize(default) * 20;
 
             offset -= 3;
+
             if (Main.myPlayer == Projectile.owner)
             {
                 if (player.HeldItem.ModItem is CorruptedDoubleRifle rifle)
                     heatOpacity = rifle.Count / 40f;
 
-                if (!player.channel && Projectile.ai[0] is 0)
-                    Projectile.Kill();
-                else
+                if (Projectile.localAI[1]++ % (int)(player.HeldItem.useTime / player.GetTotalAttackSpeed(DamageClass.Ranged)) == 0)
                 {
-                    if (++Projectile.localAI[1] % (int)(player.HeldItem.useTime / player.GetAttackSpeed(DamageClass.Ranged)) == 0)
+                    if (!player.channel)
                     {
-                        if (player.PickAmmo(player.HeldItem, out bullet, out float shootSpeed, out int weaponDamage, out float weaponKnockback, out int usedAmmoId, Main.rand.NextBool(3)))
-                        {
-                            shootSpeed *= Projectile.ai[0] == 1 ? 1 : 0.1f;
+                        Projectile.Kill();
+                        return;
+                    }
+                    if (player.PickAmmo(player.HeldItem, out bullet, out float shootSpeed, out int weaponDamage, out float weaponKnockback, out int usedAmmoId, Main.rand.NextBool(3)))
+                    {
+                        if (bullet == ProjectileID.Bullet)
+                            bullet = ProjectileID.BulletHighVelocity;
 
-                            if (bullet == ProjectileID.Bullet)
-                                bullet = ProjectileID.BulletHighVelocity;
+                        offset = 12;
+                        float bonus = 1;
+                        if (player.HeldItem.ModItem is CorruptedDoubleRifle rifle3)
+                            bonus = 1 + rifle3.Count * 0.01f;
 
-                            offset = 12;
-                            float bonus = 1;
-                            if (player.HeldItem.ModItem is CorruptedDoubleRifle rifle3)
-                                bonus = 1 + rifle3.Count * 0.01f;
+                        SoundEngine.PlaySound(SoundID.Item36, Projectile.position);
+                        Projectile proj1 = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), gunPos1, Projectile.velocity.SafeNormalize(default) * shootSpeed, bullet, (int)(Projectile.damage * bonus), Projectile.knockBack, player.whoAmI);
+                        proj1.GetGlobalProjectile<CorruptedDoubleRifleGlobal>().ShotFrom = true;
+                        proj1.rotation = Projectile.velocity.ToRotation() + 1.57f;
+                        Projectile proj2 = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), gunPos2, Projectile.velocity.SafeNormalize(default) * shootSpeed, bullet, (int)(Projectile.damage * bonus), Projectile.knockBack, player.whoAmI);
+                        proj2.GetGlobalProjectile<CorruptedDoubleRifleGlobal>().ShotFrom = true;
+                        proj2.rotation = Projectile.velocity.ToRotation() + 1.57f;
+                    }
+                }
+                if (Main.mouseRight && Main.mouseRightRelease)
+                {
+                    if (player.HeldItem.ModItem is CorruptedDoubleRifle rifle2 && rifle2.Charged && player.GetModPlayer<EnergyPlayer>().statEnergy >= 6)
+                    {
+                        if (!Main.dedServ)
+                            SoundEngine.PlaySound(CustomSounds.PlasmaShot, player.position);
 
-                            if (Projectile.ai[0] is 1)
-                            {
-                                float Distance = (Main.MouseWorld - gunPos1).Length();
-                                Distance = MathF.Max(Distance, 16 * 3);
-                                if (!Main.dedServ)
-                                    SoundEngine.PlaySound(CustomSounds.PlasmaShot, player.position);
+                        player.GetModPlayer<EnergyPlayer>().statEnergy -= 6;
 
-                                player.GetModPlayer<EnergyPlayer>().statEnergy -= 6;
+                        Vector2 Offset = Projectile.velocity.SafeNormalize(default) * 76;
+                        Vector2 pos = playerCenter;
+                        if (Collision.CanHit(pos, 16, 16, pos + Offset, 16, 16))
+                            pos += Offset;
 
-                                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), gunPos1, Projectile.velocity.SafeNormalize(default) * Distance / 120f, ProjectileType<CorruptedDoubleRifle_Beam>(), (int)(Projectile.damage * bonus * 2), Projectile.knockBack, player.whoAmI, 1, Distance);
-                                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), gunPos2, Projectile.velocity.SafeNormalize(default) * Distance / 120f, ProjectileType<CorruptedDoubleRifle_Beam>(), (int)(Projectile.damage * bonus * 2), Projectile.knockBack, player.whoAmI, 1, Distance);
-                                Projectile.ai[0] = 0;
-                                if (player.HeldItem.ModItem is CorruptedDoubleRifle rifle2)
-                                {
-                                    rifle2.Count = 0;
-                                    rifle2.Charged = false;
-                                    rifle2.Ready = false;
-                                }
-                            }
-                            else
-                            {
-                                SoundEngine.PlaySound(SoundID.Item36, Projectile.position);
-                                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), gunPos1, Projectile.velocity.SafeNormalize(default) * shootSpeed, bullet, (int)(Projectile.damage * bonus), Projectile.knockBack, player.whoAmI).GetGlobalProjectile<CorruptedDoubleRifleGlobal>().ShotFrom = true;
-                                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), gunPos2, Projectile.velocity.SafeNormalize(default) * shootSpeed, bullet, (int)(Projectile.damage * bonus), Projectile.knockBack, player.whoAmI).GetGlobalProjectile<CorruptedDoubleRifleGlobal>().ShotFrom = true;
-                            }
-                        }
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), pos, Projectile.velocity.SafeNormalize(default), ProjectileType<CorruptedDoubleRifle_Beam>(), Projectile.damage * 3, Projectile.knockBack, player.whoAmI);
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), pos, Projectile.velocity.SafeNormalize(default), ProjectileType<CorruptedDoubleRifle_Beam>(), Projectile.damage * 3, Projectile.knockBack, player.whoAmI);
+
+                        offset = 12;
+                        rifle2.Count = 0;
+                        rifle2.Charged = false;
+                        rifle2.Ready = false;
                     }
                 }
             }
@@ -118,10 +127,6 @@ namespace Redemption.Items.Weapons.HM.Ranged
             Projectile.rotation = Projectile.velocity.ToRotation() + num;
 
             offset = MathHelper.Clamp(offset, 0, 20);
-        }
-        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {
-            base.ModifyHitNPC(target, ref modifiers);
         }
         public override bool PreDraw(ref Color lightColor)
         {

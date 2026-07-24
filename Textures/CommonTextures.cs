@@ -14,6 +14,7 @@ namespace Redemption.Textures
         public static Asset<Texture2D> TextBubble_Neb;
         public static Asset<Texture2D> TextBubble_Omega;
         public static Asset<Texture2D> TextBubble_Slayer;
+        public static Asset<Texture2D> TextBubble_Demon;
 
         public static Asset<Texture2D> BigFlare;
         public static Asset<Texture2D> WhiteFlare;
@@ -57,6 +58,7 @@ namespace Redemption.Textures
             TextBubble_Neb = Request<Texture2D>("Redemption/UI/TextBubble_Neb");
             TextBubble_Omega = Request<Texture2D>("Redemption/UI/TextBubble_Omega");
             TextBubble_Slayer = Request<Texture2D>("Redemption/UI/TextBubble_Slayer");
+            TextBubble_Demon = Request<Texture2D>("Redemption/UI/TextBubble_Demon");
 
             BigFlare = Request<Texture2D>("Redemption/Textures/BigFlare");
             WhiteFlare = Request<Texture2D>("Redemption/Textures/WhiteFlare");

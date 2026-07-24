@@ -115,6 +115,8 @@ namespace Redemption
         public static readonly SoundStyle Voice6 = new("Redemption/Sounds/Custom/Voice6") { Volume = 0.4f, MaxInstances = 10, SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest };
         public static readonly SoundStyle Voice7 = new("Redemption/Sounds/Custom/Voice7") { MaxInstances = 10, SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest };
         public static readonly SoundStyle Voice8 = new("Redemption/Sounds/Custom/Voice8") { MaxInstances = 10, SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest };
+        public static readonly SoundStyle GhostlyVoice = new("Redemption/Sounds/Custom/Voices/GhostlyVoice") { Volume = 0.4f, PitchVariance = .1f, MaxInstances = 20, SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest };
+
         public static readonly SoundStyle MegaLaser = new("Redemption/Sounds/Custom/MegaLaser");
         public static readonly SoundStyle ObliteratorYo = new("Redemption/Sounds/Custom/ObliteratorYo") { Volume = 0.7f };
         public static readonly SoundStyle OODashReady = new("Redemption/Sounds/Custom/OODashReady") { Volume = 0.8f };

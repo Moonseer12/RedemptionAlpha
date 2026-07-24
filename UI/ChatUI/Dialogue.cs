@@ -40,8 +40,9 @@ namespace Redemption.UI.ChatUI
         public float fadeTime;
         public float fadeTimeMax;
         public int endID;
+        public int blipDelay;
 
-        public Dialogue(Entity entity, string text, Color? textColor = null, Color? shadowColor = null, SoundStyle? sound = null, float charTime = 0.05F, float preFadeTime = 2.5f, float fadeTime = 0.5f, bool boxFade = false, Texture2D icon = null, Texture2D bubble = null, DynamicSpriteFont font = null, Vector2 modifier = default, int endID = 0)
+        public Dialogue(Entity entity, string text, Color? textColor = null, Color? shadowColor = null, SoundStyle? sound = null, float charTime = 0.05F, float preFadeTime = 2.5f, float fadeTime = 0.5f, bool boxFade = false, Texture2D icon = null, Texture2D bubble = null, DynamicSpriteFont font = null, Vector2 modifier = default, int endID = 0, int blipDelay = 1)
         {
             this.entity = entity;
             this.text = text ?? "";
@@ -57,6 +58,7 @@ namespace Redemption.UI.ChatUI
             this.boxFade = boxFade;
             this.modifier = modifier;
             this.endID = endID;
+            this.blipDelay = blipDelay;
 
             if (this.charTime < 0)
                 this.charTime = 0.01f;
@@ -90,7 +92,7 @@ namespace Redemption.UI.ChatUI
                 if (displayingText.Length != 0)
                 {
                     char trigger = displayingText[^1];
-                    if (!Main.dedServ && (trigger is not '.' and not ',' and not '!' and not '?'))
+                    if (!Main.dedServ && displayingText.Length % blipDelay == 0 && (trigger is not '.' and not ',' and not '!' and not '?'))
                         SoundEngine.PlaySound((SoundStyle)sound, entity.position);
                 }
 

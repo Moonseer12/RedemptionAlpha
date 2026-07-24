@@ -126,6 +126,12 @@ namespace Redemption.Globals
                 {
                     if (Main.rand.NextBool(2) && npc.HasElement(ElementID.Thunder))
                         target.AddBuff(BuffType<ElectrifiedDebuff>(), 120);
+
+                    if (Main.rand.NextBool(8) && !npc.boss && npc.life < npc.lifeMax && npc.knockBackResist > 0 && !npc.RedemptionNPCBuff().iceFrozen && npc.HasElement(ElementID.Ice))
+                    {
+                        SoundEngine.PlaySound(SoundID.Item30);
+                        target.AddBuff(BuffType<IceFrozen>(), (int)MathHelper.Clamp(1800 - target.lifeMax, 60, 1780));
+                    }
                 }
                 if (!target.noTileCollide && target.collideY && target.knockBackResist > 0)
                 {
@@ -220,6 +226,13 @@ namespace Redemption.Globals
                     {
                         npc.AddBuff(BuffType<ElectrifiedDebuff>(), 120);
                         RedeQuest.SetBonusDiscovered(RedeQuest.Bonuses.Thunder);
+                    }
+
+                    if (Main.rand.NextBool(8) && !npc.boss && npc.life < npc.lifeMax && npc.knockBackResist > 0 && !npc.RedemptionNPCBuff().iceFrozen && item.HasElement(ElementID.Ice))
+                    {
+                        SoundEngine.PlaySound(SoundID.Item30);
+                        npc.AddBuff(BuffType<IceFrozen>(), (int)MathHelper.Clamp(1800 - npc.lifeMax, 60, 1780));
+                        RedeQuest.SetBonusDiscovered(RedeQuest.Bonuses.Ice);
                     }
                 }
                 if (!npc.noTileCollide && npc.collideY && npc.knockBackResist > 0)
@@ -326,6 +339,13 @@ namespace Redemption.Globals
                     {
                         npc.AddBuff(BuffType<ElectrifiedDebuff>(), 120);
                         RedeQuest.SetBonusDiscovered(RedeQuest.Bonuses.Thunder);
+                    }
+
+                    if (Main.rand.NextBool(8) && !npc.boss && npc.life < npc.lifeMax && npc.knockBackResist > 0 && !npc.RedemptionNPCBuff().iceFrozen && projectile.HasElement(ElementID.Ice))
+                    {
+                        SoundEngine.PlaySound(SoundID.Item30);
+                        npc.AddBuff(BuffType<IceFrozen>(), (int)MathHelper.Clamp(1800 - npc.lifeMax, 60, 1780));
+                        RedeQuest.SetBonusDiscovered(RedeQuest.Bonuses.Ice);
                     }
                 }
                 if (!npc.noTileCollide && npc.collideY && npc.knockBackResist > 0)

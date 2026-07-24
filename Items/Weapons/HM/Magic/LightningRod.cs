@@ -54,11 +54,16 @@ namespace Redemption.Items.Weapons.HM.Magic
         {
             if (player.altFunctionUse == 2)
             {
+                Item.useStyle = ItemUseStyleID.Swing;
+                Item.noUseGraphic = true;
                 SoundEngine.PlaySound(SoundID.DD2_DefenseTowerSpawn, position);
-                Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
+                if (player.ownedProjectileCounts[type] == 0)
+                    Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
             }
             else
             {
+                Item.useStyle = ItemUseStyleID.Shoot;
+                Item.noUseGraphic = false;
                 Projectile.NewProjectile(source, position, velocity, ProjectileType<LightningRod_Proj>(), damage, knockback, player.whoAmI);
             }
             return false;
@@ -129,19 +134,49 @@ namespace Redemption.Items.Weapons.HM.Magic
         public ref float Timer => ref Projectile.localAI[0];
         public ref float DischargeTimer => ref Projectile.localAI[1];
         public Player Owner => Main.player[Projectile.owner];
-        public override bool ShouldUpdatePosition() => false;
         private Vector2 origPos;
+        private Vector2 targetPos;
         public override void OnSpawn(IEntitySource source)
         {
             origPos = Projectile.Center;
+            if (Main.myPlayer == Projectile.owner)
+            {
+                Vector2 vel = Projectile.velocity.SafeNormalize(default);
+                float dist = 0;
+                Vector2 pos = origPos;
+                for (int i = 0; i < 50; i++)
+                {
+                    if (!Collision.CanHitLine(pos, 2, 2, pos + vel * 16, 2, 2))
+                    {
+                        pos -= vel * 16;
+                        break;
+                    }
+                    pos += vel * 16;
+                    dist += vel.Length() * 16;
+                    if (Owner.Center.Distance(Main.MouseWorld) < dist)
+                    {
+                        pos -= vel * 16;
+                        break;
+                    }
+                }
+                targetPos = pos;
+            }
         }
+        public override bool ShouldUpdatePosition() => false;
         public override void AI()
         {
-            if (!Owner.active || Owner.dead)
+            if (!Owner.active || Owner.dead || Owner.Center.Distance(Projectile.Center) > 1500 * 1500)
                 Projectile.Kill();
 
             Lighting.AddLight(Projectile.Center, 0.5f, 0.5f, 1);
             Projectile.rotation = MathF.PI * -0.25f;
+            if (Timer < 60)
+            {
+                float p = EaseFunction.EaseQuinticOut.Ease(MathF.Min(Timer / 60f, 1));
+                Projectile.Center = Vector2.Lerp(origPos, targetPos, p);
+            }
+            else
+                Projectile.velocity *= 0;
 
             int dist = 100 + (int)(20 * Charge);
             for (int i = 0; i <= 1; i++)
@@ -176,7 +211,7 @@ namespace Redemption.Items.Weapons.HM.Magic
 
                     Vector2 pos = Projectile.Center;
                     Vector2 vel = pos.DirectionTo(npc.Center);
-                    ParticleSystem.NewParticle(pos, vel * (pos - npc.Center).Length(), new ElectricParticle(20, 60, 1), new Color(100, 255, 255), 1);
+                    ParticleSystem.NewParticle(pos, vel * (pos - npc.Center).Length(), new ElectricParticle(20, 60, 1), new Color(150, 255, 255, 0), 1);
 
                     int hitDirection = npc.RightOfDir(Projectile);
                     BaseAI.DamageNPC(npc, Projectile.damage, Projectile.knockBack, hitDirection, Projectile, crit: Projectile.HeldItemCrit());
@@ -281,7 +316,8 @@ namespace Redemption.Items.Weapons.HM.Magic
             Projectile.friendly = true;
             Projectile.hostile = false;
             Projectile.penetrate = -1;
-            Projectile.tileCollide = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
             Projectile.timeLeft = 480;
             Projectile.extraUpdates = 10;
         }
@@ -304,6 +340,12 @@ namespace Redemption.Items.Weapons.HM.Magic
 
             for (int i = 0; i < 4; i++)
                 Dust.NewDustPerfect(origPos, DustID.Electric, Scale: 0.75f);
+
+            for (int k = oldPos.Length - 1; k >= 0; k--)
+            {
+                oldPos[k] = Projectile.Center;
+                oldRot[k] = Projectile.rotation;
+            }
         }
         public Vector2 EvaluatePathByDistance(Vector2[] points, float t)
         {
@@ -334,6 +376,7 @@ namespace Redemption.Items.Weapons.HM.Magic
         public override void AI()
         {
             Timer += 30 / Projectile.MaxUpdates / (origVel.Length() + 1);
+            Projectile.rotation = Projectile.Center.DirectionTo(EvaluatePathByDistance(nodes, Timer)).ToRotation();
             Projectile.Center = EvaluatePathByDistance(nodes, Timer);
 
             Owner.heldProj = Projectile.whoAmI;
@@ -341,12 +384,18 @@ namespace Redemption.Items.Weapons.HM.Magic
             Owner.itemRotation = (float)Math.Atan2(Projectile.velocity.Y * Projectile.direction, Projectile.velocity.X * Projectile.direction);
 
             Lighting.AddLight(Projectile.Center, 0.2f, 0.2f, 1f);
-            RedeParticleManager.CreateAdditiveGlowParticle(Projectile.Center, Vector2.Zero, Vector2.One * 0.2f, Color.LightCyan, 12, style: ParticleBehaviors.ParticleFlags.Fading);
-            RedeParticleManager.CreateAdditiveGlowParticle(Projectile.Center, Vector2.Zero, Vector2.One * 0.3f, Color.Cyan, 12, style: ParticleBehaviors.ParticleFlags.Fading);
+            RedeParticleManager.CreateAdditiveGlowParticle(Projectile.Center, Projectile.rotation.ToRotationVector2(), new Vector2(2, 1) * 0.15f, Color.LightCyan, 12, 0, ParticleBehaviors.ParticleFlags.Basic);
+            RedeParticleManager.CreateAdditiveGlowParticle(Projectile.Center, Projectile.rotation.ToRotationVector2(), new Vector2(2, 1) * 0.2f, Color.Cyan, 12, 0, ParticleBehaviors.ParticleFlags.Basic);
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffType<ElectrifiedDebuff>(), 180);
+        }
+        private float[] oldRot = new float[80];
+        private Vector2[] oldPos = new Vector2[80];
+        public override bool PreDraw(ref Color lightColor)
+        {
+            return false;
         }
     }
     public class LightningRod_Discharge : ModProjectile
@@ -359,7 +408,7 @@ namespace Redemption.Items.Weapons.HM.Magic
         public override string Texture => Redemption.EMPTY_TEXTURE;
         public override void SetStaticDefaults()
         {
-            ElementID.ProjShadow[Type] = true;
+            ElementID.ProjThunder[Type] = true;
             ElementID.ProjExplosive[Type] = true;
         }
         public override void SetDefaults()
