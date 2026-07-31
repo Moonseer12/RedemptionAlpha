@@ -350,7 +350,7 @@ Mods: {
 			StarSerpent: Extrañas serpientes de los cielos más altos de Ithon. Sintieron aprecio por cierta figura y la siguieron a través de una puerta dorada.
 			KS3_Magnet: Este dron convierte proyectiles en energía para disparar a sus objetivos.
 			KS3_MissileDrone: Un dron misilero construido por King Slayer III durante su viaje de millones de años.
-			// HollowfireSmith: A gentlemanly Hollowfire tasked with protecting the abandoned Blazing Bastion. Charged with blasphemy for his philosophical streak, he's no longer welcome in the Demonhollow. Now he's stuck smithing to keep the lights on.
+			HollowfireSmith: Un caballeroso Hollowfire encargado de proteger el abandonado Bastión flameante. Acusado de blasfemia por su vena filosófica, ya no es bienvenido en Demonhollow. Ahora mata el tiempo haciendo de herrero y de paso mantiene el fuego encendido.
 		}
 
 		Bestiary.Android: Los apidroides fueron un experimento con un metal muy duradero de un sistema estelar distante. El metal, bautizado como "titanio rosa" por King Slayer III, es uno de los materiales más resistentes descubiertos en la galaxia. Sin embargo, King Slayer III odiaba su tono rosado, por lo que se negó obstinadamente a usarlo después de crear algunos androides con él.
@@ -381,7 +381,7 @@ Mods: {
 			}
 
 			Death: {
-				Infested: ¡{0} estallo en larvas!
+				Infested: ¡{0} estalló en larvas!
 				DirtyWound: "{0} tuvo una infección mortal"
 				Swarmed: "{0} fue mordido hasta la muerte"
 				Xenomite: "{0} fue cristalizado"
@@ -394,7 +394,7 @@ Mods: {
 				Nuclear4: "{0} se convirtió en una sombra en el suelo"
 				Nuclear5: "{0} salió con una explosión"
 				Nuclear6: "{0} no encontró un refrigerador a tiempo"
-				DoorStuck: "{0} experimento un atascamiento"
+				DoorStuck: "{0} experimentó un atascamiento"
 			}
 
 			Event: {
@@ -433,7 +433,7 @@ Mods: {
 					IMPORTANTE: Mod of Redemption no es completamente funcional en el modo multijugador, se recomienda el modo para un jugador para obtener la mejor experiencia.
 							    ¡Si aún quieres jugar en modo multijugador, espera encontrarte con muchos errores y que las cosas no funcionen correctamente!
 
-					Para desactivar este mensaje, vaya a configurar mod > Mod of Redemption > Redemption config. del Cliente > deshabilitar advertencia multijugador
+					Para desactivar este mensaje, ve a configurar mod > Mod of Redemption > Redemption config. del Cliente > deshabilitar advertencia multijugador
 					'''
 			}
 		}
@@ -453,12 +453,12 @@ Mods: {
 				EarthBonus: Inflige daño adicional y puede aturdir a enemigos que estén en el suelo
 				FireBonus: Posibilidad de quemar a enemigos inflamables con mayor intensidad
 				HolyBonus: Mayor daño a no muertos y demonios, posibilidad de envolver demonios en llama sagrada
-				IceBonus: Probabilidad de congelar slimes y ralentizar enemigos infectados
+				IceBonus: Probabilidad de congelar slimes o enemigos mojados y ralentizar enemigos infectados
 				NatureBonus: Genera hojitas que otorgan defensa, al golpear un enemigo que no esté quemándose
 				PoisonBonus: Aumenta el daño a enemigos envenenados
 				PsychicBonus: Ignora el blindaje enemigo
-				ShadowBonus: Enemigos derrotados pueden soltar combustible que incrementa el daño de armas sombra
-				ThunderBonus: Electrifica e inflige más daño si el objetivo está en el agua
+				ShadowBonus: Enemigos derrotados pueden soltar combustible que incrementa brevemente el daño de armas sombra
+				ThunderBonus: Electrifica e inflige más daño si el objetivo está en el agua o mojado
 				WaterBonus: Mayor daño a demonios y puede electrificar objetivos robóticos
 				WindBonus: Inflige mayor retroceso a objetivos en el aire
 			}
@@ -1501,10 +1501,10 @@ Mods: {
 			LabDrone: INTRUSO DETECTADO...
 
 			HollowfireSmith: {
-				// 0: Eh?[1] It takes guts to tread on an old wreck like this place.
-				// 1: If you're looking fer trouble,[0.2] I'm afraid you won't find it 'ere,[0.4] not from a clever warrior,[0.1] anyway.
-				// 2: Time was,[0.2] an old platoon of Demons built an' guarded this place.[1] They all left an age ago.[0.5] Just me now.
-				// 3: Tread on,[0.1] voyager.[0.5] I won't stop ya.
+				0: ¿Eh?[1] Hay que tener agallas para andar por una vieja ruina como esta.
+				1: Si estas en busca de problemas,[0.2] me temo que aquí no los encontrarás,[0.4] Al menos,[0.1] no de parte de un guerrero con cabeza.
+				2: Hubo un tiempo en el que un viejo pelotón de demonios construyó y protegió este lugar,[1] partieron hace décadas.[0.5] Ya solo quedo yo.
+				3: Sigue adelante,[0.1] aventurero.[0.5] No seré yo quien te detenga
 			}
 		}
 
@@ -1910,9 +1910,12 @@ Mods: {
 			}
 
 			HollowfireSmith: {
-				// A0: Where are you from?
-				// A1: You stayed behind?
-				// A2: So you aren't a blacksmith?
+				A0: ¿De dónde eres?
+				A1: ¿Te quedaste atrás?
+				A2: ¿No eres un herrero?
+				B0: ¿Qué eres?
+				B1: ¿Eres un demonio?
+				B2: ¿Qué haces aquí?
 			}
 		}
 
@@ -2750,8 +2753,8 @@ Mods: {
 			}
 
 			AkkaRoseSentryBuff: {
-				// DisplayName: Red Rose
-				// Description: Every rose has its thorns, and this one has a lot of them!
+				DisplayName: Rosa roja
+				Description: Cada rosa tiene sus espinas, ¡pero esta tiene un montón!
 			}
 		}
 
@@ -2882,7 +2885,7 @@ Mods: {
 				UnconsciousStatus2: "{0} está noqueado por {1} minuto(s)."
 				Lad: muchacho
 				Lass: muchacha
-				// Lassy: lassy
+				Lassy: muchachita
 			}
 
 			Angler: {
@@ -3571,13 +3574,16 @@ Mods: {
 			}
 
 			HollowfireSmith: {
-				// Chat0: You look inquisitive, {0}. Well, it's as I said; everyone else left years ago. Just as well that they left me behind, bein' that I'm not welcome back there anyway. A-he-he-he-hem, my Demonspeak ain't all it used to be, for one.
-				// Chat7: Need somethin'? I'm low on metal at the moment, sorry'ta disappoint.
-				// Chat8: What? Somethin' on my face?
-				// Chat9: Suggest you get a move on. Unless ya want to peppered with shadowflame magic.
-				// A0: Demonhollow. Surely even ye in Epidotra have heard of it? Home of the Demons, sworn revenge on Epidotra, that blasted Church, alla' that? Ah, perish the thought. I try not to think about it, these days.
-				// A1: Ha! You make it sound like a choice, puttin' it like that. Truth is, I'd have returned in a flicker if it were up to me. But it wasn't, so no point in dwelling! Something something, actually a philosopher but became a blacksmith.
-				// A2: Well, I'm smithin', aren't I? Limited pointa' view, if you ask me. But no, this all was just to make myself useful, 'posed to the alternative. Nowadays, a piece'a hot metal's just about the one thing keepin' me moving and sane. 'Sa shame, I guess...
+				Chat0: Te veo muy curioso, {0}. Pues, como ya dije; Todos los demás se fueron hace años. Y mejor que me dejaran atrás, que de todas formas ya no soy bienvenido por allá. A-je-je-je-jem. Para empezar, mi habla demoníaca ya no es ni una pizca de lo que era antes.
+				Chat7: ¿Necesitas algo? Ando corto de metal por el momento, perdona si te decepciono.
+				Chat8: ¿Qué? ¿Tengo algo en la cara?
+				Chat9: Te sugiero que sigas tu camino. A menos que quieras acabar salpimentado con magia de llama sombría.
+				A0: Demonhollow. Seguro que hasta en Epidotra han oído hablar de él. Hogar de los demonios, juraron vengarse de Epidotra, de esa condenada iglesia y todo eso... Mejor ni pensarlo. Trato de no darle vueltas a eso estos días.
+				A1: ¡Ja! Lo pintas como si yo hubiese escogido esto, dicho de esa forma. La verdad, habría vuelto en un pestañeo si hubiese estado en mis manos. Pero no lo estaba, ¡así que fuera lamentos! Quién lo diría, de filósofo a herrero.
+				A2: Bueno, hago de herrero, ¿no? Una forma bastante limitada de verlo, si me preguntas. Pero no, todo esto fue solo para sentirme útil, en vez de la otra opción. Hoy por hoy, un pedazo de metal al rojo vivo es casi lo único que me mantiene andando y con la cabeza en el sitio. Una lástima, supongo...
+				B0: ¿Qué, nunca habías visto un Hollowfire antes? Supongo que no. Yo soy, er, yo era del Demonhollow. Nosotros los demonios somos muy distintos de las bestias que rondan por esta isla. ¿Quizá compartimos un ancestro en común? Er, en fin... Un Hollowfire es lo que soy.
+				B1: Supongamos que aún lo soy. Er, repito que no todos somos como los de por aquí. Somos más civilizados. Uh, en teoría. Ejem. No son mala compañía una vez que los conoces de verdad.  Aj-jeh-jem.
+				B2: Ja. Fa, ja. Ya imaginaba que preguntarías eso enseguida. No vine acá por VOLUNTAD propia, si eso querías saber. Hice demasiadas preguntas y terminé cayéndole mal a nuestro Sacerdote de Guerra. ¿Te basta con mi resumen? Tampoco estaba destinado a ser herrero... Pero aquí estoy.
 			}
 		}
 
@@ -4599,31 +4605,31 @@ Mods: {
 			SkySquiresGreaves: {
 				DisplayName: Grebas de escudero del cielo
 				Tooltip: ""
-				/* Lore:
+				Lore:
 					'''
-					'Greaves made of Kanite, worn by the Sky Squires of Ithon. The metal has a blue hue and a cold touch,
-					being used as a replacement for iron which is lacking in southern Ithon.'
-					''' */
+					'Grebas hechas de Kanite, usado por los escuderos del cielo de Ithon. El metal tiene un tono azulado
+					y un tacto frío, siendo utilizado como sustituto del hierro, el cual escasea en el sur de Ithon.'
+					'''
 			}
 
 			SkySquiresHelm: {
 				DisplayName: Casco de escudero del cielo
 				Tooltip: ""
-				/* Lore:
+				Lore:
 					'''
-					'A sallet helm made of Kanite, worn by the Sky Squires of Ithon. The Sky Squires are a unit of the south,
-					protecting the kingdoms of Yln, Klycub, and Norapass.'
-					''' */
+					'Un casco sallet hecho de Kanite, usado por los escuderos del cielo de Ithon. Los escuderos del cielo
+					son una unidad del sur que protege los reinos de Yln, Klycub, y Norapass.'
+					'''
 			}
 
 			SkySquiresTabard: {
 				DisplayName: Tabardo de escudero del cielo
 				Tooltip: ""
-				/* Lore:
+				Lore:
 					'''
-					'A tabard made of Kanite and cloth in a checkered pattern, worn by the Sky Squires of Ithon. The armour
-					allows better flexibility than most, useful for marching to the rescue swiftly.'
-					''' */
+					'Un tabardo hecho de Kanite y tela con patrón a cuadros, usado por los escuderos del cielo de Ithon.
+					La armadura permite una mayor flexibilidad que la mayoría, útil para marchar rápidamente al rescate.'
+					'''
 			}
 
 			SwordHeadband: {
@@ -7368,7 +7374,7 @@ Mods: {
 
 			SlayerShipEngine: {
 				DisplayName: Motor CMRL de la Nave
-				Tooltip: "'Significa Casi-Más-Rapido-que-la-Luz'"
+				Tooltip: "'Significa Casi-Más-Rápido-que-la-Luz'"
 			}
 
 			SlayerWiringKit: {
@@ -8198,7 +8204,7 @@ Mods: {
 				DisplayName: Pararrayos autosuficiente
 				Tooltip:
 					'''
-					Haz clic derecho para colocar una barra metálica conductora en tu posición
+					Haz clic derecho para colocar una barra metálica conductora
 					La barra tiene un aura que electrocuta pasivamente a los enemigos cercanos
 					Haz clic izquierdo para disparar electricidad hacia la barra, aumentando su alcance
 					Sobrecargar la barra provocará una explosión y restablecerá la distancia del alcance
@@ -8979,7 +8985,7 @@ Mods: {
 				DisplayName: Cadena del Cosmos
 				Tooltip:
 					'''
-					Probabilidad de 20% de impacto crítico por conexión por invocación
+					Probabilidad del 20% de impacto crítico por conexión por invocación
 					{$CommonItemTooltip.Whips}
 					Golpea a los enemigos para invocar ojos cósmicos amistosos
 					'''
@@ -10682,7 +10688,7 @@ Mods: {
 			}
 
 			WoodenBallista: {
-				DisplayName: Ballesta de madera
+				DisplayName: Balista de madera
 				Tooltip: ""
 			}
 
@@ -10724,7 +10730,7 @@ Mods: {
 				Tooltip:
 					'''
 					Los enjambres de arañas se vuelven pasivos
-					Otorga inmunidad a quedarse inmovilizado por telas de arañas
+					Otorga inmunidad al efecto 'Mordisco feroz'
 					'''
 			}
 
@@ -11259,12 +11265,12 @@ Mods: {
 			}
 
 			HolyAllianceStatue: {
-				DisplayName: Estatua de la Alianza Sagrada
+				DisplayName: Estatua de la Alianza sagrada
 				Tooltip: ""
 			}
 
 			HolyAllianceStatue2: {
-				DisplayName: Estatua del Crisol de la Alianza Sagrada
+				DisplayName: Estatua del crisol de la Alianza sagrada
 				Tooltip: ""
 			}
 
@@ -11272,9 +11278,9 @@ Mods: {
 				DisplayName: Soporte centinela Omega
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Sentry}
 					Invoca una plataforma para colocar otras centinelas encima
 					50% de daño incrementado a las centinelas colocadas en la plataforma
+					Cuenta como centinela
 					'''
 			}
 
@@ -11289,93 +11295,93 @@ Mods: {
 			}
 
 			AkkaRoseSentry: {
-				// DisplayName: Raunin Ruusu
-				/* Tooltip:
+				DisplayName: Raunin Ruusu
+				Tooltip:
 					'''
 					{$CommonItemTooltip.Sentry}
-					Summons a red rose that shoots a barrage of thorns
-					''' */
+					Invoca una rosa rojiza que dispara una ráfaga de espinas
+					'''
 			}
 
 			GaiaBoots: {
-				// DisplayName: Gaia Boots
-				/* Tooltip:
+				DisplayName: Botas de Gaia
+				Tooltip:
 					'''
-					Allows flight
-					The wearer can run super fast
-					Flowers grow on the grass you walk on
-					Increases jump speed and allow auto-jump
-					Increases fall resistance
-					Provides extra mobility in cobwebs
-					Grants immunity to Webbed
-					50% chance to ignore traps
-					10% increased {0} elemental resistance
-					''' */
+					Permite volar
+					El portador puede correr superrápido
+					Flores crecen por donde caminas
+					Aumenta la velocidad de salto y permite el salto automático
+					Aumenta la resistencia de caída
+					Proporciona mejor movilidad en las telarañas
+					Otorga inmunidad al efecto 'Entelarañado'
+					50% de probabilidad de ignorar trampas
+					10% más de resistencia elemental a {0}
+					'''
 			}
 
 			SpiderBoots: {
-				// DisplayName: Spider Boots
-				/* Tooltip:
+				DisplayName: Botas de araña
+				Tooltip:
 					'''
-					Provides extra mobility in cobwebs
-					Grants immunity to Webbed
-					50% chance to ignore traps
-					''' */
+					Proporciona mejor movilidad en las telarañas
+					Otorga inmunidad al efecto 'Entelarañado'
+					50% de probabilidad de ignorar trampas
+					'''
 			}
 
 			AshWoodBarrel: {
-				// DisplayName: Ash Wood Barrel
-				// Tooltip: ""
+				DisplayName: Barril de madera de fresno
+				Tooltip: ""
 			}
 
 			AshWoodBarrelWide: {
-				// DisplayName: Wide Ash Wood Barrel
-				// Tooltip: ""
+				DisplayName: Barril ancho de madera de fresno
+				Tooltip: ""
 			}
 
 			AshWoodSign: {
-				// DisplayName: Ash Wood Sign
-				// Tooltip: ""
+				DisplayName: Letrero de madera de fresno
+				Tooltip: ""
 			}
 
 			BlazingThrone: {
-				// DisplayName: Blazing Throne
-				// Tooltip: "{$Mods.Redemption.SpecialTooltips.Unbreakable5000}"
+				DisplayName: Trono flameante
+				Tooltip: "{$Mods.Redemption.SpecialTooltips.Unbreakable5000}"
 			}
 
 			BrokenHellstoneBallista: {
-				// DisplayName: Broken Hellstone Ballista
-				// Tooltip: ""
+				DisplayName: Balista rota de piedra infernal
+				Tooltip: ""
 			}
 
 			NozaSign: {
-				// DisplayName: Heart-Signed Ash Wood Sign
-				// Tooltip: ""
+				DisplayName: Letrero de madera de fresno con corazón tallado
+				Tooltip: ""
 			}
 
 			DarkShinkiteBrick: {
-				// DisplayName: Dark Shinkite Brick
-				// Tooltip: ""
+				DisplayName: Ladrillo de shinkite oscuro
+				Tooltip: ""
 			}
 
 			BastionGate: {
-				// DisplayName: Bastion Gate
-				// Tooltip: ""
+				DisplayName: Entrada del Bastión
+				Tooltip: ""
 			}
 
 			DemonForgeTent: {
-				// DisplayName: Demon Forge Tent
-				// Tooltip: ""
+				DisplayName: Carpa del herrero demonio
+				Tooltip: ""
 			}
 
 			DemonShopTent: {
-				// DisplayName: Demon Shop Tent
-				// Tooltip: ""
+				DisplayName: Carpa del mercader demonio
+				Tooltip: ""
 			}
 
 			DemonTailorTent: {
-				// DisplayName: Demon Tailor Tent
-				// Tooltip: ""
+				DisplayName: Carpa del artesano demonio
+				Tooltip: ""
 			}
 		}
 
@@ -12122,11 +12128,11 @@ Mods: {
 			// CorruptedSentryBase_Proj.DisplayName: Corrupted Sentry Base_ Proj
 			// HoneycombStaff_Proj.DisplayName: Honeycomb Hive
 			// XenoSplat_Small.DisplayName: Xeno Splat
-			// GhastlyRecurve_Holdout.DisplayName: Ghastly Recurve_ Holdout
-			// AkkaRosePortal.DisplayName: Akka Rose Portal
-			// AkkaRosePortal_Proj.DisplayName: Akka Rose Portal_ Proj
-			// HellstoneBallista_Bolt.DisplayName: Hellstone Ballista_ Bolt
-			// HellstoneBallista_Top.DisplayName: Hellstone Ballista_ Top
+			// GhastlyRecurve_Holdout.DisplayName: "{$Mods.Redemption.Items.GhastlyRecurve.DisplayName}"
+			// AkkaRosePortal.DisplayName: Red Rose Portal
+			// AkkaRosePortal_Proj.DisplayName: Red Rose Thorn
+			// HellstoneBallista_Bolt.DisplayName: Hellstone Bolt
+			// HellstoneBallista_Top.DisplayName: Hellstone Ballista
 		}
 
 		NPCs: {
@@ -12652,7 +12658,7 @@ Mods: {
 			MoonflareSkeleton.DisplayName: Seguidor llamalunar
 			TreebarkDryad_Savanna.DisplayName: "{$Mods.Redemption.NPCs.TreebarkDryad.DisplayName}"
 			KS3_Friendly.DisplayName: "{$Mods.Redemption.NPCs.KS3.DisplayName}"
-			// HollowfireSmith.DisplayName: Anr'thre
+			HollowfireSmith.DisplayName: Anr'thre
 		}
 
 		Tiles: {
@@ -12904,19 +12910,19 @@ Mods: {
 			DesertStatuetteTile.MapEntry: Estatuilla desértica
 			ObsidianStatuetteTile.MapEntry: Estatuilla de obsidiana
 			LostSoulBottleTile.MapEntry: Alma perdida embotellada
-			// AshWoodBarrelTile.MapEntry: Ash Wood Barrel
-			// AshWoodBarrelWideTile.MapEntry: Wide Ash Wood Barrel
-			// AshWoodSignTile.MapEntry: Ash Wood Sign
-			// BastionGateTile.MapEntry: Bastion Gate
-			// BlazingThroneTile.MapEntry: Blazing Throne
-			// DemonForgeTentTile.MapEntry: Demon Forge Tent
-			// DemonShopTentTile.MapEntry: Demon Shop Tent
-			// DemonTailorTentTile.MapEntry: Demon Tailor Tent
-			// NozaSignTile.MapEntry: Heart-Signed Ash Wood Sign
+			AshWoodBarrelTile.MapEntry: Barril de madera de fresno
+			AshWoodBarrelWideTile.MapEntry: Barril ancho de madera de fresno
+			AshWoodSignTile.MapEntry: Letrero de madera de fresno
+			BastionGateTile.MapEntry: Entrada del Bastión
+			BlazingThroneTile.MapEntry: Trono flameante
+			DemonForgeTentTile.MapEntry: Carpa del herrero demonio
+			DemonShopTentTile.MapEntry: Carpa del mercader demonio
+			DemonTailorTentTile.MapEntry: Carpa del artesano demonio
+			NozaSignTile.MapEntry: Letrero de madera de fresno con corazón tallado
 
 			HellstoneBallistaTile: {
-				// MapEntry: Hellstone Ballista
-				// Repair: Repair: [i/s30:HellstoneBar]
+				MapEntry: Balista de piedra infernal
+				Repair: Reparar: [i/s30:HellstoneBar]
 			}
 		}
 
@@ -13025,7 +13031,7 @@ Mods: {
 				DisplayName: Configuración global
 
 				DialogueWaitTime: {
-					Label: Tiempo Extra de Espera de Dialogo
+					Label: Tiempo extra de espera del dialogo
 					Tooltip:
 						'''
 						Aumenta la duración del texto de diálogo que hay antes de pasar a otro, auméntalo si eres un lector lento.
@@ -13037,9 +13043,9 @@ Mods: {
 					Label: Rapidez del dialogo
 					Tooltip:
 						'''
-						Solo se recomienda cambiar si el dialogo va muy lento o muy rapido.
+						Solo se recomienda cambiar si el dialogo va muy lento o muy rápido.
 						Este es el tiempo medido en segundos para que aparezca cada letra, más alto = más rápido.
-						Cuanto más rápido lo hagas, más difícil será leerlo antes de terminar, así que ajusta también el Tiempo Extra de Espera del Diálogo
+						Cuanto más rápido lo hagas, más difícil será leerlo antes de terminar, así que ajusta también el 'Tiempo extra de espera del dialogo'
 						'''
 				}
 

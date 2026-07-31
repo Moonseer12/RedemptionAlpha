@@ -54,7 +54,7 @@ namespace Redemption.NPCs.Bastion.Bazaar
         }
         public override bool HasTalkButton() => true;
         public override bool HasLeftHangingButton(Player player) => RedeGlobalButton.talkActive;
-        public override HangingButtonParams LeftHangingButton(Player player) => new(1);
+        public override HangingButtonParams LeftHangingButton(Player player) => new(2);
 
         private static Texture2D Bubble => !Main.dedServ ? CommonTextures.TextBubble_Demon.Value : null;
         public static readonly SoundStyle voice = CustomSounds.GhostlyVoice.WithPitchOffset(-1f);
@@ -259,8 +259,12 @@ namespace Redemption.NPCs.Bastion.Bazaar
         }
 
         public static int TalkID;
+        public static int CurrentTalk;
         public override string GetChat()
         {
+            if (TalkID <= 0)
+                CurrentTalk = 0;
+
             Player player = Main.LocalPlayer;
             WeightedRandom<string> chat = new(Main.rand);
             string lad = player.Male ? Mod.GetLocalization("Dialogue.General.Lad").Value : Mod.GetLocalization("Dialogue.General.Lassy").Value;
@@ -286,12 +290,14 @@ namespace Redemption.NPCs.Bastion.Bazaar
             public override int NPCType => NPCType<HollowfireSmith>();
             public override int YOffset => 0;
             public override bool ActiveRequirements => RedeGlobalButton.talkActive;
+            public override bool DisableText => CurrentTalk != 0 && CurrentTalk != 1;
 
             public override string NewText(NPC npc, Player player) => Mod.GetLocalization("DialogueBox.HollowfireSmith.A" + TalkID).Value;
             public override Color? NewColor(NPC npc, Player player) => DialoguePlayer.GetTalkStateLocal(DialoguePlayer.TalkType.HollowfireSmith0) ? Color.Gray : null;
 
             public override void NewOnClick(NPC npc, Player player)
             {
+                CurrentTalk = 1;
                 SoundEngine.PlaySound(SoundID.Chat);
                 int maxLines = 3;
                 Main.npcChatText = Mod.GetLocalization("Dialogue.HollowfireSmith.A" + TalkID).Value;
@@ -299,6 +305,32 @@ namespace Redemption.NPCs.Bastion.Bazaar
                 if (TalkID >= maxLines)
                 {
                     DialoguePlayer.SetTalkStateLocal(DialoguePlayer.TalkType.HollowfireSmith0);
+                    CurrentTalk = 0;
+                    TalkID = 0;
+                }
+            }
+        }
+        public sealed class Button1_HollowfireSmith : HangingButtonBase
+        {
+            public override int NPCType => NPCType<HollowfireSmith>();
+            public override int YOffset => 1;
+            public override bool ActiveRequirements => RedeGlobalButton.talkActive;
+            public override bool DisableText => CurrentTalk != 0 && CurrentTalk != 2;
+
+            public override string NewText(NPC npc, Player player) => Mod.GetLocalization("DialogueBox.HollowfireSmith.B" + TalkID).Value;
+            public override Color? NewColor(NPC npc, Player player) => DialoguePlayer.GetTalkStateLocal(DialoguePlayer.TalkType.HollowfireSmith1) ? Color.Gray : null;
+
+            public override void NewOnClick(NPC npc, Player player)
+            {
+                CurrentTalk = 2;
+                SoundEngine.PlaySound(SoundID.Chat);
+                int maxLines = 3;
+                Main.npcChatText = Mod.GetLocalization("Dialogue.HollowfireSmith.B" + TalkID).Value;
+                TalkID++;
+                if (TalkID >= maxLines)
+                {
+                    DialoguePlayer.SetTalkStateLocal(DialoguePlayer.TalkType.HollowfireSmith1);
+                    CurrentTalk = 0;
                     TalkID = 0;
                 }
             }

@@ -101,7 +101,7 @@ namespace Redemption.NPCs.Minibosses.Calavia
                 target.AddBuff(ModContent.BuffType<PureChillDebuff>(), 300);
                 if (Projectile.DistanceSQ(target.Center) > 140 * 140 || target.knockBackResist is 0 || target.RedemptionNPCBuff().iceFrozen)
                     continue;
-                target.AddBuff(ModContent.BuffType<IceFrozen>(), 1000 - ((int)MathHelper.Clamp(npc.lifeMax, 60, 980)));
+                target.AddBuff(ModContent.BuffType<IceFrozen>(), (int)MathHelper.Clamp(1000 - target.lifeMax, 60, 980));
             }
             if (npc.type != ModContent.NPCType<Calavia>())
                 return;

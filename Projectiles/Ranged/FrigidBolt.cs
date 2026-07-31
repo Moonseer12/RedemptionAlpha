@@ -187,7 +187,7 @@ namespace Redemption.Projectiles.Ranged
                         SoundEngine.PlaySound(SoundID.Item30, Projectile.position);
                         SoundEngine.PlaySound(SoundID.Item50, Projectile.position);
                         if (Main.npc[projTargetIndex].knockBackResist > 0 && !Main.npc[projTargetIndex].RedemptionNPCBuff().iceFrozen)
-                            Main.npc[projTargetIndex].AddBuff(BuffType<IceFrozen>(), 1800 - ((int)MathHelper.Clamp(Main.npc[projTargetIndex].lifeMax, 60, 1780)));
+                            Main.npc[projTargetIndex].AddBuff(BuffType<IceFrozen>(), (int)MathHelper.Clamp(1800 - Main.npc[projTargetIndex].lifeMax, 60, 1780));
                         for (int i = 0; i < 10; i++)
                             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Ice, Scale: Main.rand.NextFloat(.5f, 1));
                         for (int k = 0; k < 20; k++)
@@ -219,7 +219,7 @@ namespace Redemption.Projectiles.Ranged
                             int hitDirection = target.RightOfDir(Projectile);
                             BaseAI.DamageNPC(target, origDamage, Projectile.knockBack * 2, hitDirection, Projectile, crit: Projectile.HeldItemCrit());
                             if (Main.rand.NextBool(2) && target.knockBackResist > 0 && !target.RedemptionNPCBuff().iceFrozen)
-                                target.AddBuff(BuffType<IceFrozen>(), 1800 - ((int)MathHelper.Clamp(target.lifeMax, 60, 1780)));
+                                target.AddBuff(BuffType<IceFrozen>(), (int)MathHelper.Clamp(1800 - target.lifeMax, 60, 1780));
                         }
                         for (int i = 0; i < Main.maxProjectiles; i++)
                         {

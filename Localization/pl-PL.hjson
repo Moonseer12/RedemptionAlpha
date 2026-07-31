@@ -350,7 +350,7 @@ Mods: {
 			StarSerpent: Rzadkie węże z najwyższych przestworzy Ithonu. Upodobały sobie pewną postać i podążyły za nią przez Złotą Bramę.
 			KS3_Magnet: Ten dron przekształca nadlatujące pociski w energię, która odlatuje z powrotem w stronę ich celów.
 			KS3_MissileDrone: Rakietowy dron zbudowany przez King Slayera III podczas jego milionletniej podróży.
-			// HollowfireSmith: A gentlemanly Hollowfire tasked with protecting the abandoned Blazing Bastion. Charged with blasphemy for his philosophical streak, he's no longer welcome in the Demonhollow. Now he's stuck smithing to keep the lights on.
+			HollowfireSmith: Kowal Wydrążonego Ognia mający zaszczyt chronić opuszczony Płonący Bastion. Oskarżony o bluźnierstwo przez swoje filozoficzne zapędy, nie jest już mile widziany w Demonhollow. Teraz utknął tutaj, kując metal, żeby jakoś wiązać koniec z końcem.
 		}
 
 		Bestiary.Android: Apidroidy były eksperymentem z wykorzystaniem wyjątkowo trwałego metalu pochodzącego z odległego układu gwiezdnego. Metal – nazwany przez King Slayera III „Różowym Tytanem” – jest jednym z najsilniejszych materiałów odkrytych w galaktyce. Jednak King Slayer III nie znosił jego różowego odcienia i, choć stworzył z niego kilka androidów, uparty nie chciał go używać ponownie.
@@ -453,12 +453,12 @@ Mods: {
 				EarthBonus: "[i:Redemption/Earth] Zadaje dodatkowe obrażenia i ma szansę ogłuszyć uziemionych wrogów"
 				FireBonus: "[i:Redemption/Fire] Ma szansę nałożenia silnego efektu osłabienia 'W Płomieniach!' na łatwopalnych wrogów."
 				HolyBonus: "[i:Redemption/Holy] Zwiększone obrażenia przeciwko nieumarłym i demonom."
-				IceBonus: "[i:Redemption/Ice] Szansa na zamrożenie szlamów i spowolnienie zainfekowanych wrogów"
+				IceBonus: "[i:Redemption/Ice] Szansa na zamrożenie szlamów lub przemoczonych przeciwników oraz spowolnienie zainfekowanych przeciwników"
 				NatureBonus: "[i:Redemption/Nature] Ma szansę na upuszczenie zwiększającego obronę Daru Natury po uderzeniu wrogów dotkniętych debuffem innym niż ognisty."
 				PoisonBonus: "[i:Redemption/Poison] Zwiększone obrażenia przeciwko otrutym wrogom"
 				PsychicBonus: "[i:Redemption/Psychic] Ignoruje Punkty Obrony wroga"
-				ShadowBonus: "[i:Redemption/Shadow] Pokonani wrogowie mają szansę na upuszczenie przedmiotu, który zwiększa obrażenia Cienia"
-				ThunderBonus: "[i:Redemption/Thunder] Porazi prądem i zada dodatkowe obrażenia, jeśli cel znajduje się w wodzie"
+				ShadowBonus: "[i:Redemption/Shadow] Pokonani przeciwnicy mają szansę upuścić przedmiot, który na krótko zwiększa obrażenia od Cienii"
+				ThunderBonus: "[i:Redemption/Thunder] Elektryzuje i zadaje dodatkowe obrażenia, jeśli cel znajduje się w wodzie lub jest przemoczony"
 				WaterBonus: "[i:Redemption/Water] Zwiększone obrażenia przeciwko demonom i możliwość porażenia prądem celów robotycznych"
 				WindBonus: "[i:Redemption/Wind] Zadaje dodatkowy odrzut celom w powietrzu"
 			}
@@ -1503,10 +1503,10 @@ Mods: {
 			LabDrone: WYKRYTO INTRUZA...
 
 			HollowfireSmith: {
-				// 0: Eh?[1] It takes guts to tread on an old wreck like this place.
-				// 1: If you're looking fer trouble,[0.2] I'm afraid you won't find it 'ere,[0.4] not from a clever warrior,[0.1] anyway.
-				// 2: Time was,[0.2] an old platoon of Demons built an' guarded this place.[1] They all left an age ago.[0.5] Just me now.
-				// 3: Tread on,[0.1] voyager.[0.5] I won't stop ya.
+				0: Eh?[1] Trzeba mieć odwagę, żeby zapuszczać się do takiej starej ruiny.
+				1: Jeśli szukasz kłopotów,[0.2] obawiam się, że ich tutaj nie znajdziesz,[0.4] przynajmniej nie z rąk rozsądnego wojownika,[0.1] w każdym razie.
+				2: Kiedyś,[0.2] stary oddział Demonów zbudował i strzegł tego miejsca.[1] Odeszli całe wieki temu.[0.5] Zostałem tylko ja.
+				3: Idź dalej,[0.1] wędrowcze.[0.5] Nie będę cię zatrzymywał.
 			}
 		}
 
@@ -1907,9 +1907,12 @@ Mods: {
 			}
 
 			HollowfireSmith: {
-				// A0: Where are you from?
-				// A1: You stayed behind?
-				// A2: So you aren't a blacksmith?
+				A0: Skąd pochodzisz?
+				A1: Zostałeś tutaj?
+				A2: Czyli nie jesteś kowalem?
+				B0: Czym jesteś?
+				B1: Jesteś Demonem?
+				B2: Co tutaj robisz?
 			}
 		}
 
@@ -2743,8 +2746,8 @@ Mods: {
 			}
 
 			AkkaRoseSentryBuff: {
-				// DisplayName: Red Rose
-				// Description: Every rose has its thorns, and this one has a lot of them!
+				DisplayName: Czerwona Róża
+				Description: Każda róża ma swoje kolce, a ta ma ich wyjątkowo dużo!
 			}
 		}
 
@@ -3564,13 +3567,16 @@ Mods: {
 			}
 
 			HollowfireSmith: {
-				// Chat0: You look inquisitive, {0}. Well, it's as I said; everyone else left years ago. Just as well that they left me behind, bein' that I'm not welcome back there anyway. A-he-he-he-hem, my Demonspeak ain't all it used to be, for one.
-				// Chat7: Need somethin'? I'm low on metal at the moment, sorry'ta disappoint.
-				// Chat8: What? Somethin' on my face?
-				// Chat9: Suggest you get a move on. Unless ya want to peppered with shadowflame magic.
-				// A0: Demonhollow. Surely even ye in Epidotra have heard of it? Home of the Demons, sworn revenge on Epidotra, that blasted Church, alla' that? Ah, perish the thought. I try not to think about it, these days.
-				// A1: Ha! You make it sound like a choice, puttin' it like that. Truth is, I'd have returned in a flicker if it were up to me. But it wasn't, so no point in dwelling! Something something, actually a philosopher but became a blacksmith.
-				// A2: Well, I'm smithin', aren't I? Limited pointa' view, if you ask me. But no, this all was just to make myself useful, 'posed to the alternative. Nowadays, a piece'a hot metal's just about the one thing keepin' me moving and sane. 'Sa shame, I guess...
+				Chat0: Wyglądasz na ciekawskiego świata, {0}. Cóż, tak jak mówiłem; wszyscy pozostali odeszli lata temu. I chyba dobrze, że zostawili mnie tutaj, skoro i tak nie jestem tam już mile widziany. A-he-he-he-hem, mój demoniczny język nie jest już taki jak kiedyś.
+				Chat7: Potrzebujesz czegoś? Chwilowo brakuje mi metalu, przykro mi za rozczarowanie.
+				Chat8: Hm? Mam coś na twarzy?
+				Chat9: Radzę ci ruszać dalej. Chyba że masz ochotę zostać zasypanym magią Cieniopłomienia.
+				A0: Z Demonhollow. Chyba nawet wy w Epidotrze o tym słyszeliście? Dom Demonów, zaprzysiężona zemsta na Epidotrze, ten cholerny Kościół i cała reszta? Ech, lepiej o tym nie myśleć. Staram się już do tego nie wracać.
+				A1: Ha! Mówisz tak, jakbym miał wybór. Prawda jest taka, że wróciłbym tam w mgnieniu oka, gdyby to zależało ode mnie. Ale nie zależało, więc nie ma sensu nad tym rozmyślać! Coś tam, coś tam... tak naprawdę byłem filozofem, ale zostałem kowalem.
+				A2: No przecież kuję, prawda? Masz dosyć powierzchowny punkt widzenia, jeśli o to mnie pytasz, ale nie. Zacząłem to robić tylko po to, żeby być do czegoś przydatnym, dla alternatywy. Dzisiaj kawałeczek rozgrzanego metalu to właściwie jedyna rzecz, która trzyma mnie przy życiu i zdrowych zmysłach. Jaka szkoda, chyba...
+				B0: Co, nigdy nie widziałeś Wydrążniaka? Zgaduje, że nie. Jestem z- tsk, pochodziłem z Demonhollow. My demony różnimy się od tego demonicznego bestialskiego sortu z tej wyspy. Ciekawe, czy mamy wspólnego przodka? Erh, w każdym bądź razie... Wydrążniak, Demon Wydrążonego Ognia czy jak wy tam to zwacie, oto czym jestem...
+				B1: Na to wygląda, mhm. Warto powtórzyć, że nie wszyscy jesteśmy tacy jak tutejsze gatunki istniejącej na tej ziemi. Jesteśmy bardziej... cywilizowani. No... przynajmniej w teorii. Ekhem. Nie są aż takim złym towarzystwem, jak się ich pozna. Ah-heh-hem.
+				B2: Ha. Pa ha. No tak, mogłem się spodziewać, że o to zapytasz. Nie trafiłem tutaj z WŁASNEJ WOLI, jeśli o to pytasz. Zadawałem zbyt wiele niewygodnych pytań i naraziłem się na naszego Kapłana Wojny. Zadowala cię ten zarys? Miałem też nie być kowalem, ale oto i jestem.
 			}
 		}
 
@@ -10638,7 +10644,7 @@ Mods: {
 				Tooltip:
 					'''
 					Roje pająków stają się pasywne
-					Zapewnia odporność na Pajęczynę
+					Daję odporność na Feral Bite
 					'''
 			}
 
@@ -11202,93 +11208,91 @@ Mods: {
 			}
 
 			AkkaRoseSentry: {
-				// DisplayName: Raunin Ruusu
-				/* Tooltip:
+				DisplayName: Raunin Ruusu
+				Tooltip:
 					'''
 					{$CommonItemTooltip.Sentry}
-					Summons a red rose that shoots a barrage of thorns
-					''' */
+					Przyzywa czerwoną różę wystrzeliwującą grad kolców
+					'''
 			}
 
 			GaiaBoots: {
-				// DisplayName: Gaia Boots
-				/* Tooltip:
+				DisplayName: Buty Gaii
+				Tooltip:
 					'''
-					Allows flight
-					The wearer can run super fast
-					Flowers grow on the grass you walk on
-					Increases jump speed and allow auto-jump
-					Increases fall resistance
-					Provides extra mobility in cobwebs
-					Grants immunity to Webbed
-					50% chance to ignore traps
-					10% increased {0} elemental resistance
-					''' */
+					Umożliwiają lot, bardzo szybki bieg i większą mobilność w pajęczynach
+					Na trawie, po której chodzisz, wyrastają kwiaty
+					Zwiększają siłę skoku i włączają automatyczne skakanie
+					Zwiększają odporność na obrażenia od upadku
+					Zapewniają odporność na Oplątanie
+					50% szans na zignorowanie pułapek
+					Zwiększa odporność na żywioł {0} o 10%
+					'''
 			}
 
 			SpiderBoots: {
-				// DisplayName: Spider Boots
-				/* Tooltip:
+				DisplayName: Pajęcze Buty
+				Tooltip:
 					'''
-					Provides extra mobility in cobwebs
-					Grants immunity to Webbed
-					50% chance to ignore traps
-					''' */
+					Zapewniają większą mobilność w pajęczynach
+					Zapewniają odporność na Oplątanie
+					50% szans na zignorowanie pułapek
+					'''
 			}
 
 			AshWoodBarrel: {
-				// DisplayName: Ash Wood Barrel
-				// Tooltip: ""
+				DisplayName: Beczka z Drewna Jesionowego
+				Tooltip: ""
 			}
 
 			AshWoodBarrelWide: {
-				// DisplayName: Wide Ash Wood Barrel
-				// Tooltip: ""
+				DisplayName: Szeroka Beczka z Drewna Jesionowego
+				Tooltip: ""
 			}
 
 			AshWoodSign: {
-				// DisplayName: Ash Wood Sign
-				// Tooltip: ""
+				DisplayName: Znak z Drewna Jesionowego
+				Tooltip: ""
 			}
 
 			BlazingThrone: {
-				// DisplayName: Blazing Throne
-				// Tooltip: "{$Mods.Redemption.SpecialTooltips.Unbreakable5000}"
+				DisplayName: Płonący Tron
+				Tooltip: "{$Mods.Redemption.SpecialTooltips.Unbreakable5000}"
 			}
 
 			BrokenHellstoneBallista: {
-				// DisplayName: Broken Hellstone Ballista
-				// Tooltip: ""
+				DisplayName: Uszkodzona Balista z Piekielnego Kamienia
+				Tooltip: ""
 			}
 
 			NozaSign: {
-				// DisplayName: Heart-Signed Ash Wood Sign
-				// Tooltip: ""
+				DisplayName: Znak z Drewna Jesionowego z Sercem
+				Tooltip: ""
 			}
 
 			DarkShinkiteBrick: {
-				// DisplayName: Dark Shinkite Brick
-				// Tooltip: ""
+				DisplayName: Ciemna Cegła z Shinkitu
+				Tooltip: ""
 			}
 
 			BastionGate: {
-				// DisplayName: Bastion Gate
-				// Tooltip: ""
+				DisplayName: Brama Bastionu
+				Tooltip: ""
 			}
 
 			DemonForgeTent: {
-				// DisplayName: Demon Forge Tent
-				// Tooltip: ""
+				DisplayName: Demoniczny Namiot Kowala
+				Tooltip: ""
 			}
 
 			DemonShopTent: {
-				// DisplayName: Demon Shop Tent
-				// Tooltip: ""
+				DisplayName: Demoniczny Namiot Kupca
+				Tooltip: ""
 			}
 
 			DemonTailorTent: {
-				// DisplayName: Demon Tailor Tent
-				// Tooltip: ""
+				DisplayName: Demoniczny Namiot Krawca
+				Tooltip: ""
 			}
 		}
 
@@ -12035,11 +12039,11 @@ Mods: {
 			CorruptedSentryBase_Proj.DisplayName: "{$Mods.Redemption.Items.CorruptedSentryBase.DisplayName}"
 			HoneycombStaff_Proj.DisplayName: Rój Miodowego Plastra
 			XenoSplat_Small.DisplayName: Xenobryzg
-			// GhastlyRecurve_Holdout.DisplayName: Ghastly Recurve_ Holdout
-			// AkkaRosePortal.DisplayName: Akka Rose Portal
-			// AkkaRosePortal_Proj.DisplayName: Akka Rose Portal_ Proj
-			// HellstoneBallista_Bolt.DisplayName: Hellstone Ballista_ Bolt
-			// HellstoneBallista_Top.DisplayName: Hellstone Ballista_ Top
+			GhastlyRecurve_Holdout.DisplayName: "{$Mods.Redemption.Items.GhastlyRecurve.DisplayName}"
+			AkkaRosePortal.DisplayName: Portal Czerwonej Róży
+			AkkaRosePortal_Proj.DisplayName: Cierń Czerwonej Róży
+			HellstoneBallista_Bolt.DisplayName: Bełt z Piekielnego Kamienia
+			HellstoneBallista_Top.DisplayName: Balista z Piekielnego Kamienia
 		}
 
 		NPCs: {
@@ -12565,7 +12569,7 @@ Mods: {
 			MoonflareSkeleton.DisplayName: Pielgrzym Blasku Księżyca
 			TreebarkDryad_Savanna.DisplayName: "{$Mods.Redemption.NPCs.TreebarkDryad.DisplayName}"
 			KS3_Friendly.DisplayName: "{$Mods.Redemption.NPCs.KS3.DisplayName}"
-			// HollowfireSmith.DisplayName: Anr'thre
+			HollowfireSmith.DisplayName: Anr'thre
 		}
 
 		Tiles: {

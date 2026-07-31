@@ -114,7 +114,7 @@ namespace Redemption.Globals
                     if (Main.rand.NextBool(8) && target.life < target.lifeMax && target.knockBackResist > 0 && !target.RedemptionNPCBuff().iceFrozen && npc.HasElement(ElementID.Ice))
                     {
                         SoundEngine.PlaySound(SoundID.Item30);
-                        target.AddBuff(BuffType<IceFrozen>(), 1800 - ((int)MathHelper.Clamp(target.lifeMax, 60, 1780)));
+                        target.AddBuff(BuffType<IceFrozen>(), (int)MathHelper.Clamp(1800 - target.lifeMax, 60, 1780));
                     }
                 }
                 if (NPCLists.Plantlike.Contains(target.type) || NPCLists.Cold.Contains(target.type) || NPCLists.IsSlime.Contains(target.type))
@@ -208,7 +208,7 @@ namespace Redemption.Globals
                     if (Main.rand.NextBool(8) && npc.life < npc.lifeMax && npc.knockBackResist > 0 && !npc.RedemptionNPCBuff().iceFrozen && item.HasElement(ElementID.Ice))
                     {
                         SoundEngine.PlaySound(SoundID.Item30);
-                        npc.AddBuff(BuffType<IceFrozen>(), 1800 - ((int)MathHelper.Clamp(npc.lifeMax, 60, 1780)));
+                        npc.AddBuff(BuffType<IceFrozen>(), (int)MathHelper.Clamp(1800 - npc.lifeMax, 60, 1780));
                         RedeQuest.SetBonusDiscovered(RedeQuest.Bonuses.Ice);
                     }
                 }
@@ -321,7 +321,7 @@ namespace Redemption.Globals
                     if (Main.rand.NextBool(8) && npc.life < npc.lifeMax && npc.knockBackResist > 0 && !npc.RedemptionNPCBuff().iceFrozen && projectile.HasElement(ElementID.Ice))
                     {
                         SoundEngine.PlaySound(SoundID.Item30);
-                        npc.AddBuff(BuffType<IceFrozen>(), 1800 - ((int)MathHelper.Clamp(npc.lifeMax, 60, 1780)));
+                        npc.AddBuff(BuffType<IceFrozen>(), (int)MathHelper.Clamp(1800 - npc.lifeMax, 60, 1780));
                         RedeQuest.SetBonusDiscovered(RedeQuest.Bonuses.Ice);
                     }
                 }

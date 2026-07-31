@@ -170,7 +170,7 @@ namespace Redemption.Items.Weapons.PreHM.Melee
             {
                 SoundEngine.PlaySound(SoundID.Item30, target.position);
                 DustHelper.DrawDustImage(target.Center, DustID.Frost, 0.5f, "Redemption/Effects/DustImages/Flake", 2, true, RedeHelper.RandomRotation());
-                target.AddBuff(BuffType<IceFrozen>(), 1800 - ((int)MathHelper.Clamp(target.lifeMax, 60, 1780)));
+                target.AddBuff(BuffType<IceFrozen>(), (int)MathHelper.Clamp(1800 - target.lifeMax, 60, 1780));
             }
         }
 

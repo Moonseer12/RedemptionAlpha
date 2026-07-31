@@ -1906,6 +1906,9 @@ Mods: {
 				A0: Where are you from?
 				A1: You stayed behind?
 				A2: So you aren't a blacksmith?
+				B0: What are you?
+				B1: You're a demon?
+				B2: What are you doing here?
 			}
 		}
 
@@ -3568,6 +3571,9 @@ Mods: {
 				A0: Demonhollow. Surely even ye in Epidotra have heard of it? Home of the Demons, sworn revenge on Epidotra, that blasted Church, alla' that? Ah, perish the thought. I try not to think about it, these days.
 				A1: Ha! You make it sound like a choice, puttin' it like that. Truth is, I'd have returned in a flicker if it were up to me. But it wasn't, so no point in dwelling! Something something, actually a philosopher but became a blacksmith.
 				A2: Well, I'm smithin', aren't I? Limited pointa' view, if you ask me. But no, this all was just to make myself useful, 'posed to the alternative. Nowadays, a piece'a hot metal's just about the one thing keepin' me moving and sane. 'Sa shame, I guess...
+				B0: What, haven't seen a Hollowfire 'fore? 'spose not. I'm, er, was from the Demonhollow. We demons are well different from the beastly sorts on this island. Reckon there's a common ancestor? Er, anyway...  Hollowfire, that's what I am...
+				B1: "'Spose I still am, yeah. Er, bears repeating we're not all like the sorts 'round here. More civilized. Uh, theoretically. Ahem. They're not bad company once you get to know 'em. Ah-heh-hem."
+				B2: Ha. Pa ha. Right, figures you'd ask'at right quick. I didn't come 'ere by CHOICE, if that's what yer askin'. Asked too many questions, got on our War-Priest's bad side. Satisfied with the broad strokes? Wasn' meant'ta be a blacksmith either, but here I am.
 			}
 		}
 
@@ -12028,11 +12034,11 @@ Mods: {
 			CorruptedSentryBase_Proj.DisplayName: Corrupted Sentry Base_ Proj
 			HoneycombStaff_Proj.DisplayName: Honeycomb Hive
 			XenoSplat_Small.DisplayName: Xeno Splat
-			GhastlyRecurve_Holdout.DisplayName: Ghastly Recurve_ Holdout
-			AkkaRosePortal.DisplayName: Akka Rose Portal
-			AkkaRosePortal_Proj.DisplayName: Akka Rose Portal_ Proj
-			HellstoneBallista_Bolt.DisplayName: Hellstone Ballista_ Bolt
-			HellstoneBallista_Top.DisplayName: Hellstone Ballista_ Top
+			GhastlyRecurve_Holdout.DisplayName: "{$Mods.Redemption.Items.GhastlyRecurve.DisplayName}"
+			AkkaRosePortal.DisplayName: Red Rose Portal
+			AkkaRosePortal_Proj.DisplayName: Red Rose Thorn
+			HellstoneBallista_Bolt.DisplayName: Hellstone Bolt
+			HellstoneBallista_Top.DisplayName: Hellstone Ballista
 		}
 
 		NPCs: {

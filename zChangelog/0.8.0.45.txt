@@ -32,7 +32,7 @@
 - Added Ash Wood Barrel and Wide Ash Wood Barrel
 - Escorted Noza off the Bastion premises, but someone else decided to sit around there instead
 1499. Resprited Shinkite Beam
-1832. Added Dark Shinkite Bricks
+1832. Added Dark Shinkite Brick
 2063. Added a ruined bridge to the Underworld that leads to the Blazing Bastion
 2104. Added a watchtower in the underworld
 2105. Added Broken Hellstone Ballista to the watchtower, can be repaired and used to assist with enemies (and Wall of Flesh)
