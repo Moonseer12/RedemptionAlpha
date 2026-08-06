@@ -64,11 +64,12 @@ namespace Redemption.Projectiles.Misc
         {
             if (Projectile.ai[1] > 0)
                 return;
+            Projectile.ai[1] = 10;
+
             target.AddBuff(BuffID.OnFire3, 156);
             SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = -0.5f }, Projectile.position);
             RedeDraw.SpawnExplosion(Projectile.Center, Color.OrangeRed, DustID.Torch, 10, scale: 2, tex: "Redemption/Textures/BigFlare", rot: RedeHelper.RandomRotation());
             RedeHelper.NPCRadiusDamage(Projectile.Center, 300, Projectile, Projectile.damage, 8, Projectile.CritChance);
-            Projectile.ai[1] = 10;
         }
         public override void AI()
         {
